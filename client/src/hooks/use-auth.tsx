@@ -23,6 +23,7 @@ interface AuthContextType {
   logout: () => void;
   adminLogin: (admin: Admin, token: string) => void;
   adminLogout: () => void;
+  checkAdminLogin: (username: string, password: string) => Promise<boolean>;
   isAuthenticated: boolean;
   isAdmin: boolean;
 }
@@ -55,6 +56,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('user', JSON.stringify(userData));
   };
 
+  const checkAdminLogin = async (username: string, password: string) => {
+    try {
+      const response = await fetch("/api/admin/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        adminLogin(data.admin, data.token);
+        return true;
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
@@ -82,6 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logout,
     adminLogin,
     adminLogout,
+    checkAdminLogin,
     isAuthenticated: !!user,
     isAdmin: !!admin && !!adminToken,
   };

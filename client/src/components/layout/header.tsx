@@ -65,8 +65,8 @@ export default function Header() {
                 </>
               )}
               {isAdmin && (
-                <Link href="/admin-console" className="text-red-600 hover:text-red-700 transition-colors">
-                  Admin Console
+                <Link href="/admin" className="text-red-600 hover:text-red-700 transition-colors">
+                  Admin Panel
                 </Link>
               )}
             </nav>
@@ -144,11 +144,11 @@ export default function Header() {
                   )}
                   {isAdmin && (
                     <Link
-                      href="/admin-console"
+                      href="/admin"
                       onClick={() => setIsOpen(false)}
                       className="text-lg font-medium text-red-600 hover:text-red-700 transition-colors"
                     >
-                      Admin Console
+                      Admin Panel
                     </Link>
                   )}
                   <hr className="my-4" />

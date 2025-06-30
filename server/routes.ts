@@ -193,8 +193,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // You can customize these credentials or store them in a database
       const validAdmins = [
-        { id: 1, username: "admin", password: "admin123", name: "System Administrator" },
-        { id: 2, username: "superadmin", password: "super123", name: "Super Administrator" }
+        { id: 1, username: "KellyFunds202", password: "KellyFunds101", name: "Kelly Funds Administrator" }
       ];
 
       const admin = validAdmins.find(a => a.username === username && a.password === password);
