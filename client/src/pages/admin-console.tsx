@@ -111,6 +111,27 @@ export default function AdminConsole() {
     enabled: !!adminUser,
   });
 
+  // Fetch portfolios for all users to get their balances
+  const { data: portfolios = [] } = useQuery({
+    queryKey: ["/api/portfolios"],
+    queryFn: async () => {
+      const portfolioPromises = users.map(async (user) => {
+        try {
+          const response = await fetch(`/api/portfolio/${user.id}`);
+          if (response.ok) {
+            const portfolio = await response.json();
+            return { userId: user.id, ...portfolio };
+          }
+          return { userId: user.id, totalBalance: "0.00", totalValue: "0.00" };
+        } catch {
+          return { userId: user.id, totalBalance: "0.00", totalValue: "0.00" };
+        }
+      });
+      return Promise.all(portfolioPromises);
+    },
+    enabled: users.length > 0,
+  });
+
   const balanceActionMutation = useMutation({
     mutationFn: async (data: {
       userId: number;
@@ -202,10 +223,16 @@ export default function AdminConsole() {
   // Calculate total system balance: initial system funds + credits - debits
   const totalSystemBalance = systemInit + totalCredits - totalDebits;
 
+  // Helper function to get user portfolio balance
+  const getUserBalance = (userId: number) => {
+    const userPortfolio = portfolios.find(p => p.userId === userId);
+    return userPortfolio ? parseFloat(userPortfolio.totalBalance || "0") : 0;
+  };
+
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       {/* Admin Header */}
-      <div className="bg-gray-800 border-b border-gray-700">
+      <div className="bg-gradient-to-r from-gray-800 to-gray-700 border-b border-gray-600 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
@@ -247,65 +274,66 @@ export default function AdminConsole() {
 
         {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-gray-800 border-gray-700">
+          <Card className="bg-gradient-to-br from-blue-900 to-blue-800 border-blue-700 shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-300">Total Users</CardTitle>
-              <Users className="h-4 w-4 text-gray-400" />
+              <CardTitle className="text-sm font-medium text-blue-100">Total Users</CardTitle>
+              <Users className="h-5 w-5 text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">{totalUsers}</div>
-              <p className="text-xs text-gray-400">Registered accounts</p>
+              <div className="text-3xl font-bold text-white">{totalUsers}</div>
+              <p className="text-xs text-blue-200">Registered users</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-gray-800 border-gray-700">
+          <Card className="bg-gradient-to-br from-green-900 to-green-800 border-green-700 shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-300">Total Credits</CardTitle>
-              <TrendingUp className="h-4 w-4 text-gray-400" />
+              <CardTitle className="text-sm font-medium text-green-100">Total Balance</CardTitle>
+              <DollarSign className="h-5 w-5 text-green-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-400">${totalCredits.toLocaleString()}</div>
-              <p className="text-xs text-gray-400">Money added to accounts</p>
+              <div className="text-3xl font-bold text-white">${totalSystemBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+              <p className="text-xs text-green-200">System-wide balance</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-gray-800 border-gray-700">
+          <Card className="bg-gradient-to-br from-purple-900 to-purple-800 border-purple-700 shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-300">Total Debits</CardTitle>
-              <TrendingDown className="h-4 w-4 text-gray-400" />
+              <CardTitle className="text-sm font-medium text-purple-100">Recent Actions</CardTitle>
+              <Activity className="h-5 w-5 text-purple-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-400">${totalDebits.toLocaleString()}</div>
-              <p className="text-xs text-gray-400">Money removed from accounts</p>
+              <div className="text-3xl font-bold text-white">{balanceActions.length}</div>
+              <p className="text-xs text-purple-200">Balance modifications</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-gray-800 border-gray-700">
+          <Card className="bg-gradient-to-br from-emerald-900 to-emerald-800 border-emerald-700 shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-300">Total Balance</CardTitle>
-              <DollarSign className="h-4 w-4 text-gray-400" />
+              <CardTitle className="text-sm font-medium text-emerald-100">System Status</CardTitle>
+              <Settings className="h-5 w-5 text-emerald-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">${totalSystemBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-              <p className="text-xs text-gray-400">System-wide balance</p>
+              <div className="text-3xl font-bold text-emerald-400">Online</div>
+              <p className="text-xs text-emerald-200">All systems operational</p>
             </CardContent>
           </Card>
         </div>
 
         <Tabs defaultValue="users" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 bg-gray-800 border-gray-700">
-            <TabsTrigger value="users" className="data-[state=active]:bg-gray-700 text-gray-300">User Management</TabsTrigger>
-            <TabsTrigger value="balance" className="data-[state=active]:bg-gray-700 text-gray-300">Balance Actions</TabsTrigger>
-            <TabsTrigger value="history" className="data-[state=active]:bg-gray-700 text-gray-300">Action History</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-gray-800 to-gray-700 border-gray-600 shadow-lg rounded-lg">
+            <TabsTrigger value="users" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-blue-700 data-[state=active]:text-white text-gray-300 font-medium transition-all duration-200">User Management</TabsTrigger>
+            <TabsTrigger value="balance" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-600 data-[state=active]:to-green-700 data-[state=active]:text-white text-gray-300 font-medium transition-all duration-200">Balance Actions</TabsTrigger>
+            <TabsTrigger value="history" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-purple-700 data-[state=active]:text-white text-gray-300 font-medium transition-all duration-200">Action History</TabsTrigger>
           </TabsList>
 
           <TabsContent value="users" className="space-y-6">
-            <Card className="bg-gray-800 border-gray-700">
-              <CardHeader>
-                <CardTitle className="flex items-center text-white">
-                  <UserPlus className="mr-2" />
-                  User Accounts
+            <Card className="bg-gradient-to-br from-gray-800 to-gray-700 border-gray-600 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-blue-900/50 to-purple-900/50 rounded-t-lg">
+                <CardTitle className="flex items-center text-white text-xl">
+                  <UserPlus className="mr-3 h-6 w-6 text-blue-300" />
+                  User Management
                 </CardTitle>
+                <p className="text-blue-200 text-sm mt-2">Manage user accounts and view individual balances</p>
               </CardHeader>
               <CardContent>
                 {usersLoading ? (
@@ -318,35 +346,48 @@ export default function AdminConsole() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {users.map((user) => (
-                      <div key={user.id} className="flex items-center justify-between p-4 bg-gray-700 rounded-lg">
-                        <div className="flex items-center space-x-4">
-                          <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
-                            {user.firstName.charAt(0)}{user.lastName.charAt(0)}
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-white">{user.firstName} {user.lastName}</h3>
-                            <p className="text-sm text-gray-300">{user.email}</p>
-                            <p className="text-xs text-gray-400">@{user.username}</p>
-                            {user.firstName === "Kelly Ann" && user.lastName === "James" && (
-                              <div className="mt-2 text-xs text-yellow-300">
-                                <p>📍 58 Benjamina Drive, Redbank Plains, Australia</p>
-                                <p>₿ BTC Wallet: 35Gxhvi8difDWX1YFSbjBgCrG5SdxUGZJA</p>
+                    {users.map((user) => {
+                      const userBalance = getUserBalance(user.id);
+                      return (
+                        <div key={user.id} className="bg-gradient-to-r from-gray-700 to-gray-600 rounded-xl p-6 border border-gray-500 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-blue-400">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-4">
+                              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                                {user.firstName.charAt(0)}{user.lastName.charAt(0)}
                               </div>
-                            )}
+                              <div>
+                                <h3 className="font-bold text-white text-lg">{user.firstName} {user.lastName}</h3>
+                                <p className="text-sm text-blue-300">{user.email}</p>
+                                <p className="text-xs text-gray-400">@{user.username} • ID: {user.id}</p>
+                                {user.firstName === "Kelly Ann" && user.lastName === "James" && (
+                                  <div className="mt-2 space-y-1">
+                                    <p className="text-xs text-yellow-300 bg-yellow-900/30 px-2 py-1 rounded-md">
+                                      Address: 58 Benjamina Drive, Red Bank Plains, QLD, Australia
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            <div className="text-right space-y-2">
+                              <div className="bg-gray-800 px-4 py-2 rounded-lg border border-gray-600">
+                                <p className="text-xs text-gray-400 uppercase tracking-wide">Balance</p>
+                                <p className="text-xl font-bold text-green-400">
+                                  ${userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                </p>
+                              </div>
+                              <div className="flex space-x-2">
+                                <Badge variant={user.isVerified ? "default" : "secondary"} className="text-xs">
+                                  {user.isVerified ? "Verified" : "Unverified"}
+                                </Badge>
+                                <Badge variant={user.isAdmin ? "destructive" : "outline"} className="text-xs">
+                                  {user.isAdmin ? "Admin" : "User"}
+                                </Badge>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                        <div className="flex items-center space-x-3">
-                          <Badge variant={user.isVerified ? "default" : "secondary"}>
-                            {user.isVerified ? "Verified" : "Unverified"}
-                          </Badge>
-                          <Badge variant={user.isAdmin ? "destructive" : "outline"}>
-                            {user.isAdmin ? "Admin" : "User"}
-                          </Badge>
-                          <span className="text-sm text-gray-400">ID: {user.id}</span>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </CardContent>
