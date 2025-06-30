@@ -61,6 +61,12 @@ export default {
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)",
         },
+        // FutureWallet custom colors
+        "fw-blue": "var(--fw-blue)",
+        "fw-light-blue": "var(--fw-light-blue)", 
+        "fw-dark": "var(--fw-dark)",
+        "fw-success": "var(--fw-success)",
+        "fw-warning": "var(--fw-warning)",
       },
       keyframes: {
         "accordion-down": {
