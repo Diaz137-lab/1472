@@ -13,6 +13,7 @@ import Institutional from "@/pages/institutional";
 import Admin from "@/pages/admin";
 import AdminLogin from "@/pages/admin-auth/admin-login";
 import AdminConsole from "@/pages/admin-console";
+import Login from "@/pages/auth/login";
 import Signup from "@/pages/auth/signup";
 import NotFound from "@/pages/not-found";
 
