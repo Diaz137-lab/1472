@@ -3,6 +3,32 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertUserSchema, insertTransactionSchema, insertAdminBalanceActionSchema } from "@shared/schema";
 import { z } from "zod";
+import jwt from "jsonwebtoken";
+
+const JWT_SECRET = process.env.JWT_SECRET || "your-super-secure-admin-secret-key";
+
+const adminLoginSchema = z.object({
+  username: z.string().min(1),
+  password: z.string().min(1),
+});
+
+// Middleware to verify admin token
+const verifyAdminToken = (req: any, res: any, next: any) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ message: "Access token required" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    req.admin = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: "Invalid or expired token" });
+  }
+};
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -160,8 +186,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Admin routes
-  app.get("/api/admin/users", async (req, res) => {
+  // Admin authentication routes
+  app.post("/api/admin/auth/login", async (req, res) => {
+    try {
+      const { username, password } = adminLoginSchema.parse(req.body);
+      
+      // You can customize these credentials or store them in a database
+      const validAdmins = [
+        { id: 1, username: "admin", password: "admin123", name: "System Administrator" },
+        { id: 2, username: "superadmin", password: "super123", name: "Super Administrator" }
+      ];
+      
+      const admin = validAdmins.find(a => a.username === username && a.password === password);
+      
+      if (!admin) {
+        return res.status(401).json({ message: "Invalid admin credentials" });
+      }
+      
+      const token = jwt.sign(
+        { id: admin.id, username: admin.username, name: admin.name },
+        JWT_SECRET,
+        { expiresIn: "8h" }
+      );
+      
+      const { password: _, ...adminWithoutPassword } = admin;
+      res.json({ 
+        token, 
+        admin: adminWithoutPassword,
+        message: "Admin authentication successful"
+      });
+    } catch (error) {
+      res.status(400).json({ message: "Invalid login data" });
+    }
+  });
+
+  // Admin routes (protected)
+  app.get("/api/admin/users", verifyAdminToken, async (req, res) => {
     try {
       const users = await storage.getAllUsers();
       // Remove passwords from response
@@ -172,7 +232,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/admin/balance-action", async (req, res) => {
+  app.post("/api/admin/balance-action", verifyAdminToken, async (req, res) => {
     try {
       const actionData = insertAdminBalanceActionSchema.parse(req.body);
       
@@ -209,7 +269,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/admin/balance-actions", async (req, res) => {
+  app.get("/api/admin/balance-actions", verifyAdminToken, async (req, res) => {
     try {
       const actions = await storage.getAdminBalanceActions();
       res.json(actions);
@@ -218,7 +278,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/admin/user-balance-actions/:userId", async (req, res) => {
+  app.get("/api/admin/user-balance-actions/:userId", verifyAdminToken, async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
       const actions = await storage.getUserBalanceActions(userId);

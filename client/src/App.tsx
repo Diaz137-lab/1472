@@ -10,9 +10,10 @@ import Portfolio from "@/pages/portfolio";
 import Exchange from "@/pages/exchange";
 import Explorer from "@/pages/explorer";
 import Institutional from "@/pages/institutional";
-import Login from "@/pages/auth/login";
-import Signup from "@/pages/auth/signup";
 import Admin from "@/pages/admin";
+import AdminLogin from "@/pages/admin-auth/admin-login";
+import AdminConsole from "@/pages/admin-console";
+import Signup from "@/pages/auth/signup";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -26,6 +27,8 @@ function Router() {
       <Route path="/explorer" component={Explorer} />
       <Route path="/institutional" component={Institutional} />
       <Route path="/admin" component={Admin} />
+      <Route path="/admin-login" component={AdminLogin} />
+      <Route path="/admin-console" component={AdminConsole} />
       <Route path="/auth/login" component={Login} />
       <Route path="/auth/signup" component={Signup} />
       <Route component={NotFound} />
