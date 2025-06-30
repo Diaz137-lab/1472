@@ -4,6 +4,8 @@ import {
   type Holding, type InsertHolding, type Transaction, type InsertTransaction,
   type CryptoAsset, type InsertCryptoAsset, type AdminBalanceAction, type InsertAdminBalanceAction
 } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -319,4 +321,154 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export class DatabaseStorage implements IStorage {
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
+    return user;
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return await db.select().from(users);
+  }
+
+  async updateUser(id: number, updates: Partial<User>): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set(updates)
+      .where(eq(users.id, id))
+      .returning();
+    return user || undefined;
+  }
+
+  async getPortfolio(userId: number): Promise<Portfolio | undefined> {
+    const [portfolio] = await db.select().from(portfolios).where(eq(portfolios.userId, userId));
+    return portfolio || undefined;
+  }
+
+  async createPortfolio(insertPortfolio: InsertPortfolio): Promise<Portfolio> {
+    const [portfolio] = await db
+      .insert(portfolios)
+      .values(insertPortfolio)
+      .returning();
+    return portfolio;
+  }
+
+  async updatePortfolio(userId: number, updates: Partial<Portfolio>): Promise<Portfolio | undefined> {
+    const [portfolio] = await db
+      .update(portfolios)
+      .set(updates)
+      .where(eq(portfolios.userId, userId))
+      .returning();
+    return portfolio || undefined;
+  }
+
+  async getHoldings(portfolioId: number): Promise<Holding[]> {
+    return await db.select().from(holdings).where(eq(holdings.portfolioId, portfolioId));
+  }
+
+  async createHolding(insertHolding: InsertHolding): Promise<Holding> {
+    const [holding] = await db
+      .insert(holdings)
+      .values(insertHolding)
+      .returning();
+    return holding;
+  }
+
+  async updateHolding(id: number, updates: Partial<Holding>): Promise<Holding | undefined> {
+    const [holding] = await db
+      .update(holdings)
+      .set(updates)
+      .where(eq(holdings.id, id))
+      .returning();
+    return holding || undefined;
+  }
+
+  async deleteHolding(id: number): Promise<boolean> {
+    const result = await db.delete(holdings).where(eq(holdings.id, id));
+    return result.rowCount > 0;
+  }
+
+  async getTransactions(userId: number): Promise<Transaction[]> {
+    return await db.select().from(transactions).where(eq(transactions.userId, userId));
+  }
+
+  async createTransaction(insertTransaction: InsertTransaction): Promise<Transaction> {
+    const [transaction] = await db
+      .insert(transactions)
+      .values(insertTransaction)
+      .returning();
+    return transaction;
+  }
+
+  async updateTransaction(id: number, updates: Partial<Transaction>): Promise<Transaction | undefined> {
+    const [transaction] = await db
+      .update(transactions)
+      .set(updates)
+      .where(eq(transactions.id, id))
+      .returning();
+    return transaction || undefined;
+  }
+
+  async getCryptoAssets(): Promise<CryptoAsset[]> {
+    return await db.select().from(cryptoAssets);
+  }
+
+  async getCryptoAsset(symbol: string): Promise<CryptoAsset | undefined> {
+    const [asset] = await db.select().from(cryptoAssets).where(eq(cryptoAssets.symbol, symbol));
+    return asset || undefined;
+  }
+
+  async createOrUpdateCryptoAsset(insertAsset: InsertCryptoAsset): Promise<CryptoAsset> {
+    const existing = await this.getCryptoAsset(insertAsset.symbol);
+    if (existing) {
+      const [updated] = await db
+        .update(cryptoAssets)
+        .set(insertAsset)
+        .where(eq(cryptoAssets.symbol, insertAsset.symbol))
+        .returning();
+      return updated;
+    } else {
+      const [created] = await db
+        .insert(cryptoAssets)
+        .values(insertAsset)
+        .returning();
+      return created;
+    }
+  }
+
+  async getAdminBalanceActions(): Promise<AdminBalanceAction[]> {
+    return await db.select().from(adminBalanceActions);
+  }
+
+  async createAdminBalanceAction(insertAction: InsertAdminBalanceAction): Promise<AdminBalanceAction> {
+    const [action] = await db
+      .insert(adminBalanceActions)
+      .values(insertAction)
+      .returning();
+    return action;
+  }
+
+  async getUserBalanceActions(userId: number): Promise<AdminBalanceAction[]> {
+    return await db.select().from(adminBalanceActions).where(eq(adminBalanceActions.userId, userId));
+  }
+}
+
+export const storage = new DatabaseStorage();
