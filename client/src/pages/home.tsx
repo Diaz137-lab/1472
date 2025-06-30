@@ -19,7 +19,12 @@ import {
   ArrowRight,
   Users,
   DollarSign,
-  BarChart3
+  BarChart3,
+  CreditCard,
+  Globe,
+  Zap,
+  MessageCircle,
+  Link as LinkIcon
 } from "lucide-react";
 
 export default function Home() {
