@@ -47,11 +47,7 @@ function Router() {
           <Exchange />
         </ProtectedRoute>
       </Route>
-      <Route path="/admin">
-        <ProtectedRoute requireAdmin>
-          <Admin />
-        </ProtectedRoute>
-      </Route>
+      <Route path="/admin" component={Admin} />
       <Route component={NotFound} />
     </Switch>
   );
