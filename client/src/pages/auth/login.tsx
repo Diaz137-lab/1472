@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 import { apiRequest } from "@/lib/queryClient";
 
 export default function Login() {
@@ -13,13 +14,15 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { login } = useAuth();
 
   const loginMutation = useMutation({
     mutationFn: async (data: { email: string; password: string }) => {
       const response = await apiRequest("POST", "/api/auth/login", data);
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      login(data.user);
       toast({
         title: "Welcome back!",
         description: "You have successfully logged in.",

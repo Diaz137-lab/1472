@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 import { apiRequest } from "@/lib/queryClient";
 
 export default function Signup() {
@@ -19,6 +20,7 @@ export default function Signup() {
   });
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { login } = useAuth();
 
   const signupMutation = useMutation({
     mutationFn: async (data: {
@@ -31,7 +33,8 @@ export default function Signup() {
       const response = await apiRequest("POST", "/api/auth/register", data);
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      login(data.user);
       toast({
         title: "Account created!",
         description: "Welcome to FutureWallet. You can now start trading.",

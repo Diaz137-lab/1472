@@ -1,12 +1,12 @@
-
 import { useState } from "react";
-import { useLocation } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 import { apiRequest } from "@/lib/queryClient";
 import { Shield } from "lucide-react";
 
@@ -17,6 +17,7 @@ export default function AdminLogin() {
   });
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { adminLogin } = useAuth();
 
   const loginMutation = useMutation({
     mutationFn: async (data: { username: string; password: string }) => {
@@ -27,9 +28,7 @@ export default function AdminLogin() {
       return response.json();
     },
     onSuccess: (data) => {
-      // Store admin session
-      localStorage.setItem("admin_token", data.token);
-      localStorage.setItem("admin_user", JSON.stringify(data.admin));
+      adminLogin(data.admin, data.token);
       toast({
         title: "Admin Access Granted",
         description: "Welcome to the admin console.",

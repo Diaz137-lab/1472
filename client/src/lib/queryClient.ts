@@ -8,19 +8,40 @@ async function throwIfResNotOk(res: Response) {
 }
 
 export async function apiRequest(
-  method: string,
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE',
   url: string,
-  data?: unknown | undefined,
+  data?: any
 ): Promise<Response> {
-  const res = await fetch(url, {
+  const config: RequestInit = {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
-    body: data ? JSON.stringify(data) : undefined,
-    credentials: "include",
-  });
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
 
-  await throwIfResNotOk(res);
-  return res;
+  // Add admin token to admin API requests
+  if (url.startsWith('/api/admin/') && !url.includes('/auth/login')) {
+    const adminToken = localStorage.getItem('adminToken');
+    if (adminToken) {
+      config.headers = {
+        ...config.headers,
+        'Authorization': `Bearer ${adminToken}`,
+      };
+    }
+  }
+
+  if (data) {
+    config.body = JSON.stringify(data);
+  }
+
+  const response = await fetch(url, config);
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ message: 'An error occurred' }));
+    throw new Error(errorData.message || 'An error occurred');
+  }
+
+  return response;
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";
