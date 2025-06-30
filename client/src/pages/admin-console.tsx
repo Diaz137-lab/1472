@@ -121,10 +121,8 @@ export default function AdminConsole() {
       return response.json();
     },
     onSuccess: () => {
-      toast({
-        title: "Balance Updated",
-        description: "User balance has been successfully updated.",
-      });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/balance-actions"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
       setBalanceAction({
         action: "credit",
         amount: "",
@@ -132,8 +130,10 @@ export default function AdminConsole() {
         currency: "USD"
       });
       setSelectedUser("");
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/balance-actions"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+      toast({
+        title: "Balance Updated",
+        description: `Successfully ${balanceAction.action}ed ${balanceAction.amount} ${balanceAction.currency}.`,
+      });
     },
     onError: () => {
       toast({

@@ -1,4 +1,3 @@
-
 import { ReactNode } from 'react';
 import { useLocation } from 'wouter';
 import { useAuth } from '@/hooks/use-auth';
@@ -8,20 +7,35 @@ interface ProtectedRouteProps {
   requireAdmin?: boolean;
 }
 
-export default function ProtectedRoute({ children, requireAdmin = false }: ProtectedRouteProps) {
-  const { isAuthenticated, isAdmin } = useAuth();
+export function AdminProtectedRoute({ children }: ProtectedRouteProps) {
+  const { isAdmin } = useAuth();
   const [, setLocation] = useLocation();
 
-  if (requireAdmin) {
+  useEffect(() => {
     if (!isAdmin) {
-      setLocation('/admin-login');
-      return null;
+      setLocation("/admin-login");
     }
-  } else {
+  }, [isAdmin, setLocation]);
+
+  if (!isAdmin) {
+    return <div>Redirecting to admin login...</div>;
+  }
+
+  return <>{children}</>;
+}
+
+export default function ProtectedRoute({ children }: ProtectedRouteProps) {
+  const { isAuthenticated } = useAuth();
+  const [, setLocation] = useLocation();
+
+  useEffect(() => {
     if (!isAuthenticated) {
-      setLocation('/auth/login');
-      return null;
+      setLocation("/login");
     }
+  }, [isAuthenticated, setLocation]);
+
+  if (!isAuthenticated) {
+    return <div>Redirecting...</div>;
   }
 
   return <>{children}</>;

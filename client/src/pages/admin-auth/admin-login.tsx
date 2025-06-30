@@ -21,7 +21,14 @@ export default function AdminLogin() {
 
   const loginMutation = useMutation({
     mutationFn: async (data: { username: string; password: string }) => {
-      const response = await apiRequest("POST", "/api/admin/auth/login", data);
+      const response = await fetch("/api/admin/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      
       if (!response.ok) {
         throw new Error("Invalid credentials");
       }
