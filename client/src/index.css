@@ -24,7 +24,7 @@
   --ring: hsl(20, 14.3%, 4.1%);
   --radius: 0.5rem;
   
-  /* FutureWallet custom colors */
+  /* QuotexWallet custom colors */
   --fw-blue: hsl(220, 91%, 61%);
   --fw-light-blue: hsl(217, 91%, 95%);
   --fw-dark: hsl(220, 13%, 7%);
@@ -54,7 +54,7 @@
   --ring: hsl(240, 4.9%, 83.9%);
   --radius: 0.5rem;
   
-  /* FutureWallet dark theme colors */
+  /* QuotexWallet dark theme colors */
   --fw-blue: hsl(220, 91%, 61%);
   --fw-light-blue: hsl(217, 32%, 17%);
   --fw-dark: hsl(220, 13%, 7%);

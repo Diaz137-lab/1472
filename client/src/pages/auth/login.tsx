@@ -56,7 +56,7 @@ export default function Login() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <Link href="/">
-            <h1 className="text-3xl font-bold text-fw-blue mb-4 cursor-pointer">FutureWallet</h1>
+            <h1 className="text-3xl font-bold text-fw-blue mb-4 cursor-pointer">QuotexWallet</h1>
           </Link>
           <CardTitle className="text-2xl">Welcome back</CardTitle>
           <CardDescription>Sign in to your account to continue</CardDescription>

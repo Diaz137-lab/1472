@@ -249,7 +249,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-bold mb-4">Let us take you from zero to crypto</h2>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join millions of users who trust FutureWallet for their cryptocurrency journey.
+            Join millions of users who trust QuotexWallet for their cryptocurrency journey.
           </p>
           <Link href="/auth/signup">
             <Button className="bg-white text-fw-blue px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors font-semibold text-lg">

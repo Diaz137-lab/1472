@@ -1,8 +1,8 @@
-# FutureWallet - Cryptocurrency Trading Platform
+# QuotexWallet - Cryptocurrency Trading Platform
 
 ## Overview
 
-FutureWallet is a modern cryptocurrency trading platform built as a full-stack web application. It provides users with the ability to buy, sell, and manage cryptocurrency portfolios through an intuitive interface. The application features real-time price tracking, portfolio management, trading capabilities, and institutional services.
+QuotexWallet is a modern cryptocurrency trading platform built as a full-stack web application. It provides users with the ability to buy, sell, and manage cryptocurrency portfolios through an intuitive interface. The application features real-time price tracking, portfolio management, trading capabilities, and institutional services.
 
 ## System Architecture
 
@@ -100,8 +100,16 @@ Located in `shared/schema.ts`, the database includes:
 ## Changelog
 - June 30, 2025. Initial setup
 - June 30, 2025. Completed comprehensive admin panel implementation with user management, balance controls, and action history tracking
+- June 30, 2025. Rebranded from FutureWallet to QuotexWallet
 
 ## Recent Changes
+
+### Brand Update (June 30, 2025)
+- Complete rebrand from FutureWallet to QuotexWallet
+- Updated all UI components, page titles, and branding elements
+- Modified authentication pages, headers, and footer references
+- Updated email addresses and contact information
+- Revised documentation and project files
 
 ### Admin Panel Implementation (June 30, 2025)
 - Added complete admin interface at /admin route
@@ -114,7 +122,7 @@ Located in `shared/schema.ts`, the database includes:
 - Backend API routes for admin operations fully functional
 
 ### Current System State
-- Full-featured cryptocurrency trading platform operational
+- Full-featured cryptocurrency trading platform operational under QuotexWallet brand
 - Complete user authentication and portfolio management
 - Trading interface with buy/sell capabilities
 - Market explorer with real-time price data

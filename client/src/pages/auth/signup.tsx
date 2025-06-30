@@ -37,7 +37,7 @@ export default function Signup() {
       login(data.user);
       toast({
         title: "Account created!",
-        description: "Welcome to FutureWallet. You can now start trading.",
+        description: "Welcome to QuotexWallet. You can now start trading.",
       });
       setLocation("/dashboard");
     },
@@ -84,7 +84,7 @@ export default function Signup() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <Link href="/">
-            <h1 className="text-3xl font-bold text-fw-blue mb-4 cursor-pointer">FutureWallet</h1>
+            <h1 className="text-3xl font-bold text-fw-blue mb-4 cursor-pointer">QuotexWallet</h1>
           </Link>
           <CardTitle className="text-2xl">Create your account</CardTitle>
           <CardDescription>Start your crypto journey today</CardDescription>

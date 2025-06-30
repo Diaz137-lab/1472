@@ -254,7 +254,7 @@ export default function Institutional() {
                     ))}
                   </div>
                   <p className="text-gray-600 italic">
-                    "FutureWallet's OTC desk provides the liquidity and execution quality we need for our large crypto allocations."
+                    "QuotexWallet's OTC desk provides the liquidity and execution quality we need for our large crypto allocations."
                   </p>
                 </div>
                 <div>
@@ -330,7 +330,7 @@ export default function Institutional() {
                   </div>
                   <div>
                     <p className="font-semibold">Email</p>
-                    <p className="text-gray-600">institutional@futurewallet.com</p>
+                    <p className="text-gray-600">institutional@quotexwallet.com</p>
                   </div>
                 </div>
 

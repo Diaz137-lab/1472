@@ -431,7 +431,7 @@ export default function Explorer() {
               <CardContent>
                 <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
                   <div className="mb-2"># Get real-time price data</div>
-                  <div className="mb-4">curl -X GET "https://api.futurewallet.com/v1/prices/BTC"</div>
+                  <div className="mb-4">curl -X GET "https://api.quotexwallet.com/v1/prices/BTC"</div>
                   
                   <div className="mb-2"># Response</div>
                   <div className="text-white">

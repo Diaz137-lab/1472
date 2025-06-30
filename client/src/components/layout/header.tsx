@@ -33,7 +33,7 @@ export default function Header() {
             <div className="flex-shrink-0">
               <Link href="/">
                 <h1 className="text-2xl font-bold text-fw-blue cursor-pointer">
-                  FutureWallet
+                  QuotexWallet
                 </h1>
               </Link>
             </div>

@@ -103,7 +103,7 @@ export class MemStorage implements IStorage {
     const mockUsers = [
       { username: "johndoe", email: "john@example.com", password: "hashed_password", firstName: "John", lastName: "Doe" },
       { username: "janesmith", email: "jane@example.com", password: "hashed_password", firstName: "Jane", lastName: "Smith" },
-      { username: "admin", email: "admin@futurewallet.com", password: "admin_password", firstName: "Admin", lastName: "User" },
+      { username: "admin", email: "admin@quotexwallet.com", password: "admin_password", firstName: "Admin", lastName: "User" },
     ];
 
     mockUsers.forEach((userData, index) => {

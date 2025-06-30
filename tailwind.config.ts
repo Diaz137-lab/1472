@@ -61,7 +61,7 @@ export default {
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)",
         },
-        // FutureWallet custom colors
+        // QuotexWallet custom colors
         "fw-blue": "var(--fw-blue)",
         "fw-light-blue": "var(--fw-light-blue)", 
         "fw-dark": "var(--fw-dark)",
