@@ -12,14 +12,16 @@ export default function ProtectedRoute({ children, requireAdmin = false }: Prote
   const { isAuthenticated, isAdmin } = useAuth();
   const [, setLocation] = useLocation();
 
-  if (requireAdmin && !isAdmin) {
-    setLocation('/admin-login');
-    return null;
-  }
-
-  if (!requireAdmin && !isAuthenticated) {
-    setLocation('/auth/login');
-    return null;
+  if (requireAdmin) {
+    if (!isAdmin) {
+      setLocation('/admin-login');
+      return null;
+    }
+  } else {
+    if (!isAuthenticated) {
+      setLocation('/auth/login');
+      return null;
+    }
   }
 
   return <>{children}</>;

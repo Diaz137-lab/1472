@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -44,12 +43,12 @@ export default function AdminConsole() {
   useEffect(() => {
     const token = localStorage.getItem("admin_token");
     const admin = localStorage.getItem("admin_user");
-    
+
     if (!token || !admin) {
       setLocation("/admin-login");
       return;
     }
-    
+
     try {
       setAdminUser(JSON.parse(admin));
     } catch {
@@ -80,14 +79,14 @@ export default function AdminConsole() {
       },
       body: data ? JSON.stringify(data) : undefined,
     });
-    
+
     if (response.status === 401) {
       localStorage.removeItem("admin_token");
       localStorage.removeItem("admin_user");
       setLocation("/admin-login");
       throw new Error("Unauthorized");
     }
-    
+
     return response;
   };
 
@@ -208,7 +207,7 @@ export default function AdminConsole() {
           </div>
         </div>
       </div>
-      
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Warning Banner */}
         <div className="mb-6 p-4 bg-red-900/50 border border-red-700 rounded-lg">

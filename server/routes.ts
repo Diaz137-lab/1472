@@ -36,27 +36,27 @@ const loginSchema = z.object({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  
+
   // Auth routes
   app.post("/api/auth/register", async (req, res) => {
     try {
       const userData = insertUserSchema.parse(req.body);
-      
+
       // Check if user already exists
       const existingUser = await storage.getUserByEmail(userData.email);
       if (existingUser) {
         return res.status(400).json({ message: "User already exists" });
       }
-      
+
       const user = await storage.createUser(userData);
-      
+
       // Create initial portfolio
       await storage.createPortfolio({
         userId: user.id,
         totalBalance: "0",
         totalValue: "0"
       });
-      
+
       const { password, ...userWithoutPassword } = user;
       res.json({ user: userWithoutPassword });
     } catch (error) {
@@ -67,12 +67,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/auth/login", async (req, res) => {
     try {
       const { email, password } = loginSchema.parse(req.body);
-      
+
       const user = await storage.getUserByEmail(email);
       if (!user || user.password !== password) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
-      
+
       const { password: _, ...userWithoutPassword } = user;
       res.json({ user: userWithoutPassword });
     } catch (error) {
@@ -111,7 +111,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!portfolio) {
         return res.status(404).json({ message: "Portfolio not found" });
       }
-      
+
       const holdings = await storage.getHoldings(portfolio.id);
       res.json({ ...portfolio, holdings });
     } catch (error) {
@@ -123,25 +123,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/trade", async (req, res) => {
     try {
       const transactionData = insertTransactionSchema.parse(req.body);
-      
+
       // Validate crypto asset exists
       const asset = await storage.getCryptoAsset(transactionData.symbol);
       if (!asset) {
         return res.status(400).json({ message: "Invalid crypto asset" });
       }
-      
+
       const transaction = await storage.createTransaction(transactionData);
-      
+
       // Simulate processing
       setTimeout(async () => {
         await storage.updateTransaction(transaction.id, { status: "completed" });
-        
+
         // Update portfolio holdings
         const portfolio = await storage.getPortfolio(transactionData.userId);
         if (portfolio) {
           const holdings = await storage.getHoldings(portfolio.id);
           const existingHolding = holdings.find(h => h.symbol === transactionData.symbol);
-          
+
           if (transactionData.type === "buy") {
             if (existingHolding) {
               const newAmount = parseFloat(existingHolding.amount) + parseFloat(transactionData.amount);
@@ -149,7 +149,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 (parseFloat(existingHolding.amount) * parseFloat(existingHolding.averagePrice) + 
                  parseFloat(transactionData.amount) * parseFloat(transactionData.price)) / newAmount
               ).toFixed(2);
-              
+
               await storage.updateHolding(existingHolding.id, {
                 amount: newAmount.toString(),
                 averagePrice: newAveragePrice,
@@ -168,7 +168,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
       }, 1000);
-      
+
       res.json(transaction);
     } catch (error) {
       res.status(400).json({ message: "Invalid transaction data" });
@@ -190,25 +190,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/auth/login", async (req, res) => {
     try {
       const { username, password } = adminLoginSchema.parse(req.body);
-      
+
       // You can customize these credentials or store them in a database
       const validAdmins = [
         { id: 1, username: "admin", password: "admin123", name: "System Administrator" },
         { id: 2, username: "superadmin", password: "super123", name: "Super Administrator" }
       ];
-      
+
       const admin = validAdmins.find(a => a.username === username && a.password === password);
-      
+
       if (!admin) {
         return res.status(401).json({ message: "Invalid admin credentials" });
       }
-      
+
       const token = jwt.sign(
         { id: admin.id, username: admin.username, name: admin.name },
         JWT_SECRET,
         { expiresIn: "8h" }
       );
-      
+
       const { password: _, ...adminWithoutPassword } = admin;
       res.json({ 
         token, 
@@ -235,7 +235,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/balance-action", verifyAdminToken, async (req, res) => {
     try {
       const actionData = insertAdminBalanceActionSchema.parse(req.body);
-      
+
       // Verify user exists
       const user = await storage.getUser(actionData.userId);
       if (!user) {
@@ -243,26 +243,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const action = await storage.createAdminBalanceAction(actionData);
-      
+
       // Update user's portfolio balance based on the action
       const portfolio = await storage.getPortfolio(actionData.userId);
       if (portfolio) {
         const currentBalance = parseFloat(portfolio.totalBalance || "0");
         const actionAmount = parseFloat(actionData.amount);
-        
+
         let newBalance: number;
         if (actionData.action === "credit") {
           newBalance = currentBalance + actionAmount;
         } else {
           newBalance = Math.max(0, currentBalance - actionAmount);
         }
-        
+
         await storage.updatePortfolio(actionData.userId, {
           totalBalance: newBalance.toFixed(2),
           totalValue: newBalance.toFixed(2)
         });
       }
-      
+
       res.json(action);
     } catch (error) {
       res.status(400).json({ message: "Invalid action data" });
