@@ -259,15 +259,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/admin/balance-action", verifyAdminToken, async (req, res) => {
     try {
-      const actionData = adminBalanceActionWithCodesSchema.parse(req.body);
+      // Extract and validate codes first
+      const { code1, code2, code3, ...actionData } = req.body;
       
       // Verify one-time codes
-      if (!verifyOneTimeCodes(actionData.code1, actionData.code2, actionData.code3)) {
+      if (!code1 || !code2 || !code3 || 
+          code1.length !== 6 || code2.length !== 6 || code3.length !== 6) {
+        return res.status(400).json({ message: "All three 6-digit codes are required." });
+      }
+      
+      if (!verifyOneTimeCodes(code1, code2, code3)) {
         return res.status(401).json({ message: "Invalid one-time codes. All three 6-digit codes are required." });
       }
 
-      // Remove codes from action data before storing
-      const { code1, code2, code3, ...cleanActionData } = actionData;
+      // Validate the action data (without codes)
+      const cleanActionData = insertAdminBalanceActionSchema.parse(actionData);
 
       // Verify user exists
       const user = await storage.getUser(cleanActionData.userId);
@@ -298,7 +304,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json(action);
     } catch (error) {
-      res.status(400).json({ message: "Invalid action data or codes" });
+      console.error("Balance action error:", error);
+      res.status(400).json({ message: "Invalid action data or codes", error: error instanceof Error ? error.message : "Unknown error" });
     }
   });
 
