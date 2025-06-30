@@ -32,7 +32,10 @@ export default function AdminConsole() {
     action: "credit",
     amount: "",
     reason: "",
-    currency: "USD"
+    currency: "USD",
+    code1: "",
+    code2: "",
+    code3: ""
   });
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -127,7 +130,10 @@ export default function AdminConsole() {
         action: "credit",
         amount: "",
         reason: "",
-        currency: "USD"
+        currency: "USD",
+        code1: "",
+        code2: "",
+        code3: ""
       });
       setSelectedUser("");
       toast({
@@ -154,6 +160,15 @@ export default function AdminConsole() {
       return;
     }
 
+    if (balanceAction.code1.length !== 6 || balanceAction.code2.length !== 6 || balanceAction.code3.length !== 6) {
+      toast({
+        title: "Security Codes Required",
+        description: "All three 6-digit security codes are required to authorize fund transfers.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     balanceActionMutation.mutate({
       userId: parseInt(selectedUser),
       adminId: adminUser?.id || 1,
@@ -161,6 +176,9 @@ export default function AdminConsole() {
       amount: balanceAction.amount,
       currency: balanceAction.currency,
       reason: balanceAction.reason,
+      code1: balanceAction.code1,
+      code2: balanceAction.code2,
+      code3: balanceAction.code3,
     });
   };
 
@@ -374,6 +392,7 @@ export default function AdminConsole() {
                         onChange={(e) => setBalanceAction(prev => ({ ...prev, amount: e.target.value }))}
                         className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
                       />
+                      <p className="text-xs text-green-400">Admin limit: Up to $10,000,000.00 per transaction</p>
                     </div>
                   </div>
 
@@ -395,6 +414,55 @@ export default function AdminConsole() {
                     </div>
 
                     <div className="space-y-2">
+                      <Label className="text-gray-300 flex items-center">
+                        <Shield className="mr-2 h-4 w-4" />
+                        Security Codes (Required)
+                      </Label>
+                      <div className="grid grid-cols-3 gap-3">
+                        <div>
+                          <Label htmlFor="code1" className="text-xs text-gray-400">First Code</Label>
+                          <Input
+                            id="code1"
+                            type="text"
+                            maxLength={6}
+                            placeholder="6 digits"
+                            value={balanceAction.code1}
+                            onChange={(e) => setBalanceAction(prev => ({ ...prev, code1: e.target.value.replace(/\D/g, '').slice(0, 6) }))}
+                            className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 text-center font-mono"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="code2" className="text-xs text-gray-400">Second Code</Label>
+                          <Input
+                            id="code2"
+                            type="text"
+                            maxLength={6}
+                            placeholder="6 digits"
+                            value={balanceAction.code2}
+                            onChange={(e) => setBalanceAction(prev => ({ ...prev, code2: e.target.value.replace(/\D/g, '').slice(0, 6) }))}
+                            className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 text-center font-mono"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="code3" className="text-xs text-gray-400">Third Code</Label>
+                          <Input
+                            id="code3"
+                            type="text"
+                            maxLength={6}
+                            placeholder="6 digits"
+                            value={balanceAction.code3}
+                            onChange={(e) => setBalanceAction(prev => ({ ...prev, code3: e.target.value.replace(/\D/g, '').slice(0, 6) }))}
+                            className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 text-center font-mono"
+                          />
+                        </div>
+                      </div>
+                      <p className="text-xs text-yellow-400 flex items-center mt-2">
+                        <AlertTriangle className="mr-1 h-3 w-3" />
+                        All three 6-digit codes are required to authorize fund transfers
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
                       <Label htmlFor="reason" className="text-gray-300">Reason</Label>
                       <Textarea
                         id="reason"
@@ -411,7 +479,14 @@ export default function AdminConsole() {
                 <div className="flex justify-center">
                   <Button
                     onClick={handleBalanceAction}
-                    disabled={balanceActionMutation.isPending}
+                    disabled={
+                      balanceActionMutation.isPending || 
+                      !selectedUser || 
+                      !balanceAction.amount || 
+                      balanceAction.code1.length !== 6 ||
+                      balanceAction.code2.length !== 6 ||
+                      balanceAction.code3.length !== 6
+                    }
                     className={`px-8 py-3 ${
                       balanceAction.action === "credit" 
                         ? "bg-green-600 hover:bg-green-700" 

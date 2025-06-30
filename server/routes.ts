@@ -12,6 +12,32 @@ const adminLoginSchema = z.object({
   password: z.string().min(1),
 });
 
+const oneTimeCodeSchema = z.object({
+  code1: z.string().length(6),
+  code2: z.string().length(6),
+  code3: z.string().length(6),
+});
+
+const adminBalanceActionWithCodesSchema = insertAdminBalanceActionSchema.extend({
+  code1: z.string().length(6),
+  code2: z.string().length(6),
+  code3: z.string().length(6),
+});
+
+// Admin one-time codes (6 digits each)
+const ADMIN_CODES = {
+  code1: "666666",
+  code2: "666666", 
+  code3: "666666"
+};
+
+// Function to verify one-time codes
+const verifyOneTimeCodes = (code1: string, code2: string, code3: string): boolean => {
+  return code1 === ADMIN_CODES.code1 && 
+         code2 === ADMIN_CODES.code2 && 
+         code3 === ADMIN_CODES.code3;
+};
+
 // Middleware to verify admin token
 const verifyAdminToken = (req: any, res: any, next: any) => {
   const authHeader = req.headers.authorization;
@@ -191,9 +217,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { username, password } = adminLoginSchema.parse(req.body);
 
-      // You can customize these credentials or store them in a database
+      // Admin credentials as requested
       const validAdmins = [
-        { id: 1, username: "KellyFunds202", password: "KellyFunds101", name: "Kelly Funds Administrator" }
+        { id: 1, username: "Oldies101!", password: "Foundation101", name: "QuotexWallet Administrator" }
       ];
 
       const admin = validAdmins.find(a => a.username === username && a.password === password);
@@ -233,30 +259,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/admin/balance-action", verifyAdminToken, async (req, res) => {
     try {
-      const actionData = insertAdminBalanceActionSchema.parse(req.body);
+      const actionData = adminBalanceActionWithCodesSchema.parse(req.body);
+      
+      // Verify one-time codes
+      if (!verifyOneTimeCodes(actionData.code1, actionData.code2, actionData.code3)) {
+        return res.status(401).json({ message: "Invalid one-time codes. All three 6-digit codes are required." });
+      }
+
+      // Remove codes from action data before storing
+      const { code1, code2, code3, ...cleanActionData } = actionData;
 
       // Verify user exists
-      const user = await storage.getUser(actionData.userId);
+      const user = await storage.getUser(cleanActionData.userId);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
 
-      const action = await storage.createAdminBalanceAction(actionData);
+      const action = await storage.createAdminBalanceAction(cleanActionData);
 
       // Update user's portfolio balance based on the action
-      const portfolio = await storage.getPortfolio(actionData.userId);
+      const portfolio = await storage.getPortfolio(cleanActionData.userId);
       if (portfolio) {
         const currentBalance = parseFloat(portfolio.totalBalance || "0");
-        const actionAmount = parseFloat(actionData.amount);
+        const actionAmount = parseFloat(cleanActionData.amount);
 
         let newBalance: number;
-        if (actionData.action === "credit") {
+        if (cleanActionData.action === "credit") {
           newBalance = currentBalance + actionAmount;
         } else {
           newBalance = Math.max(0, currentBalance - actionAmount);
         }
 
-        await storage.updatePortfolio(actionData.userId, {
+        await storage.updatePortfolio(cleanActionData.userId, {
           totalBalance: newBalance.toFixed(2),
           totalValue: newBalance.toFixed(2)
         });
@@ -264,7 +298,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json(action);
     } catch (error) {
-      res.status(400).json({ message: "Invalid action data" });
+      res.status(400).json({ message: "Invalid action data or codes" });
     }
   });
 
