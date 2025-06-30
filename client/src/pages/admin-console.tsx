@@ -320,6 +320,12 @@ export default function AdminConsole() {
                             <h3 className="font-semibold text-white">{user.firstName} {user.lastName}</h3>
                             <p className="text-sm text-gray-300">{user.email}</p>
                             <p className="text-xs text-gray-400">@{user.username}</p>
+                            {user.firstName === "Kelly Ann" && user.lastName === "James" && (
+                              <div className="mt-2 text-xs text-yellow-300">
+                                <p>📍 58 Benjamina Drive, Redbank Plains, Australia</p>
+                                <p>₿ BTC Wallet: 35Gxhvi8difDWX1YFSbjBgCrG5SdxUGZJA</p>
+                              </div>
+                            )}
                           </div>
                         </div>
                         <div className="flex items-center space-x-3">
