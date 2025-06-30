@@ -28,6 +28,7 @@ import type { User, AdminBalanceAction } from "@shared/schema";
 
 export default function AdminConsole() {
   const [selectedUser, setSelectedUser] = useState("");
+  const [expandedUserId, setExpandedUserId] = useState<number | null>(null);
   const [balanceAction, setBalanceAction] = useState({
     action: "credit",
     amount: "",
@@ -229,6 +230,32 @@ export default function AdminConsole() {
     return userPortfolio ? parseFloat(userPortfolio.totalBalance || "0") : 0;
   };
 
+  // Generate wallet address for user (mock for demo)
+  const generateWalletAddress = (userId: number, symbol: string) => {
+    const prefixes: Record<string, string> = {
+      BTC: '1',
+      ETH: '0x',
+      DOGE: 'D',
+      SOL: '',
+      ADA: 'addr1',
+      DOT: '1'
+    };
+    
+    const chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+    let result = prefixes[symbol] || '1';
+    
+    // Use userId as seed for consistent addresses
+    const seed = userId * 12345;
+    for (let i = 0; i < (symbol === 'ETH' ? 40 : 30); i++) {
+      result += chars.charAt((seed + i) % chars.length);
+    }
+    return result;
+  };
+
+  const toggleUserDetails = (userId: number) => {
+    setExpandedUserId(expandedUserId === userId ? null : userId);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       {/* Admin Header */}
@@ -348,43 +375,124 @@ export default function AdminConsole() {
                   <div className="space-y-4">
                     {users.map((user) => {
                       const userBalance = getUserBalance(user.id);
+                      const isExpanded = expandedUserId === user.id;
                       return (
-                        <div key={user.id} className="bg-gradient-to-r from-gray-700 to-gray-600 rounded-xl p-6 border border-gray-500 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-blue-400">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-4">
-                              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
-                                {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                        <div key={user.id} className="bg-gradient-to-r from-gray-700 to-gray-600 rounded-xl border border-gray-500 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-blue-400">
+                          {/* Main User Card - Clickable */}
+                          <div 
+                            className="p-6 cursor-pointer"
+                            onClick={() => toggleUserDetails(user.id)}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-4">
+                                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                                  {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                                </div>
+                                <div>
+                                  <h3 className="font-bold text-white text-lg">{user.firstName} {user.lastName}</h3>
+                                  <p className="text-sm text-blue-300">{user.email}</p>
+                                  <p className="text-xs text-gray-400">@{user.username} • ID: {user.id}</p>
+                                  {user.firstName === "Kelly Ann" && user.lastName === "James" && (
+                                    <div className="mt-2 space-y-1">
+                                      <p className="text-xs text-yellow-300 bg-yellow-900/30 px-2 py-1 rounded-md">
+                                        📍 Address: 58 Benjamina Drive, Red Bank Plains, QLD, Australia
+                                      </p>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                              <div>
-                                <h3 className="font-bold text-white text-lg">{user.firstName} {user.lastName}</h3>
-                                <p className="text-sm text-blue-300">{user.email}</p>
-                                <p className="text-xs text-gray-400">@{user.username} • ID: {user.id}</p>
-                                {user.firstName === "Kelly Ann" && user.lastName === "James" && (
-                                  <div className="mt-2 space-y-1">
-                                    <p className="text-xs text-yellow-300 bg-yellow-900/30 px-2 py-1 rounded-md">
-                                      Address: 58 Benjamina Drive, Red Bank Plains, QLD, Australia
-                                    </p>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                            <div className="text-right space-y-2">
-                              <div className="bg-gray-800 px-4 py-2 rounded-lg border border-gray-600">
-                                <p className="text-xs text-gray-400 uppercase tracking-wide">Balance</p>
-                                <p className="text-xl font-bold text-green-400">
-                                  ${userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                </p>
-                              </div>
-                              <div className="flex space-x-2">
-                                <Badge variant={user.isVerified ? "default" : "secondary"} className="text-xs">
-                                  {user.isVerified ? "Verified" : "Unverified"}
-                                </Badge>
-                                <Badge variant={user.isAdmin ? "destructive" : "outline"} className="text-xs">
-                                  {user.isAdmin ? "Admin" : "User"}
-                                </Badge>
+                              <div className="text-right space-y-2">
+                                <div className="bg-gray-800 px-4 py-2 rounded-lg border border-gray-600">
+                                  <p className="text-xs text-gray-400 uppercase tracking-wide">Balance</p>
+                                  <p className="text-xl font-bold text-green-400">
+                                    ${userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                  </p>
+                                </div>
+                                <div className="flex space-x-2">
+                                  <Badge variant={user.isVerified ? "default" : "secondary"} className="text-xs">
+                                    {user.isVerified ? "Verified" : "Unverified"}
+                                  </Badge>
+                                  <Badge variant={user.isAdmin ? "destructive" : "outline"} className="text-xs">
+                                    {user.isAdmin ? "Admin" : "User"}
+                                  </Badge>
+                                </div>
+                                <div className="flex items-center text-xs text-gray-400">
+                                  {isExpanded ? "▼ Hide Details" : "▶ View Details"}
+                                </div>
                               </div>
                             </div>
                           </div>
+
+                          {/* Expanded Details Section */}
+                          {isExpanded && (
+                            <div className="border-t border-gray-600 bg-gray-800/50 p-6 rounded-b-xl">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Wallet Addresses */}
+                                <div>
+                                  <h4 className="text-white font-semibold mb-3 flex items-center">
+                                    <Wallet className="mr-2 h-4 w-4 text-blue-400" />
+                                    Crypto Wallet Addresses
+                                  </h4>
+                                  <div className="space-y-3">
+                                    {['BTC', 'ETH', 'DOGE', 'SOL', 'ADA'].map((symbol) => (
+                                      <div key={symbol} className="bg-gray-700 p-3 rounded-lg">
+                                        <div className="flex justify-between items-center">
+                                          <span className="text-sm font-medium text-gray-300">{symbol}</span>
+                                          <button 
+                                            className="text-xs text-blue-400 hover:text-blue-300"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              navigator.clipboard.writeText(generateWalletAddress(user.id, symbol));
+                                              toast({ title: "Copied!", description: `${symbol} address copied to clipboard` });
+                                            }}
+                                          >
+                                            Copy
+                                          </button>
+                                        </div>
+                                        <p className="text-xs text-gray-400 font-mono mt-1 break-all">
+                                          {generateWalletAddress(user.id, symbol)}
+                                        </p>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                {/* Account Info & Actions */}
+                                <div>
+                                  <h4 className="text-white font-semibold mb-3 flex items-center">
+                                    <Settings className="mr-2 h-4 w-4 text-green-400" />
+                                    Account Information
+                                  </h4>
+                                  <div className="space-y-3">
+                                    <div className="bg-gray-700 p-3 rounded-lg">
+                                      <p className="text-sm text-gray-300">Account Status</p>
+                                      <p className="text-white font-medium">
+                                        {user.isVerified ? "✅ Verified" : "⏳ Pending Verification"}
+                                      </p>
+                                    </div>
+                                    <div className="bg-gray-700 p-3 rounded-lg">
+                                      <p className="text-sm text-gray-300">Account Type</p>
+                                      <p className="text-white font-medium">
+                                        {user.isAdmin ? "🔐 Administrator" : "👤 Standard User"}
+                                      </p>
+                                    </div>
+                                    <div className="bg-gray-700 p-3 rounded-lg">
+                                      <p className="text-sm text-gray-300">Current Balance</p>
+                                      <p className="text-2xl font-bold text-green-400">
+                                        ${userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                      </p>
+                                    </div>
+                                    {user.address && (
+                                      <div className="bg-gray-700 p-3 rounded-lg">
+                                        <p className="text-sm text-gray-300">Physical Address</p>
+                                        <p className="text-white text-sm">{user.address}</p>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       );
                     })}
