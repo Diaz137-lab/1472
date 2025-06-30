@@ -119,6 +119,9 @@ export default function AdminConsole() {
       amount: string;
       currency: string;
       reason: string;
+      code1: string;
+      code2: string;
+      code3: string;
     }) => {
       const response = await authorizedApiRequest("POST", "/api/admin/balance-action", data);
       return response.json();
@@ -193,6 +196,11 @@ export default function AdminConsole() {
     .reduce((sum, action) => sum + parseFloat(action.amount), 0);
   const totalDebits = balanceActions.filter(action => action.action === "debit")
     .reduce((sum, action) => sum + parseFloat(action.amount), 0);
+  const systemInit = balanceActions.filter(action => action.action === "system_init")
+    .reduce((sum, action) => sum + parseFloat(action.amount), 0);
+  
+  // Calculate total system balance: initial system funds + credits - debits
+  const totalSystemBalance = systemInit + totalCredits - totalDebits;
 
   return (
     <div className="min-h-screen bg-gray-900">
@@ -278,8 +286,8 @@ export default function AdminConsole() {
               <DollarSign className="h-4 w-4 text-gray-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">$20,000,000</div>
-              <p className="text-xs text-gray-400">Total platform balance</p>
+              <div className="text-2xl font-bold text-white">${totalSystemBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+              <p className="text-xs text-gray-400">System-wide balance</p>
             </CardContent>
           </Card>
         </div>

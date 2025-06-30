@@ -187,7 +187,15 @@ export default function Admin() {
   };
 
   const totalUsers = users.length;
-  const totalBalance = users.reduce((sum, user) => sum + (user.balance || 0), 0);
+  // Calculate total system balance from admin balance actions
+  const totalCredits = balanceActions.filter(action => action.action === "credit")
+    .reduce((sum, action) => sum + parseFloat(action.amount), 0);
+  const totalDebits = balanceActions.filter(action => action.action === "debit")
+    .reduce((sum, action) => sum + parseFloat(action.amount), 0);
+  const systemInit = balanceActions.filter(action => action.action === "system_init")
+    .reduce((sum, action) => sum + parseFloat(action.amount), 0);
+  
+  const totalBalance = systemInit + totalCredits - totalDebits;
 
   // Admin Login Dialog
   if (showAdminLogin) {
@@ -337,8 +345,10 @@ export default function Admin() {
                           <p className="text-sm">Username: {user.username}</p>
                         </div>
                         <div className="text-right">
-                          <p className="font-semibold">${(user.balance || 0).toLocaleString()}</p>
-                          <Badge variant="secondary">Active</Badge>
+                          <p className="font-semibold">User ID: {user.id}</p>
+                          <Badge variant={user.isVerified ? "default" : "secondary"}>
+                            {user.isVerified ? "Verified" : "Pending"}
+                          </Badge>
                         </div>
                       </div>
                     ))}
