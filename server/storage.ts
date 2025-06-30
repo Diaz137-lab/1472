@@ -1,8 +1,8 @@
 import { 
-  users, portfolios, holdings, transactions, cryptoAssets,
+  users, portfolios, holdings, transactions, cryptoAssets, adminBalanceActions,
   type User, type InsertUser, type Portfolio, type InsertPortfolio,
   type Holding, type InsertHolding, type Transaction, type InsertTransaction,
-  type CryptoAsset, type InsertCryptoAsset
+  type CryptoAsset, type InsertCryptoAsset, type AdminBalanceAction, type InsertAdminBalanceAction
 } from "@shared/schema";
 
 export interface IStorage {
@@ -11,6 +11,8 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  getAllUsers(): Promise<User[]>;
+  updateUser(id: number, updates: Partial<User>): Promise<User | undefined>;
   
   // Portfolio methods
   getPortfolio(userId: number): Promise<Portfolio | undefined>;
@@ -32,6 +34,11 @@ export interface IStorage {
   getCryptoAssets(): Promise<CryptoAsset[]>;
   getCryptoAsset(symbol: string): Promise<CryptoAsset | undefined>;
   createOrUpdateCryptoAsset(asset: InsertCryptoAsset): Promise<CryptoAsset>;
+  
+  // Admin methods
+  getAdminBalanceActions(): Promise<AdminBalanceAction[]>;
+  createAdminBalanceAction(action: InsertAdminBalanceAction): Promise<AdminBalanceAction>;
+  getUserBalanceActions(userId: number): Promise<AdminBalanceAction[]>;
 }
 
 export class MemStorage implements IStorage {
@@ -40,11 +47,13 @@ export class MemStorage implements IStorage {
   private holdings: Map<number, Holding>;
   private transactions: Map<number, Transaction>;
   private cryptoAssets: Map<string, CryptoAsset>;
+  private adminBalanceActions: Map<number, AdminBalanceAction>;
   private currentUserId: number;
   private currentPortfolioId: number;
   private currentHoldingId: number;
   private currentTransactionId: number;
   private currentAssetId: number;
+  private currentAdminActionId: number;
 
   constructor() {
     this.users = new Map();
@@ -52,11 +61,13 @@ export class MemStorage implements IStorage {
     this.holdings = new Map();
     this.transactions = new Map();
     this.cryptoAssets = new Map();
+    this.adminBalanceActions = new Map();
     this.currentUserId = 1;
     this.currentPortfolioId = 1;
     this.currentHoldingId = 1;
     this.currentTransactionId = 1;
     this.currentAssetId = 1;
+    this.currentAdminActionId = 1;
     
     this.initializeMockData();
   }
@@ -85,6 +96,50 @@ export class MemStorage implements IStorage {
       };
       this.cryptoAssets.set(asset.symbol, cryptoAsset);
     });
+
+    // Create mock users for admin testing
+    const mockUsers = [
+      { username: "johndoe", email: "john@example.com", password: "hashed_password", firstName: "John", lastName: "Doe" },
+      { username: "janesmith", email: "jane@example.com", password: "hashed_password", firstName: "Jane", lastName: "Smith" },
+      { username: "admin", email: "admin@futurewallet.com", password: "admin_password", firstName: "Admin", lastName: "User" },
+    ];
+
+    mockUsers.forEach((userData, index) => {
+      const user: User = {
+        ...userData,
+        id: this.currentUserId++,
+        isVerified: index < 2,
+        isAdmin: index === 2, // Make the admin user an admin
+        createdAt: new Date()
+      };
+      this.users.set(user.id, user);
+
+      // Create portfolio for each user
+      const portfolio: Portfolio = {
+        id: this.currentPortfolioId++,
+        userId: user.id,
+        totalBalance: (Math.random() * 10000).toFixed(2),
+        totalValue: (Math.random() * 10000).toFixed(2),
+        updatedAt: new Date()
+      };
+      this.portfolios.set(portfolio.id, portfolio);
+    });
+
+    // Create some mock admin balance actions
+    const mockActions = [
+      { userId: 1, adminId: 3, action: "credit", amount: "1000.00", currency: "USD", reason: "Welcome bonus" },
+      { userId: 2, adminId: 3, action: "credit", amount: "500.00", currency: "USD", reason: "Referral bonus" },
+      { userId: 1, adminId: 3, action: "debit", amount: "50.00", currency: "USD", reason: "Transaction fee correction" },
+    ];
+
+    mockActions.forEach((actionData) => {
+      const action: AdminBalanceAction = {
+        ...actionData,
+        id: this.currentAdminActionId++,
+        createdAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000) // Random date within last week
+      };
+      this.adminBalanceActions.set(action.id, action);
+    });
   }
 
   async getUser(id: number): Promise<User | undefined> {
@@ -105,6 +160,7 @@ export class MemStorage implements IStorage {
       ...insertUser,
       id,
       isVerified: false,
+      isAdmin: false,
       createdAt: new Date()
     };
     this.users.set(id, user);
@@ -120,6 +176,8 @@ export class MemStorage implements IStorage {
     const portfolio: Portfolio = {
       ...insertPortfolio,
       id,
+      totalBalance: insertPortfolio.totalBalance || "0",
+      totalValue: insertPortfolio.totalValue || "0",
       updatedAt: new Date()
     };
     this.portfolios.set(id, portfolio);
@@ -176,6 +234,7 @@ export class MemStorage implements IStorage {
     const transaction: Transaction = {
       ...insertTransaction,
       id,
+      fee: insertTransaction.fee || "0",
       status: "pending",
       createdAt: new Date()
     };
@@ -212,11 +271,51 @@ export class MemStorage implements IStorage {
       const asset: CryptoAsset = {
         ...insertAsset,
         id,
+        marketCap: insertAsset.marketCap || null,
+        volume24h: insertAsset.volume24h || null,
         updatedAt: new Date()
       };
       this.cryptoAssets.set(insertAsset.symbol, asset);
       return asset;
     }
+  }
+
+  // Admin methods
+  async getAllUsers(): Promise<User[]> {
+    return Array.from(this.users.values());
+  }
+
+  async updateUser(id: number, updates: Partial<User>): Promise<User | undefined> {
+    const user = this.users.get(id);
+    if (user) {
+      const updatedUser = { ...user, ...updates };
+      this.users.set(id, updatedUser);
+      return updatedUser;
+    }
+    return undefined;
+  }
+
+  async getAdminBalanceActions(): Promise<AdminBalanceAction[]> {
+    return Array.from(this.adminBalanceActions.values())
+      .sort((a, b) => b.createdAt!.getTime() - a.createdAt!.getTime());
+  }
+
+  async createAdminBalanceAction(insertAction: InsertAdminBalanceAction): Promise<AdminBalanceAction> {
+    const id = this.currentAdminActionId++;
+    const action: AdminBalanceAction = {
+      ...insertAction,
+      id,
+      currency: insertAction.currency || "USD",
+      createdAt: new Date()
+    };
+    this.adminBalanceActions.set(id, action);
+    return action;
+  }
+
+  async getUserBalanceActions(userId: number): Promise<AdminBalanceAction[]> {
+    return Array.from(this.adminBalanceActions.values())
+      .filter(action => action.userId === userId)
+      .sort((a, b) => b.createdAt!.getTime() - a.createdAt!.getTime());
   }
 }
 

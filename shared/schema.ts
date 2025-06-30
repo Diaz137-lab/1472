@@ -10,6 +10,7 @@ export const users = pgTable("users", {
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   isVerified: boolean("is_verified").default(false),
+  isAdmin: boolean("is_admin").default(false),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -55,12 +56,32 @@ export const cryptoAssets = pgTable("crypto_assets", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const adminBalanceActions = pgTable("admin_balance_actions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  adminId: integer("admin_id").notNull().references(() => users.id),
+  action: text("action").notNull(), // 'credit', 'debit'
+  amount: decimal("amount", { precision: 18, scale: 2 }).notNull(),
+  currency: text("currency").notNull().default("USD"),
+  reason: text("reason").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   email: true,
   password: true,
   firstName: true,
   lastName: true,
+});
+
+export const insertAdminBalanceActionSchema = createInsertSchema(adminBalanceActions).pick({
+  userId: true,
+  adminId: true,
+  action: true,
+  amount: true,
+  currency: true,
+  reason: true,
 });
 
 export const insertPortfolioSchema = createInsertSchema(portfolios).pick({
@@ -106,3 +127,5 @@ export type InsertTransaction = z.infer<typeof insertTransactionSchema>;
 export type Transaction = typeof transactions.$inferSelect;
 export type InsertCryptoAsset = z.infer<typeof insertCryptoAssetSchema>;
 export type CryptoAsset = typeof cryptoAssets.$inferSelect;
+export type InsertAdminBalanceAction = z.infer<typeof insertAdminBalanceActionSchema>;
+export type AdminBalanceAction = typeof adminBalanceActions.$inferSelect;

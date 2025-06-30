@@ -13,6 +13,7 @@ export default function Header() {
     { name: "Exchange", href: "/exchange" },
     { name: "Institutional", href: "/institutional" },
     { name: "Explore", href: "/explorer" },
+    { name: "Admin", href: "/admin" },
   ];
 
   return (

@@ -12,6 +12,7 @@ import Explorer from "@/pages/explorer";
 import Institutional from "@/pages/institutional";
 import Login from "@/pages/auth/login";
 import Signup from "@/pages/auth/signup";
+import Admin from "@/pages/admin";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/exchange" component={Exchange} />
       <Route path="/explorer" component={Explorer} />
       <Route path="/institutional" component={Institutional} />
+      <Route path="/admin" component={Admin} />
       <Route path="/auth/login" component={Login} />
       <Route path="/auth/signup" component={Signup} />
       <Route component={NotFound} />

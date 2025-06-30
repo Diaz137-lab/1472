@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertUserSchema, insertTransactionSchema } from "@shared/schema";
+import { insertUserSchema, insertTransactionSchema, insertAdminBalanceActionSchema } from "@shared/schema";
 import { z } from "zod";
 
 const loginSchema = z.object({
@@ -157,6 +157,74 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(transactions);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch transactions" });
+    }
+  });
+
+  // Admin routes
+  app.get("/api/admin/users", async (req, res) => {
+    try {
+      const users = await storage.getAllUsers();
+      // Remove passwords from response
+      const safeUsers = users.map(({ password, ...user }) => user);
+      res.json(safeUsers);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
+  app.post("/api/admin/balance-action", async (req, res) => {
+    try {
+      const actionData = insertAdminBalanceActionSchema.parse(req.body);
+      
+      // Verify user exists
+      const user = await storage.getUser(actionData.userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const action = await storage.createAdminBalanceAction(actionData);
+      
+      // Update user's portfolio balance based on the action
+      const portfolio = await storage.getPortfolio(actionData.userId);
+      if (portfolio) {
+        const currentBalance = parseFloat(portfolio.totalBalance || "0");
+        const actionAmount = parseFloat(actionData.amount);
+        
+        let newBalance: number;
+        if (actionData.action === "credit") {
+          newBalance = currentBalance + actionAmount;
+        } else {
+          newBalance = Math.max(0, currentBalance - actionAmount);
+        }
+        
+        await storage.updatePortfolio(actionData.userId, {
+          totalBalance: newBalance.toFixed(2),
+          totalValue: newBalance.toFixed(2)
+        });
+      }
+      
+      res.json(action);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid action data" });
+    }
+  });
+
+  app.get("/api/admin/balance-actions", async (req, res) => {
+    try {
+      const actions = await storage.getAdminBalanceActions();
+      res.json(actions);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch balance actions" });
+    }
+  });
+
+  app.get("/api/admin/user-balance-actions/:userId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const actions = await storage.getUserBalanceActions(userId);
+      res.json(actions);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch user balance actions" });
     }
   });
 
