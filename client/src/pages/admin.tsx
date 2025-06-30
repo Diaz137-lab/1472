@@ -153,14 +153,15 @@ export default function Admin() {
     enabled: users.length > 0,
   });
 
-  // Fetch real-time Bitcoin price
-  const { data: btcPrice = 0 } = useQuery({
+  // Fetch real-time Bitcoin price from our crypto assets
+  const { data: btcPrice = 108524.84 } = useQuery({
     queryKey: ["btc-price"],
     queryFn: async () => {
       try {
-        const response = await fetch("https://api.coindesk.com/v1/bpi/currentprice.json");
-        const data = await response.json();
-        return parseFloat(data.bpi.USD.rate.replace(/[,$]/g, ""));
+        const response = await fetch("/api/crypto/assets");
+        const assets = await response.json();
+        const btcAsset = assets.find((asset: any) => asset.symbol === "BTC");
+        return btcAsset ? parseFloat(btcAsset.currentPrice) : 108524.84;
       } catch {
         return 108524.84; // Fallback price
       }
