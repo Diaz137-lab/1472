@@ -6,7 +6,21 @@ import PriceTicker from "@/components/crypto/price-ticker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { CreditCard, TrendingUp, Shield, Link as LinkIcon, Globe, Zap, MessageCircle, BarChart3, ChartLine, Box, Code, AreaChart } from "lucide-react";
+import { 
+  Play, 
+  Shield, 
+  TrendingUp, 
+  ChartLine, 
+  Box, 
+  Code, 
+  AreaChart, 
+  Star,
+  CheckCircle,
+  ArrowRight,
+  Users,
+  DollarSign,
+  BarChart3
+} from "lucide-react";
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -14,7 +28,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      
+
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-fw-light-blue to-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -238,6 +252,51 @@ export default function Home() {
             <Link href="/explorer">
               <Button className="bg-fw-blue text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
                 Explore now
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Admin Section */}
+      <section id="admin" className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Admin</h2>
+            <h3 className="text-2xl font-semibold text-gray-700">System Administration</h3>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Users className="text-red-600 text-2xl" />
+              </div>
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">User Management</h4>
+              <p className="text-gray-600">Manage user accounts, permissions, and access controls.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <DollarSign className="text-red-600 text-2xl" />
+              </div>
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">Balance Management</h4>
+              <p className="text-gray-600">Credit, debit, and monitor user wallet balances across all currencies.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <BarChart3 className="text-red-600 text-2xl" />
+              </div>
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">System Analytics</h4>
+              <p className="text-gray-600">View comprehensive reports and system performance metrics.</p>
+            </div>
+          </div>
+          <div className="mt-16 text-center">
+            <img
+              src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&h=500"
+              alt="Admin dashboard and analytics interface"
+              className="rounded-2xl shadow-2xl w-full h-80 object-cover mb-8"
+            />
+            <Link href="/admin">
+              <Button className="bg-red-600 text-white px-8 py-3 rounded-lg hover:bg-red-700 transition-colors font-semibold">
+                Access Admin Panel
               </Button>
             </Link>
           </div>
