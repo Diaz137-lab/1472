@@ -31,6 +31,7 @@ import type { User, AdminBalanceAction } from "@shared/schema";
 
 export default function Admin() {
   const [selectedUser, setSelectedUser] = useState("");
+  const [expandedUserId, setExpandedUserId] = useState<number | null>(null);
   const [balanceAction, setBalanceAction] = useState({
     action: "credit",
     amount: "",
@@ -131,6 +132,27 @@ export default function Admin() {
     enabled: isAdmin,
   });
 
+  // Fetch portfolios for all users to get their balances
+  const { data: portfolios = [] } = useQuery({
+    queryKey: ["/api/portfolios"],
+    queryFn: async () => {
+      const portfolioPromises = users.map(async (user) => {
+        try {
+          const response = await fetch(`/api/portfolio/${user.id}`);
+          if (response.ok) {
+            const portfolio = await response.json();
+            return { userId: user.id, ...portfolio };
+          }
+          return { userId: user.id, totalBalance: "0.00", totalValue: "0.00" };
+        } catch {
+          return { userId: user.id, totalBalance: "0.00", totalValue: "0.00" };
+        }
+      });
+      return Promise.all(portfolioPromises);
+    },
+    enabled: users.length > 0,
+  });
+
   const balanceActionMutation = useMutation({
     mutationFn: async (data: {
       userId: number;
@@ -196,6 +218,51 @@ export default function Admin() {
     .reduce((sum, action) => sum + parseFloat(action.amount), 0);
   
   const totalBalance = systemInit + totalCredits - totalDebits;
+
+  // Helper function to get user portfolio balance
+  const getUserBalance = (userId: number) => {
+    const userPortfolio = portfolios.find(p => p.userId === userId);
+    return userPortfolio ? parseFloat(userPortfolio.totalBalance || "0") : 0;
+  };
+
+  // Generate wallet address for user
+  const generateWalletAddress = (userId: number, symbol: string) => {
+    // Kelly Ann James (ID: 1) has specific wallet addresses
+    if (userId === 1) {
+      const kellyWallets: Record<string, string> = {
+        BTC: '35Gxhvi8difDWX1YFSbjBgCrG5SdxUGZJA',
+        ETH: '0x742d35Cc6523C0532925a3b8F36F7539000f5f74',
+        DOGE: 'DH5yaieqoZN36fDVciNyRueRGvGLR3mr7L',
+        SOL: '7Np41oeYqM7UnTh4iNj6D3k5r3X9k3mX8w7q4J3rM3sW',
+        ADA: 'addr1qx5j8k3z9f2m7n6p4q8r2s5t7u9v1w3x4y6z8a2b4c6d'
+      };
+      return kellyWallets[symbol] || kellyWallets.BTC;
+    }
+    
+    // Generate addresses for other users
+    const prefixes: Record<string, string> = {
+      BTC: '1',
+      ETH: '0x',
+      DOGE: 'D',
+      SOL: '',
+      ADA: 'addr1',
+      DOT: '1'
+    };
+    
+    const chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+    let result = prefixes[symbol] || '1';
+    
+    // Use userId as seed for consistent addresses
+    const seed = userId * 12345;
+    for (let i = 0; i < (symbol === 'ETH' ? 40 : 30); i++) {
+      result += chars.charAt((seed + i) % chars.length);
+    }
+    return result;
+  };
+
+  const toggleUserDetails = (userId: number) => {
+    setExpandedUserId(expandedUserId === userId ? null : userId);
+  };
 
   // Admin Login Dialog
   if (showAdminLogin) {
@@ -337,21 +404,129 @@ export default function Admin() {
                   <div>Loading users...</div>
                 ) : (
                   <div className="space-y-4">
-                    {users.map((user) => (
-                      <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div>
-                          <p className="font-medium">{user.firstName} {user.lastName}</p>
-                          <p className="text-sm text-gray-600">{user.email}</p>
-                          <p className="text-sm">Username: {user.username}</p>
+                    {users.map((user) => {
+                      const userBalance = getUserBalance(user.id);
+                      const isExpanded = expandedUserId === user.id;
+                      return (
+                        <div key={user.id} className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:border-blue-400">
+                          {/* Main User Card - Clickable */}
+                          <div 
+                            className="p-6 cursor-pointer"
+                            onClick={() => toggleUserDetails(user.id)}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-4">
+                                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                                  {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                                </div>
+                                <div>
+                                  <h3 className="font-bold text-gray-900 text-lg">{user.firstName} {user.lastName}</h3>
+                                  <p className="text-sm text-blue-600">{user.email}</p>
+                                  <p className="text-xs text-gray-500">@{user.username} • ID: {user.id}</p>
+                                  {user.firstName === "Kelly Ann" && user.lastName === "James" && (
+                                    <div className="mt-2 space-y-1">
+                                      <p className="text-xs text-amber-700 bg-amber-100 px-2 py-1 rounded-md">
+                                        📍 Address: 58 Benjamina Drive, Red Bank Plains, QLD, Australia
+                                      </p>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="text-right space-y-2">
+                                <div className="bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm">
+                                  <p className="text-xs text-gray-500 uppercase tracking-wide">Balance</p>
+                                  <p className="text-xl font-bold text-green-600">
+                                    ${userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                  </p>
+                                </div>
+                                <div className="flex space-x-2">
+                                  <Badge variant={user.isVerified ? "default" : "secondary"} className="text-xs">
+                                    {user.isVerified ? "Verified" : "Unverified"}
+                                  </Badge>
+                                  <Badge variant={user.isAdmin ? "destructive" : "outline"} className="text-xs">
+                                    {user.isAdmin ? "Admin" : "User"}
+                                  </Badge>
+                                </div>
+                                <div className="flex items-center text-xs text-gray-500">
+                                  {isExpanded ? "▼ Hide Details" : "▶ View Details"}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Expanded Details Section */}
+                          {isExpanded && (
+                            <div className="border-t border-blue-200 bg-white/70 p-6 rounded-b-xl">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Wallet Addresses */}
+                                <div>
+                                  <h4 className="text-gray-900 font-semibold mb-3 flex items-center">
+                                    <Wallet className="mr-2 h-4 w-4 text-blue-500" />
+                                    Crypto Wallet Addresses
+                                  </h4>
+                                  <div className="space-y-3">
+                                    {['BTC', 'ETH', 'DOGE', 'SOL', 'ADA'].map((symbol) => (
+                                      <div key={symbol} className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
+                                        <div className="flex justify-between items-center">
+                                          <span className="text-sm font-medium text-gray-700">{symbol}</span>
+                                          <button 
+                                            className="text-xs text-blue-500 hover:text-blue-700 font-medium"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              navigator.clipboard.writeText(generateWalletAddress(user.id, symbol));
+                                              toast({ title: "Copied!", description: `${symbol} address copied to clipboard` });
+                                            }}
+                                          >
+                                            Copy
+                                          </button>
+                                        </div>
+                                        <p className="text-xs text-gray-600 font-mono mt-1 break-all">
+                                          {generateWalletAddress(user.id, symbol)}
+                                        </p>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                {/* Account Info & Actions */}
+                                <div>
+                                  <h4 className="text-gray-900 font-semibold mb-3 flex items-center">
+                                    <Settings className="mr-2 h-4 w-4 text-green-500" />
+                                    Account Information
+                                  </h4>
+                                  <div className="space-y-3">
+                                    <div className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
+                                      <p className="text-sm text-gray-600">Account Status</p>
+                                      <p className="text-gray-900 font-medium">
+                                        {user.isVerified ? "✅ Verified" : "⏳ Pending Verification"}
+                                      </p>
+                                    </div>
+                                    <div className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
+                                      <p className="text-sm text-gray-600">Account Type</p>
+                                      <p className="text-gray-900 font-medium">
+                                        {user.isAdmin ? "🔐 Administrator" : "👤 Standard User"}
+                                      </p>
+                                    </div>
+                                    <div className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
+                                      <p className="text-sm text-gray-600">Current Balance</p>
+                                      <p className="text-2xl font-bold text-green-600">
+                                        ${userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                      </p>
+                                    </div>
+                                    {user.address && (
+                                      <div className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
+                                        <p className="text-sm text-gray-600">Physical Address</p>
+                                        <p className="text-gray-900 text-sm">{user.address}</p>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
-                        <div className="text-right">
-                          <p className="font-semibold">User ID: {user.id}</p>
-                          <Badge variant={user.isVerified ? "default" : "secondary"}>
-                            {user.isVerified ? "Verified" : "Pending"}
-                          </Badge>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </CardContent>
