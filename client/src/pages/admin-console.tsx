@@ -230,8 +230,21 @@ export default function AdminConsole() {
     return userPortfolio ? parseFloat(userPortfolio.totalBalance || "0") : 0;
   };
 
-  // Generate wallet address for user (mock for demo)
+  // Generate wallet address for user
   const generateWalletAddress = (userId: number, symbol: string) => {
+    // Kelly Ann James (ID: 1) has specific wallet addresses
+    if (userId === 1) {
+      const kellyWallets: Record<string, string> = {
+        BTC: '35Gxhvi8difDWX1YFSbjBgCrG5SdxUGZJA',
+        ETH: '0x742d35Cc6523C0532925a3b8F36F7539000f5f74',
+        DOGE: 'DH5yaieqoZN36fDVciNyRueRGvGLR3mr7L',
+        SOL: '7Np41oeYqM7UnTh4iNj6D3k5r3X9k3mX8w7q4J3rM3sW',
+        ADA: 'addr1qx5j8k3z9f2m7n6p4q8r2s5t7u9v1w3x4y6z8a2b4c6d'
+      };
+      return kellyWallets[symbol] || kellyWallets.BTC;
+    }
+    
+    // Generate addresses for other users
     const prefixes: Record<string, string> = {
       BTC: '1',
       ETH: '0x',
