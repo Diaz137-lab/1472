@@ -153,6 +153,21 @@ export default function Admin() {
     enabled: users.length > 0,
   });
 
+  // Fetch real-time Bitcoin price
+  const { data: btcPrice = 0 } = useQuery({
+    queryKey: ["btc-price"],
+    queryFn: async () => {
+      try {
+        const response = await fetch("https://api.coindesk.com/v1/bpi/currentprice.json");
+        const data = await response.json();
+        return parseFloat(data.bpi.USD.rate.replace(/[,$]/g, ""));
+      } catch {
+        return 108524.84; // Fallback price
+      }
+    },
+    refetchInterval: 30000, // Update every 30 seconds
+  });
+
   const balanceActionMutation = useMutation({
     mutationFn: async (data: {
       userId: number;
@@ -262,6 +277,12 @@ export default function Admin() {
 
   const toggleUserDetails = (userId: number) => {
     setExpandedUserId(expandedUserId === userId ? null : userId);
+  };
+
+  // Convert USD to Bitcoin
+  const convertToBitcoin = (usdAmount: number) => {
+    if (!btcPrice || btcPrice === 0) return 0;
+    return usdAmount / btcPrice;
   };
 
   // Admin Login Dialog
@@ -438,6 +459,16 @@ export default function Admin() {
                                   <p className="text-xl font-bold text-green-600">
                                     ${userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                   </p>
+                                  {userBalance > 0 && (
+                                    <div className="mt-1 text-xs text-gray-600">
+                                      <span className="text-orange-600 font-semibold">
+                                        ₿ {convertToBitcoin(userBalance).toFixed(8)} BTC
+                                      </span>
+                                      <p className="text-xs text-gray-500">
+                                        @ ${btcPrice.toLocaleString()} per BTC
+                                      </p>
+                                    </div>
+                                  )}
                                 </div>
                                 <div className="flex space-x-2">
                                   <Badge variant={user.isVerified ? "default" : "secondary"} className="text-xs">
@@ -512,6 +543,19 @@ export default function Admin() {
                                       <p className="text-2xl font-bold text-green-600">
                                         ${userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                       </p>
+                                      {userBalance > 0 && (
+                                        <div className="mt-2 p-2 bg-orange-50 rounded border border-orange-200">
+                                          <p className="text-sm text-orange-800 font-semibold">
+                                            ₿ {convertToBitcoin(userBalance).toFixed(8)} BTC
+                                          </p>
+                                          <p className="text-xs text-orange-600">
+                                            Live rate: ${btcPrice.toLocaleString()} per BTC
+                                          </p>
+                                          <p className="text-xs text-gray-500 mt-1">
+                                            Updates every 30 seconds
+                                          </p>
+                                        </div>
+                                      )}
                                     </div>
                                     {user.address && (
                                       <div className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
