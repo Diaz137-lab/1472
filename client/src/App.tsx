@@ -15,6 +15,8 @@ import Institutional from "@/pages/institutional";
 import Admin from "@/pages/admin";
 import AdminLogin from "@/pages/admin-auth/admin-login";
 import NotFound from "@/pages/not-found";
+import Login from "@/pages/auth/login";
+import Signup from "@/pages/auth/signup";
 
 function Router() {
   return (
