@@ -375,7 +375,7 @@ export default function AdminConsole() {
                 onClick={handleLogout}
                 variant="outline"
                 size="sm"
-                className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                className="border-gray-600 text-gray-300 hover:bg-gray-700 cursor-pointer z-10 relative"
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
@@ -415,19 +415,14 @@ export default function AdminConsole() {
               <DollarSign className="h-5 w-5 text-green-300" />
             </CardHeader>
             <CardContent className="pb-3">
-              <div className="space-y-1">
-                <div className="text-2xl lg:text-3xl font-bold text-white leading-tight break-all">
-                  ${(totalSystemBalance / 1000000 >= 1) 
-                    ? `${(totalSystemBalance / 1000000).toFixed(1)}M`
-                    : totalSystemBalance.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })
-                  }
+              <div className="space-y-1 overflow-hidden">
+                <div className="text-xl lg:text-2xl font-bold text-white leading-tight">
+                  ${(totalSystemBalance / 1000000).toFixed(1)}M
                 </div>
                 <p className="text-xs text-green-200">System-wide balance</p>
-                {totalSystemBalance >= 1000000 && (
-                  <p className="text-xs text-green-300 font-mono">
-                    ${totalSystemBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </p>
-                )}
+                <p className="text-xs text-green-300 font-mono truncate">
+                  ${totalSystemBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </p>
                 {totalSystemBalance > 0 && <BitcoinDisplay usdAmount={totalSystemBalance} size="xs" showLabel={true} className="text-green-300" />}
               </div>
             </CardContent>
@@ -458,9 +453,24 @@ export default function AdminConsole() {
 
         <Tabs defaultValue="users" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-gray-800 to-gray-700 border-gray-600 shadow-lg rounded-lg">
-            <TabsTrigger value="users" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-blue-700 data-[state=active]:text-white text-gray-300 font-medium transition-all duration-200">User Management</TabsTrigger>
-            <TabsTrigger value="balance" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-600 data-[state=active]:to-green-700 data-[state=active]:text-white text-gray-300 font-medium transition-all duration-200">Balance Actions</TabsTrigger>
-            <TabsTrigger value="history" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-purple-700 data-[state=active]:text-white text-gray-300 font-medium transition-all duration-200">Action History</TabsTrigger>
+            <TabsTrigger 
+              value="users" 
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-blue-700 data-[state=active]:text-white text-gray-300 font-medium transition-all duration-200 cursor-pointer hover:bg-gray-600"
+            >
+              User Management
+            </TabsTrigger>
+            <TabsTrigger 
+              value="balance" 
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-600 data-[state=active]:to-green-700 data-[state=active]:text-white text-gray-300 font-medium transition-all duration-200 cursor-pointer hover:bg-gray-600"
+            >
+              Balance Actions
+            </TabsTrigger>
+            <TabsTrigger 
+              value="history" 
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-purple-700 data-[state=active]:text-white text-gray-300 font-medium transition-all duration-200 cursor-pointer hover:bg-gray-600"
+            >
+              Action History
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="users" className="space-y-6">
