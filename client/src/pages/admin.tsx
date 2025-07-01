@@ -22,7 +22,8 @@ import {
   UserPlus,
   Wallet,
   Activity,
-  Shield
+  Shield,
+  LogOut
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
@@ -353,85 +354,128 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <Header />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">QuotexWallet Administrator</h1>
-            <p className="text-gray-600">Secure administrative control panel for user and balance management.</p>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-10">
+          <div className="flex justify-between items-center">
+            <div>
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center">
+                  <Shield className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-4xl font-bold text-gray-900">Administrator Console</h1>
+                  <p className="text-lg text-gray-600 mt-1">QuotexWallet Management Portal</p>
+                </div>
+              </div>
+              <p className="text-gray-500 max-w-2xl">
+                Comprehensive administrative control panel for managing users, monitoring transactions, and overseeing platform operations with enterprise-grade security.
+              </p>
+            </div>
+            <Button
+              onClick={() => {
+                adminLogout();
+                setShowAdminLogin(true);
+              }}
+              variant="outline"
+              className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 font-medium px-6 py-3 rounded-lg"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Secure Logout
+            </Button>
           </div>
-          <Button
-            onClick={() => {
-              adminLogout();
-              setShowAdminLogin(true);
-            }}
-            variant="outline"
-            className="border-red-200 text-red-600 hover:bg-red-50"
-          >
-            Admin Logout
-          </Button>
         </div>
 
         {/* Admin Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 shadow-md hover:shadow-lg transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-semibold text-blue-800">Total Users</CardTitle>
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <Users className="h-4 w-4 text-white" />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{totalUsers}</div>
-              <p className="text-xs text-muted-foreground">Registered users</p>
+              <div className="text-3xl font-bold text-blue-900">{totalUsers}</div>
+              <p className="text-sm text-blue-600 mt-1">Active registered accounts</p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Balance</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
+          <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 shadow-md hover:shadow-lg transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-semibold text-green-800">Total Balance</CardTitle>
+              <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+                <DollarSign className="h-4 w-4 text-white" />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">${totalBalance.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground">System-wide balance</p>
+              <div className="text-3xl font-bold text-green-900">${totalBalance.toLocaleString()}</div>
+              <p className="text-sm text-green-600 mt-1">System-wide liquidity</p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Recent Actions</CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
+          <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 shadow-md hover:shadow-lg transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-semibold text-purple-800">Transaction Volume</CardTitle>
+              <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+                <Activity className="h-4 w-4 text-white" />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{balanceActions.length}</div>
-              <p className="text-xs text-muted-foreground">Balance modifications</p>
+              <div className="text-3xl font-bold text-purple-900">{balanceActions.length}</div>
+              <p className="text-sm text-purple-600 mt-1">Administrative actions</p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">System Status</CardTitle>
-              <Settings className="h-4 w-4 text-muted-foreground" />
+          <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200 shadow-md hover:shadow-lg transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-semibold text-orange-800">System Status</CardTitle>
+              <div className="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center">
+                <Settings className="h-4 w-4 text-white" />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">Online</div>
-              <p className="text-xs text-muted-foreground">All systems operational</p>
+              <div className="text-3xl font-bold text-green-600">Online</div>
+              <p className="text-sm text-orange-600 mt-1">All systems operational</p>
             </CardContent>
           </Card>
         </div>
 
-        <Tabs defaultValue="users" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="users">User Management</TabsTrigger>
-            <TabsTrigger value="balance">Balance Actions</TabsTrigger>
-            <TabsTrigger value="history">Action History</TabsTrigger>
+        <Tabs defaultValue="users" className="space-y-8">
+          <TabsList className="grid w-full grid-cols-3 bg-gray-100 p-1 rounded-xl">
+            <TabsTrigger 
+              value="users" 
+              className="rounded-lg font-semibold data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm"
+            >
+              <Users className="h-4 w-4 mr-2" />
+              User Management
+            </TabsTrigger>
+            <TabsTrigger 
+              value="balance" 
+              className="rounded-lg font-semibold data-[state=active]:bg-white data-[state=active]:text-green-600 data-[state=active]:shadow-sm"
+            >
+              <DollarSign className="h-4 w-4 mr-2" />
+              Balance Control
+            </TabsTrigger>
+            <TabsTrigger 
+              value="history" 
+              className="rounded-lg font-semibold data-[state=active]:bg-white data-[state=active]:text-purple-600 data-[state=active]:shadow-sm"
+            >
+              <Activity className="h-4 w-4 mr-2" />
+              Transaction History
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="users">
-            <Card>
-              <CardHeader>
-                <CardTitle>User Management</CardTitle>
+            <Card className="shadow-lg border-0 bg-white rounded-2xl">
+              <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-2xl border-b border-blue-100">
+                <CardTitle className="text-xl font-bold text-gray-900 flex items-center">
+                  <Users className="h-5 w-5 mr-3 text-blue-600" />
+                  User Account Management
+                </CardTitle>
+                <p className="text-gray-600 mt-2">Manage user accounts, view balances, and perform quick credit operations</p>
               </CardHeader>
               <CardContent>
                 {usersLoading ? (

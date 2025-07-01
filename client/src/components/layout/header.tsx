@@ -26,9 +26,9 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-20">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Link href="/">
@@ -37,14 +37,14 @@ export default function Header() {
                 </h1>
               </Link>
             </div>
-            <nav className="hidden md:ml-8 md:flex space-x-8">
+            <nav className="hidden md:ml-12 md:flex md:space-x-10">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`transition-colors ${
+                  className={`font-medium transition-colors duration-200 ${
                     location === item.href
-                      ? "text-fw-blue"
+                      ? "text-fw-blue border-b-2 border-fw-blue pb-1"
                       : "text-gray-700 hover:text-fw-blue"
                   }`}
                 >
@@ -53,46 +53,45 @@ export default function Header() {
               ))}
               {isAuthenticated && (
                 <>
-                  <Link href="/dashboard" className="text-gray-700 hover:text-fw-blue transition-colors">
+                  <Link href="/dashboard" className="font-medium text-gray-700 hover:text-fw-blue transition-colors duration-200">
                     Dashboard
                   </Link>
-                  {/* <Link href="/trading" className="text-gray-700 hover:text-fw-blue transition-colors">
-                    Trading
-                  </Link>
-                  <Link href="/portfolio" className="text-gray-700 hover:text-fw-blue transition-colors">
-                    Portfolio
-                  </Link> */}
                 </>
               )}
-              <Link href="/admin" className="text-red-600 hover:text-red-700 transition-colors">
-                Admin
-              </Link>
+              <div className="border-l border-gray-300 pl-6 ml-4">
+                <Link href="/admin" className="font-medium text-red-600 hover:text-red-700 transition-colors duration-200 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg">
+                  Administrator
+                </Link>
+              </div>
             </nav>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-6">
             {isAuthenticated || isAdmin ? (
               <>
-                <span className="text-gray-700">
-                  Welcome, {isAdmin ? admin?.name : user?.firstName}
-                </span>
+                <div className="text-right">
+                  <p className="text-sm text-gray-500">Welcome back,</p>
+                  <p className="font-semibold text-gray-900">
+                    {isAdmin ? admin?.name || 'Administrator' : user?.firstName}
+                  </p>
+                </div>
                 <Button
-                  variant="ghost"
-                  className="text-gray-700 hover:text-fw-blue"
+                  variant="outline"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50 font-medium"
                   onClick={handleLogout}
                 >
-                  Log Out
+                  Sign Out
                 </Button>
               </>
             ) : (
               <>
                 <Link href="/auth/login">
-                  <Button variant="ghost" className="text-gray-700 hover:text-fw-blue">
-                    Log In
+                  <Button variant="ghost" className="font-medium text-gray-700 hover:text-fw-blue hover:bg-blue-50">
+                    Sign In
                   </Button>
                 </Link>
                 <Link href="/auth/signup">
-                  <Button className="bg-fw-blue text-white hover:bg-blue-700">
-                    Sign Up
+                  <Button className="bg-fw-blue text-white hover:bg-blue-700 font-medium px-6 py-2 rounded-lg shadow-sm">
+                    Get Started
                   </Button>
                 </Link>
               </>
