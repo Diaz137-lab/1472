@@ -18,8 +18,8 @@ import {
   LogOut,
   Settings,
   UserPlus,
-  Wallet,
   Activity,
+  Wallet,
   AlertTriangle
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -418,13 +418,13 @@ export default function AdminConsole() {
           <Card className="bg-gradient-to-br from-green-900 to-green-800 border-green-700 shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-green-100">Total Balance</CardTitle>
-              <DollarSign className="h-5 w-5 text-green-300" />
+              <DollarSign className="h-4 w-4 text-green-300" />
             </CardHeader>
-            <CardContent className="pb-2">
-              <div className="text-2xl font-bold text-white truncate">
+            <CardContent className="pb-2 text-center">
+              <div className="text-xl font-bold text-white">
                 ${(totalSystemBalance / 1000000).toFixed(1)}M
               </div>
-              <p className="text-xs text-green-200 mt-1">
+              <p className="text-xs text-green-200">
                 System Balance
               </p>
             </CardContent>
@@ -497,7 +497,7 @@ export default function AdminConsole() {
                 e.stopPropagation();
               }}
             >
-              Action History
+              Transaction History
             </TabsTrigger>
           </TabsList>
 
@@ -712,6 +712,39 @@ export default function AdminConsole() {
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-white text-sm truncate">{user.firstName} {user.lastName}</h3>
                               <p className="text-xs text-gray-400 truncate">{user.email}</p>
+                              {/* Clickable Account Information */}
+                              <div className="flex items-center space-x-2 mt-1">
+                                <button 
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    const newStatus = user.email.includes('verified') ? 'Pending' : 'Verified';
+                                    toast({
+                                      title: "Account Status",
+                                      description: `Account status changed to ${newStatus}`,
+                                    });
+                                  }}
+                                  className="text-xs px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 cursor-pointer"
+                                  style={{ pointerEvents: 'auto' }}
+                                >
+                                  ✓ Verified
+                                </button>
+                                <button 
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    const newType = user.username === 'kellyann' ? 'Premium' : 'Standard';
+                                    toast({
+                                      title: "Account Type",
+                                      description: `Account type changed to ${newType}`,
+                                    });
+                                  }}
+                                  className="text-xs px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer"
+                                  style={{ pointerEvents: 'auto' }}
+                                >
+                                  {user.username === 'kellyann' ? '👑 Premium' : '📋 Standard'}
+                                </button>
+                              </div>
                             </div>
                           </div>
                         </CardHeader>
@@ -756,10 +789,23 @@ export default function AdminConsole() {
 
                                     try {
                                       await balanceActionMutation.mutateAsync(creditData);
-                                      // Refresh portfolios to show updated balance
-                                      queryClient.invalidateQueries({ queryKey: ["/api/portfolios"] });
+                                      // Refresh all data to show updated balances immediately
+                                      await queryClient.invalidateQueries({ queryKey: ["/api/portfolio"] });
+                                      await queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+                                      await queryClient.invalidateQueries({ queryKey: ["/api/admin/balance-actions"] });
+                                      // Force refetch of individual portfolio
+                                      await queryClient.refetchQueries({ queryKey: ["/api/portfolio", user.id] });
+                                      toast({
+                                        title: "Credit Successful",
+                                        description: `$${amount.toLocaleString()} credited to ${user.firstName} ${user.lastName}`,
+                                      });
                                     } catch (error) {
                                       console.error('Credit failed:', error);
+                                      toast({
+                                        title: "Credit Failed",
+                                        description: "Please try again or check your security codes",
+                                        variant: "destructive"
+                                      });
                                     }
                                   }}
                                   disabled={balanceActionMutation.isPending}
@@ -818,9 +864,23 @@ export default function AdminConsole() {
                                   try {
                                     await balanceActionMutation.mutateAsync(creditData);
                                     input.value = ''; // Clear the input
-                                    queryClient.invalidateQueries({ queryKey: ["/api/portfolios"] });
+                                    // Refresh all data to show updated balances immediately
+                                    await queryClient.invalidateQueries({ queryKey: ["/api/portfolio"] });
+                                    await queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+                                    await queryClient.invalidateQueries({ queryKey: ["/api/admin/balance-actions"] });
+                                    // Force refetch of individual portfolio
+                                    await queryClient.refetchQueries({ queryKey: ["/api/portfolio", user.id] });
+                                    toast({
+                                      title: "Credit Successful",
+                                      description: `$${parseFloat(amount).toLocaleString()} credited to ${user.firstName} ${user.lastName}`,
+                                    });
                                   } catch (error) {
                                     console.error('Credit failed:', error);
+                                    toast({
+                                      title: "Credit Failed",
+                                      description: "Please try again or check your security codes",
+                                      variant: "destructive"
+                                    });
                                   }
                                 }}
                                 disabled={balanceActionMutation.isPending}
@@ -1025,6 +1085,167 @@ export default function AdminConsole() {
           </TabsContent>
 
           <TabsContent value="history" className="space-y-6">
+            <Card className="bg-gradient-to-br from-gray-800 to-gray-700 border-gray-600 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-purple-900/50 to-indigo-900/50 rounded-t-lg">
+                <CardTitle className="flex items-center text-white text-xl">
+                  <Activity className="mr-3 h-6 w-6 text-purple-300" />
+                  Complete Transaction History
+                </CardTitle>
+                <p className="text-purple-200 text-sm mt-2">All system transactions with real-time crypto conversions</p>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-700">
+                      <tr className="border-b border-gray-600">
+                        <th className="text-left p-4 text-sm font-medium text-gray-300">Date & Time</th>
+                        <th className="text-left p-4 text-sm font-medium text-gray-300">User</th>
+                        <th className="text-left p-4 text-sm font-medium text-gray-300">Action</th>
+                        <th className="text-right p-4 text-sm font-medium text-gray-300">Amount (USD)</th>
+                        <th className="text-right p-4 text-sm font-medium text-gray-300">BTC Equivalent</th>
+                        <th className="text-left p-4 text-sm font-medium text-gray-300">Wallet/Details</th>
+                        <th className="text-left p-4 text-sm font-medium text-gray-300">Reason</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-600">
+                      {balanceActions
+                        .sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime())
+                        .map((action) => {
+                          const user = users.find(u => u.id === action.userId);
+                          const isWithdrawal = action.action === 'withdrawal';
+                          const usdAmount = parseFloat(action.amount);
+                          
+                          return (
+                            <tr key={action.id} className="hover:bg-gray-700/50 transition-colors">
+                              <td className="p-4 text-sm text-gray-300">
+                                {new Date(action.createdAt!).toLocaleString('en-US', {
+                                  year: 'numeric',
+                                  month: 'short',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  second: '2-digit'
+                                })}
+                              </td>
+                              <td className="p-4 text-sm">
+                                <div className="flex items-center space-x-2">
+                                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                                    {user ? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}` : 'SY'}
+                                  </div>
+                                  <div>
+                                    <p className="text-white font-medium text-sm">
+                                      {user ? `${user.firstName} ${user.lastName}` : 'System'}
+                                    </p>
+                                    <p className="text-xs text-gray-400">
+                                      {user ? user.email : 'system@quotexwallet.com'}
+                                    </p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="p-4 text-sm">
+                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                  action.action === 'credit' 
+                                    ? 'bg-green-900/30 text-green-400 border border-green-600/30' 
+                                    : action.action === 'withdrawal'
+                                    ? 'bg-orange-900/30 text-orange-400 border border-orange-600/30'
+                                    : action.action === 'system_init'
+                                    ? 'bg-blue-900/30 text-blue-400 border border-blue-600/30'
+                                    : 'bg-red-900/30 text-red-400 border border-red-600/30'
+                                }`}>
+                                  {action.action === 'credit' && '💰 Credit'}
+                                  {action.action === 'debit' && '💸 Debit'}
+                                  {action.action === 'withdrawal' && '🏦 Withdrawal'}
+                                  {action.action === 'system_init' && '⚙️ System Init'}
+                                </span>
+                              </td>
+                              <td className="p-4 text-right text-sm">
+                                <span className={`font-bold ${
+                                  action.action === 'credit' || action.action === 'system_init'
+                                    ? 'text-green-400' 
+                                    : 'text-red-400'
+                                }`}>
+                                  {action.action === 'credit' || action.action === 'system_init' ? '+' : '-'}
+                                  ${usdAmount.toLocaleString(undefined, { 
+                                    minimumFractionDigits: 2, 
+                                    maximumFractionDigits: 2 
+                                  })}
+                                </span>
+                                <div className="text-xs text-gray-400 mt-1">
+                                  {action.currency}
+                                </div>
+                              </td>
+                              <td className="p-4 text-right text-sm">
+                                <BitcoinDisplay 
+                                  usdAmount={usdAmount} 
+                                  size="xs" 
+                                  showLabel={false} 
+                                  className="text-orange-400 justify-end" 
+                                />
+                              </td>
+                              <td className="p-4 text-sm">
+                                {isWithdrawal && action.walletAddress ? (
+                                  <div className="space-y-1">
+                                    <div className="flex items-center space-x-2">
+                                      <span className="text-orange-400 font-mono text-xs bg-orange-900/20 px-2 py-1 rounded">
+                                        🔗 {action.walletAddress}
+                                      </span>
+                                    </div>
+                                    {action.transactionHash && (
+                                      <div className="text-xs text-gray-400 font-mono">
+                                        TX: {action.transactionHash.substring(0, 16)}...
+                                      </div>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <span className="text-gray-400 text-xs">Internal Transfer</span>
+                                )}
+                              </td>
+                              <td className="p-4 text-sm text-gray-300 max-w-xs">
+                                <div className="truncate" title={action.reason}>
+                                  {action.reason}
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                    </tbody>
+                  </table>
+                </div>
+                
+                {/* Summary Stats */}
+                <div className="bg-gray-700 p-4 border-t border-gray-600">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="text-center">
+                      <p className="text-xs text-gray-400">Total Credits</p>
+                      <p className="text-lg font-bold text-green-400">
+                        ${totalCredits.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xs text-gray-400">Total Debits</p>
+                      <p className="text-lg font-bold text-red-400">
+                        ${totalDebits.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xs text-gray-400">Total Withdrawals</p>
+                      <p className="text-lg font-bold text-orange-400">
+                        ${balanceActions.filter(a => a.action === 'withdrawal').reduce((sum, a) => sum + parseFloat(a.amount), 0).toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xs text-gray-400">System Balance</p>
+                      <p className="text-lg font-bold text-blue-400">
+                        ${totalSystemBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="balance" className="space-y-6">
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
                 <CardTitle className="flex items-center text-white">

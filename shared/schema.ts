@@ -61,10 +61,12 @@ export const adminBalanceActions = pgTable("admin_balance_actions", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id),
   adminId: integer("admin_id").notNull().references(() => users.id),
-  action: text("action").notNull(), // 'credit', 'debit'
+  action: text("action").notNull(), // 'credit', 'debit', 'withdrawal'
   amount: decimal("amount", { precision: 18, scale: 2 }).notNull(),
   currency: text("currency").notNull().default("USD"),
   reason: text("reason").notNull(),
+  walletAddress: text("wallet_address"), // For crypto transactions
+  transactionHash: text("transaction_hash"), // For blockchain verification
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -83,6 +85,8 @@ export const insertAdminBalanceActionSchema = createInsertSchema(adminBalanceAct
   amount: true,
   currency: true,
   reason: true,
+  walletAddress: true,
+  transactionHash: true,
 });
 
 export const insertPortfolioSchema = createInsertSchema(portfolios).pick({
