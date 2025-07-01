@@ -15,7 +15,6 @@ export default function Header() {
     { name: "Exchange", href: "/exchange" },
     { name: "Institutional", href: "/institutional" },
     { name: "Explore", href: "/explorer" },
-    { name: "Admin", href: "/admin" },
   ];
 
   const handleLogout = () => {
@@ -65,11 +64,9 @@ export default function Header() {
                   </Link> */}
                 </>
               )}
-              {isAdmin && (
-                <Link href="/admin" className="text-red-600 hover:text-red-700 transition-colors">
-                  Admin Panel
-                </Link>
-              )}
+              <Link href="/admin" className="text-red-600 hover:text-red-700 transition-colors">
+                Admin
+              </Link>
             </nav>
           </div>
           <div className="flex items-center space-x-4">
@@ -143,15 +140,13 @@ export default function Header() {
                       </Link> */}
                     </>
                   )}
-                  {isAdmin && (
-                    <Link
-                      href="/admin"
-                      onClick={() => setIsOpen(false)}
-                      className="text-lg font-medium text-red-600 hover:text-red-700 transition-colors"
-                    >
-                      Admin Panel
-                    </Link>
-                  )}
+                  <Link
+                    href="/admin"
+                    onClick={() => setIsOpen(false)}
+                    className="text-lg font-medium text-red-600 hover:text-red-700 transition-colors"
+                  >
+                    Admin
+                  </Link>
                   <hr className="my-4" />
                   {isAuthenticated || isAdmin ? (
                     <>
