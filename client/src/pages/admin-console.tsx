@@ -350,6 +350,7 @@ export default function AdminConsole() {
   };
 
   const toggleUserDetails = (userId: number) => {
+    console.log('Toggle user details clicked for user:', userId);
     setExpandedUserId(expandedUserId === userId ? null : userId);
   };
 
@@ -372,13 +373,18 @@ export default function AdminConsole() {
                 <p className="text-xs text-gray-400">Administrator</p>
               </div>
               <Button
-                onClick={handleLogout}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleLogout();
+                }}
                 variant="outline"
                 size="sm"
                 className="border-gray-600 text-gray-300 hover:bg-gray-700 cursor-pointer z-10 relative"
+                style={{ pointerEvents: 'auto' }}
               >
                 <LogOut className="h-4 w-4 mr-2" />
-                Logout
+                Admin Logout
               </Button>
             </div>
           </div>
@@ -452,22 +458,37 @@ export default function AdminConsole() {
         </div>
 
         <Tabs defaultValue="users" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-gray-800 to-gray-700 border-gray-600 shadow-lg rounded-lg">
+          <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-gray-800 to-gray-700 border-gray-600 shadow-lg rounded-lg p-1">
             <TabsTrigger 
               value="users" 
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-blue-700 data-[state=active]:text-white text-gray-300 font-medium transition-all duration-200 cursor-pointer hover:bg-gray-600"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-blue-700 data-[state=active]:text-white text-gray-300 font-medium transition-all duration-200 cursor-pointer hover:bg-gray-600 px-4 py-2 rounded-md"
+              style={{ pointerEvents: 'auto' }}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
             >
               User Management
             </TabsTrigger>
             <TabsTrigger 
               value="balance" 
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-600 data-[state=active]:to-green-700 data-[state=active]:text-white text-gray-300 font-medium transition-all duration-200 cursor-pointer hover:bg-gray-600"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-600 data-[state=active]:to-green-700 data-[state=active]:text-white text-gray-300 font-medium transition-all duration-200 cursor-pointer hover:bg-gray-600 px-4 py-2 rounded-md"
+              style={{ pointerEvents: 'auto' }}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
             >
               Balance Actions
             </TabsTrigger>
             <TabsTrigger 
               value="history" 
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-purple-700 data-[state=active]:text-white text-gray-300 font-medium transition-all duration-200 cursor-pointer hover:bg-gray-600"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-purple-700 data-[state=active]:text-white text-gray-300 font-medium transition-all duration-200 cursor-pointer hover:bg-gray-600 px-4 py-2 rounded-md"
+              style={{ pointerEvents: 'auto' }}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
             >
               Action History
             </TabsTrigger>
@@ -500,8 +521,13 @@ export default function AdminConsole() {
                         <div key={user.id} className="bg-gradient-to-r from-gray-700 to-gray-600 rounded-xl border border-gray-500 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-blue-400">
                           {/* Main User Card - Clickable */}
                           <div 
-                            className="p-6 cursor-pointer"
-                            onClick={() => toggleUserDetails(user.id)}
+                            className="p-6 cursor-pointer hover:bg-gray-600/50 transition-colors"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              toggleUserDetails(user.id);
+                            }}
+                            style={{ pointerEvents: 'auto' }}
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex items-center space-x-4">
@@ -572,12 +598,14 @@ export default function AdminConsole() {
                                         <div className="flex justify-between items-center">
                                           <span className="text-sm font-medium text-gray-300">{symbol}</span>
                                           <button 
-                                            className="text-xs text-blue-400 hover:text-blue-300"
+                                            className="text-xs text-blue-400 hover:text-blue-300 cursor-pointer px-2 py-1 rounded bg-blue-900/30 hover:bg-blue-800/50 transition-colors"
                                             onClick={(e) => {
+                                              e.preventDefault();
                                               e.stopPropagation();
                                               navigator.clipboard.writeText(generateWalletAddress(user.id, symbol));
                                               toast({ title: "Copied!", description: `${symbol} address copied to clipboard` });
                                             }}
+                                            style={{ pointerEvents: 'auto' }}
                                           >
                                             Copy
                                           </button>
@@ -792,7 +820,11 @@ export default function AdminConsole() {
 
                 <div className="flex justify-center">
                   <Button
-                    onClick={handleBalanceAction}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleBalanceAction();
+                    }}
                     disabled={
                       balanceActionMutation.isPending || 
                       !selectedUser || 
@@ -801,11 +833,12 @@ export default function AdminConsole() {
                       balanceAction.code2.length !== 6 ||
                       balanceAction.code3.length !== 6
                     }
-                    className={`px-8 py-3 ${
+                    className={`px-8 py-3 cursor-pointer ${
                       balanceAction.action === "credit" 
                         ? "bg-green-600 hover:bg-green-700" 
                         : "bg-red-600 hover:bg-red-700"
                     }`}
+                    style={{ pointerEvents: 'auto' }}
                   >
                     {balanceActionMutation.isPending ? "Processing..." : 
                      balanceAction.action === "credit" ? "Add Money" : "Remove Money"}
@@ -855,12 +888,20 @@ export default function AdminConsole() {
                               </p>
                             </div>
                           </div>
-                          <div className="text-right">
+                          <div className="text-right space-y-1">
                             <p className={`text-lg font-bold ${
                               action.action === "credit" ? "text-green-400" : "text-red-400"
                             }`}>
                               {action.action === "credit" ? "+" : "-"}${parseFloat(action.amount).toLocaleString()} {action.currency}
                             </p>
+                            {parseFloat(action.amount) > 0 && (
+                              <BitcoinDisplay 
+                                usdAmount={parseFloat(action.amount)} 
+                                size="xs" 
+                                showLabel={true} 
+                                className={action.action === "credit" ? "text-green-300" : "text-red-300"} 
+                              />
+                            )}
                           </div>
                         </div>
                       );
