@@ -44,6 +44,8 @@ export default function Admin() {
   });
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<AdminBalanceAction | null>(null);
+  const [showTransactionDetails, setShowTransactionDetails] = useState(false);
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -284,6 +286,16 @@ export default function Admin() {
   const convertToBitcoin = (usdAmount: number) => {
     if (!btcPrice || btcPrice === 0) return 0;
     return usdAmount / btcPrice;
+  };
+
+  const showTransactionDetail = (transaction: AdminBalanceAction) => {
+    setSelectedTransaction(transaction);
+    setShowTransactionDetails(true);
+  };
+
+  const closeTransactionDetails = () => {
+    setSelectedTransaction(null);
+    setShowTransactionDetails(false);
   };
 
   // Admin Login Dialog
@@ -558,6 +570,34 @@ export default function Admin() {
                                         </div>
                                       )}
                                     </div>
+
+                                    {/* Quick Credit Actions */}
+                                    <div className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
+                                      <p className="text-sm text-gray-600 mb-2">Quick Credit Actions</p>
+                                      <div className="grid grid-cols-2 gap-2">
+                                        {[100, 500, 1000, 5000, 10000, 50000].map((amount) => (
+                                          <Button
+                                            key={amount}
+                                            size="sm"
+                                            variant="outline"
+                                            className="text-xs h-8 border-green-200 text-green-700 hover:bg-green-50"
+                                            onClick={() => {
+                                              balanceActionMutation.mutate({
+                                                userId: user.id,
+                                                action: "credit",
+                                                amount: amount,
+                                                reason: `Quick credit of $${amount}`,
+                                                currency: "USD"
+                                              });
+                                            }}
+                                            disabled={balanceActionMutation.isPending}
+                                          >
+                                            +${amount.toLocaleString()}
+                                          </Button>
+                                        ))}
+                                      </div>
+                                    </div>
+
                                     {user.address && (
                                       <div className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
                                         <p className="text-sm text-gray-600">Physical Address</p>
@@ -674,28 +714,76 @@ export default function Admin() {
               </CardHeader>
               <CardContent>
                 {actionsLoading ? (
-                  <div>Loading history...</div>
-                ) : (
                   <div className="space-y-4">
-                    {balanceActions.map((action) => (
-                      <div key={action.id} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div>
-                          <p className="font-medium">
-                            {action.action === "credit" ? <TrendingUp className="inline h-4 w-4 text-green-500 mr-2" /> : <TrendingDown className="inline h-4 w-4 text-red-500 mr-2" />}
-                            {action.action.charAt(0).toUpperCase() + action.action.slice(1)} Action
-                          </p>
-                          <p className="text-sm text-gray-600">User ID: {action.userId}</p>
-                          <p className="text-sm text-gray-600">Reason: {action.reason}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-semibold">{action.amount} {action.currency}</p>
-                          <p className="text-sm text-gray-500">
-                            <Calendar className="inline h-3 w-3 mr-1" />
-                            {action.createdAt ? new Date(action.createdAt).toLocaleDateString() : 'N/A'}
-                          </p>
-                        </div>
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className="animate-pulse">
+                        <div className="h-20 bg-gray-200 rounded"></div>
                       </div>
                     ))}
+                  </div>
+                ) : balanceActions.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Wallet className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No Transaction History</h3>
+                    <p className="text-gray-500">Transaction history will appear here when balance actions are performed.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {balanceActions.map((action) => {
+                      const user = users.find(u => u.id === action.userId);
+                      const userBalance = getUserBalance(action.userId);
+                      const btcAmount = convertToBitcoin(parseFloat(action.amount));
+                      const walletAddress = generateWalletAddress(action.userId, 'BTC');
+                      
+                      return (
+                        <div 
+                          key={action.id} 
+                          className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 cursor-pointer hover:shadow-lg hover:border-blue-400 transition-all duration-300"
+                          onClick={() => showTransactionDetail(action)}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                              <div className="flex-shrink-0">
+                                <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                                  <span className="text-white font-bold text-sm">
+                                    {user ? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}` : 'SY'}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <p className="text-sm font-medium text-gray-900">
+                                  {user ? `${user.firstName} ${user.lastName}` : 'System'}
+                                </p>
+                                <p className="text-sm text-gray-500 truncate">
+                                  {action.reason}
+                                </p>
+                                <p className="text-xs text-gray-400">
+                                  BTC: {walletAddress.substring(0, 15)}...
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-4">
+                              <div className="text-right">
+                                <div className={`text-sm font-medium ${
+                                  action.action === 'credit' ? 'text-green-600' : 'text-red-600'
+                                }`}>
+                                  {action.action === 'credit' ? '+' : '-'}${parseFloat(action.amount).toLocaleString()}
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                  ≈ {btcAmount.toFixed(8)} BTC
+                                </div>
+                              </div>
+                              <Badge variant={action.action === 'credit' ? 'default' : 'destructive'}>
+                                {action.action}
+                              </Badge>
+                            </div>
+                          </div>
+                          <div className="mt-2 text-xs text-gray-400">
+                            {action.createdAt ? new Date(action.createdAt).toLocaleString() : 'Date not available'}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </CardContent>
@@ -705,6 +793,114 @@ export default function Admin() {
       </main>
 
       <Footer />
+      
+      {/* Transaction Details Modal */}
+      {selectedTransaction && (
+        <Dialog open={showTransactionDetails} onOpenChange={closeTransactionDetails}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-center">Transaction Details</DialogTitle>
+              <DialogDescription className="text-center">
+                Complete transaction information
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              {(() => {
+                const user = users.find(u => u.id === selectedTransaction.userId);
+                const userBalance = getUserBalance(selectedTransaction.userId);
+                const btcAmount = convertToBitcoin(parseFloat(selectedTransaction.amount));
+                const walletAddress = generateWalletAddress(selectedTransaction.userId, 'BTC');
+                
+                return (
+                  <>
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h3 className="font-semibold text-gray-900 mb-2">User Information</h3>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Name:</span>
+                          <span className="font-medium">{user ? `${user.firstName} ${user.lastName}` : 'System'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Email:</span>
+                          <span className="font-medium">{user?.email || 'N/A'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">User ID:</span>
+                          <span className="font-medium">{selectedTransaction.userId}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Current Balance:</span>
+                          <span className="font-medium">${userBalance.toLocaleString()}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-blue-50 rounded-lg p-4">
+                      <h3 className="font-semibold text-gray-900 mb-2">Transaction Details</h3>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Action:</span>
+                          <Badge variant={selectedTransaction.action === 'credit' ? 'default' : 'destructive'}>
+                            {selectedTransaction.action.charAt(0).toUpperCase() + selectedTransaction.action.slice(1)}
+                          </Badge>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Amount:</span>
+                          <span className={`font-medium ${
+                            selectedTransaction.action === 'credit' ? 'text-green-600' : 'text-red-600'
+                          }`}>
+                            {selectedTransaction.action === 'credit' ? '+' : '-'}${parseFloat(selectedTransaction.amount).toLocaleString()} {selectedTransaction.currency}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">BTC Equivalent:</span>
+                          <span className="font-medium">≈ {btcAmount.toFixed(8)} BTC</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Reason:</span>
+                          <span className="font-medium">{selectedTransaction.reason}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Date:</span>
+                          <span className="font-medium">
+                            {selectedTransaction.createdAt ? new Date(selectedTransaction.createdAt).toLocaleString() : 'Date not available'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-orange-50 rounded-lg p-4">
+                      <h3 className="font-semibold text-gray-900 mb-2">Wallet Information</h3>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">BTC Wallet:</span>
+                          <span className="font-mono text-xs bg-white px-2 py-1 rounded border">
+                            {walletAddress}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Transaction Type:</span>
+                          <span className="font-medium">
+                            {selectedTransaction.action === 'credit' ? 'Deposit' : 'Withdrawal'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <Button
+                      onClick={closeTransactionDetails}
+                      className="w-full"
+                    >
+                      Close Details
+                    </Button>
+                  </>
+                );
+              })()}
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

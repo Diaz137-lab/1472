@@ -40,7 +40,7 @@ export default function AdminLogin() {
         title: "Admin Access Granted",
         description: "Welcome to the admin console.",
       });
-      setLocation("/admin-console");
+      setLocation("/admin");
     },
     onError: () => {
       toast({

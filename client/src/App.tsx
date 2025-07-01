@@ -48,6 +48,7 @@ function Router() {
         </ProtectedRoute>
       </Route>
       <Route path="/admin" component={Admin} />
+      <Route path="/admin-console" component={Admin} />
       <Route component={NotFound} />
     </Switch>
   );
