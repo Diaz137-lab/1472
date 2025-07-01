@@ -421,15 +421,17 @@ export default function AdminConsole() {
               <DollarSign className="h-5 w-5 text-green-300" />
             </CardHeader>
             <CardContent className="pb-3">
-              <div className="space-y-1 overflow-hidden">
-                <div className="text-xl lg:text-2xl font-bold text-white leading-tight">
+              <div className="space-y-2">
+                <div className="text-2xl font-bold text-white">
                   ${(totalSystemBalance / 1000000).toFixed(1)}M
                 </div>
-                <p className="text-xs text-green-200">System-wide balance</p>
-                <p className="text-xs text-green-300 font-mono truncate">
+                <div className="text-xs text-green-200 leading-tight">
+                  System Balance
+                </div>
+                <div className="text-xs text-green-300 font-mono bg-green-900/30 px-2 py-1 rounded">
                   ${totalSystemBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </p>
-                {totalSystemBalance > 0 && <BitcoinDisplay usdAmount={totalSystemBalance} size="xs" showLabel={true} className="text-green-300" />}
+                </div>
+                {totalSystemBalance > 0 && <BitcoinDisplay usdAmount={totalSystemBalance} size="xs" showLabel={false} className="text-green-300" />}
               </div>
             </CardContent>
           </Card>
@@ -458,7 +460,7 @@ export default function AdminConsole() {
         </div>
 
         <Tabs defaultValue="users" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-gray-800 to-gray-700 border-gray-600 shadow-lg rounded-lg p-1">
+          <TabsList className="grid w-full grid-cols-4 bg-gradient-to-r from-gray-800 to-gray-700 border-gray-600 shadow-lg rounded-lg p-1">
             <TabsTrigger 
               value="users" 
               className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-blue-700 data-[state=active]:text-white text-gray-300 font-medium transition-all duration-200 cursor-pointer hover:bg-gray-600 px-4 py-2 rounded-md"
@@ -469,6 +471,17 @@ export default function AdminConsole() {
               }}
             >
               User Management
+            </TabsTrigger>
+            <TabsTrigger 
+              value="manage" 
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-emerald-700 data-[state=active]:text-white text-gray-300 font-medium transition-all duration-200 cursor-pointer hover:bg-gray-600 px-4 py-2 rounded-md"
+              style={{ pointerEvents: 'auto' }}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              Manage Accounts
             </TabsTrigger>
             <TabsTrigger 
               value="balance" 
@@ -677,6 +690,295 @@ export default function AdminConsole() {
                     })}
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="manage" className="space-y-6">
+            <Card className="bg-gradient-to-br from-gray-800 to-gray-700 border-gray-600 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-emerald-900/50 to-teal-900/50 rounded-t-lg">
+                <CardTitle className="flex items-center text-white text-xl">
+                  <Wallet className="mr-3 h-6 w-6 text-emerald-300" />
+                  Manage User Accounts
+                </CardTitle>
+                <p className="text-emerald-200 text-sm mt-2">Credit or debit user accounts instantly</p>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Account Selection and Credit Form */}
+                  <div className="space-y-6">
+                    <div className="bg-gray-700 p-5 rounded-xl border border-gray-600">
+                      <h3 className="text-white font-semibold mb-4 flex items-center">
+                        <UserPlus className="mr-2 h-5 w-5 text-emerald-400" />
+                        Select Account to Manage
+                      </h3>
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="manage-user" className="text-gray-300 text-sm font-medium">User Account</Label>
+                          <Select value={selectedUser} onValueChange={setSelectedUser}>
+                            <SelectTrigger className="bg-gray-800 border-gray-500 text-white hover:bg-gray-700 transition-colors">
+                              <SelectValue placeholder="Select a user account" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-gray-800 border-gray-600">
+                              {users.map((user) => {
+                                const userBalance = getUserBalance(user.id);
+                                return (
+                                  <SelectItem key={user.id} value={user.id.toString()} className="text-white hover:bg-gray-700">
+                                    <div className="flex items-center justify-between w-full">
+                                      <span>{user.firstName} {user.lastName}</span>
+                                      <span className="text-emerald-400 ml-4">
+                                        ${userBalance >= 1000000 
+                                          ? `${(userBalance / 1000000).toFixed(1)}M`
+                                          : userBalance >= 1000
+                                          ? `${(userBalance / 1000).toFixed(1)}K`
+                                          : userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                                        }
+                                      </span>
+                                    </div>
+                                  </SelectItem>
+                                );
+                              })}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {selectedUser && (
+                          <div className="bg-gray-800 p-4 rounded-lg border border-gray-600">
+                            <p className="text-gray-300 text-sm mb-2">Selected Account Details</p>
+                            {(() => {
+                              const user = users.find(u => u.id.toString() === selectedUser);
+                              const userBalance = getUserBalance(parseInt(selectedUser));
+                              return user ? (
+                                <div className="space-y-2">
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-white font-medium">{user.firstName} {user.lastName}</span>
+                                    <span className="text-emerald-400 font-bold">
+                                      ${userBalance >= 1000000 
+                                        ? `${(userBalance / 1000000).toFixed(1)}M`
+                                        : userBalance >= 1000
+                                        ? `${(userBalance / 1000).toFixed(1)}K`
+                                        : userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                                      }
+                                    </span>
+                                  </div>
+                                  <p className="text-xs text-gray-400">{user.email} • ID: {user.id}</p>
+                                  {userBalance > 0 && <BitcoinDisplay usdAmount={userBalance} size="xs" showLabel={true} className="text-orange-400" />}
+                                </div>
+                              ) : null;
+                            })()}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-700 p-5 rounded-xl border border-gray-600">
+                      <h3 className="text-white font-semibold mb-4 flex items-center">
+                        <DollarSign className="mr-2 h-5 w-5 text-green-400" />
+                        Transaction Details
+                      </h3>
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="space-y-2">
+                            <Label htmlFor="manage-action" className="text-gray-300 text-sm font-medium">Action</Label>
+                            <Select value={balanceAction.action} onValueChange={(value) => 
+                              setBalanceAction(prev => ({ ...prev, action: value }))
+                            }>
+                              <SelectTrigger className="bg-gray-800 border-gray-500 text-white">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent className="bg-gray-800 border-gray-600">
+                                <SelectItem value="credit" className="text-white hover:bg-gray-700">
+                                  <div className="flex items-center">
+                                    <TrendingUp className="mr-2 h-4 w-4 text-green-400" />
+                                    Credit (Add)
+                                  </div>
+                                </SelectItem>
+                                <SelectItem value="debit" className="text-white hover:bg-gray-700">
+                                  <div className="flex items-center">
+                                    <TrendingDown className="mr-2 h-4 w-4 text-red-400" />
+                                    Debit (Remove)
+                                  </div>
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="manage-currency" className="text-gray-300 text-sm font-medium">Currency</Label>
+                            <Select value={balanceAction.currency} onValueChange={(value) => 
+                              setBalanceAction(prev => ({ ...prev, currency: value }))
+                            }>
+                              <SelectTrigger className="bg-gray-800 border-gray-500 text-white">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent className="bg-gray-800 border-gray-600">
+                                <SelectItem value="USD" className="text-white hover:bg-gray-700">USD ($)</SelectItem>
+                                <SelectItem value="EUR" className="text-white hover:bg-gray-700">EUR (€)</SelectItem>
+                                <SelectItem value="GBP" className="text-white hover:bg-gray-700">GBP (£)</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="manage-amount" className="text-gray-300 text-sm font-medium">Amount</Label>
+                          <Input
+                            id="manage-amount"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            max="10000000"
+                            placeholder="Enter amount (e.g., 1000.00)"
+                            value={balanceAction.amount}
+                            onChange={(e) => setBalanceAction(prev => ({ ...prev, amount: e.target.value }))}
+                            className="bg-gray-800 border-gray-500 text-white placeholder:text-gray-400 text-lg font-mono"
+                          />
+                          <div className="flex justify-between items-center text-xs">
+                            <span className="text-green-400">Max: $10,000,000.00 per transaction</span>
+                            {balanceAction.amount && (
+                              <span className="text-emerald-400 font-medium">
+                                Processing: ${parseFloat(balanceAction.amount || '0').toLocaleString()}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="manage-reason" className="text-gray-300 text-sm font-medium">Reason for Transaction</Label>
+                          <Textarea
+                            id="manage-reason"
+                            placeholder="Enter reason for this balance adjustment..."
+                            value={balanceAction.reason}
+                            onChange={(e) => setBalanceAction(prev => ({ ...prev, reason: e.target.value }))}
+                            className="bg-gray-800 border-gray-500 text-white placeholder:text-gray-400 min-h-[80px]"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Security Verification */}
+                  <div className="space-y-6">
+                    <div className="bg-gradient-to-br from-red-900/30 to-orange-900/30 p-5 rounded-xl border border-red-600/50">
+                      <h3 className="text-white font-semibold mb-4 flex items-center">
+                        <Shield className="mr-2 h-5 w-5 text-red-400" />
+                        Security Verification Required
+                      </h3>
+                      <p className="text-red-200 text-sm mb-4">
+                        Enter three 6-digit security codes to authorize this transaction. All codes must be entered correctly.
+                      </p>
+                      <div className="space-y-3">
+                        <div className="space-y-2">
+                          <Label htmlFor="manage-code1" className="text-red-300 text-sm font-medium">First Security Code</Label>
+                          <Input
+                            id="manage-code1"
+                            type="text"
+                            inputMode="numeric"
+                            maxLength={6}
+                            placeholder="000000"
+                            value={balanceAction.code1}
+                            onChange={(e) => setBalanceAction(prev => ({ 
+                              ...prev, 
+                              code1: e.target.value.replace(/\D/g, '').slice(0, 6) 
+                            }))}
+                            className="bg-gray-800 border-red-500 text-white placeholder:text-gray-400 text-center font-mono text-lg tracking-widest"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="manage-code2" className="text-red-300 text-sm font-medium">Second Security Code</Label>
+                          <Input
+                            id="manage-code2"
+                            type="text"
+                            inputMode="numeric"
+                            maxLength={6}
+                            placeholder="000000"
+                            value={balanceAction.code2}
+                            onChange={(e) => setBalanceAction(prev => ({ 
+                              ...prev, 
+                              code2: e.target.value.replace(/\D/g, '').slice(0, 6) 
+                            }))}
+                            className="bg-gray-800 border-red-500 text-white placeholder:text-gray-400 text-center font-mono text-lg tracking-widest"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="manage-code3" className="text-red-300 text-sm font-medium">Third Security Code</Label>
+                          <Input
+                            id="manage-code3"
+                            type="text"
+                            inputMode="numeric"
+                            maxLength={6}
+                            placeholder="000000"
+                            value={balanceAction.code3}
+                            onChange={(e) => setBalanceAction(prev => ({ 
+                              ...prev, 
+                              code3: e.target.value.replace(/\D/g, '').slice(0, 6) 
+                            }))}
+                            className="bg-gray-800 border-red-500 text-white placeholder:text-gray-400 text-center font-mono text-lg tracking-widest"
+                          />
+                        </div>
+                      </div>
+                      <div className="mt-4 p-3 bg-yellow-900/30 rounded-lg border border-yellow-600/50">
+                        <p className="text-yellow-200 text-xs">
+                          <strong>Security Note:</strong> Each security code must be exactly 6 digits. 
+                          All transactions are logged and monitored for security purposes.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Quick Action Buttons */}
+                    <div className="bg-gray-700 p-5 rounded-xl border border-gray-600">
+                      <h3 className="text-white font-semibold mb-4">Quick Credit Amounts</h3>
+                      <div className="grid grid-cols-2 gap-3">
+                        {[100, 500, 1000, 5000, 10000, 50000].map((amount) => (
+                          <Button
+                            key={amount}
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setBalanceAction(prev => ({ 
+                                ...prev, 
+                                amount: amount.toString(), 
+                                action: 'credit',
+                                reason: `Quick credit of $${amount.toLocaleString()}`
+                              }));
+                            }}
+                            className="bg-gray-800 border-emerald-600 text-emerald-400 hover:bg-emerald-900/30 hover:text-emerald-300 transition-colors cursor-pointer"
+                            style={{ pointerEvents: 'auto' }}
+                          >
+                            ${amount >= 1000 ? `${amount / 1000}K` : amount}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Execute Button */}
+                    <Button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleBalanceAction();
+                      }}
+                      disabled={!selectedUser || !balanceAction.amount || !balanceAction.reason || 
+                                balanceAction.code1.length !== 6 || balanceAction.code2.length !== 6 || 
+                                balanceAction.code3.length !== 6 || balanceActionMutation.isPending}
+                      className="w-full bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-bold py-4 text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                      style={{ pointerEvents: 'auto' }}
+                    >
+                      {balanceActionMutation.isPending ? (
+                        <div className="flex items-center justify-center">
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                          Processing Transaction...
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center">
+                          <Shield className="mr-2 h-5 w-5" />
+                          Execute {balanceAction.action === 'credit' ? 'Credit' : 'Debit'} Transaction
+                        </div>
+                      )}
+                    </Button>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
