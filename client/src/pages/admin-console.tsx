@@ -24,7 +24,68 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { useBitcoinPrice, useBitcoinConversion } from "@/hooks/use-bitcoin-price";
 import type { User, AdminBalanceAction } from "@shared/schema";
+
+// Bitcoin Balance Display Component
+function BitcoinBalanceDisplay({ usdBalance }: { usdBalance: number }) {
+  const { data: btcPrice, isLoading: btcPriceLoading } = useBitcoinPrice();
+  const { data: conversion, isLoading: conversionLoading } = useBitcoinConversion(usdBalance);
+
+  if (btcPriceLoading || conversionLoading || !btcPrice || !conversion) {
+    return (
+      <div className="mt-2 animate-pulse">
+        <div className="h-4 bg-gray-600 rounded w-32"></div>
+      </div>
+    );
+  }
+
+  const isPositiveChange = btcPrice.change24h >= 0;
+
+  return (
+    <div className="mt-3 pt-3 border-t border-gray-600">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-xs text-gray-400">Bitcoin Equivalent</p>
+          <p className="text-lg font-bold text-orange-400">
+            {conversion.formattedBtc}
+          </p>
+          <p className="text-xs text-gray-500">
+            @ ${btcPrice.price.toLocaleString()} per BTC
+          </p>
+        </div>
+        <div className="text-right">
+          <div className={`flex items-center text-xs ${isPositiveChange ? 'text-green-400' : 'text-red-400'}`}>
+            {isPositiveChange ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
+            {Math.abs(btcPrice.change24h).toFixed(2)}% (24h)
+          </div>
+          <p className="text-xs text-gray-500">
+            Last updated: {new Date(btcPrice.lastUpdated * 1000).toLocaleTimeString()}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Compact Bitcoin Display Component for header balance
+function CompactBitcoinDisplay({ usdBalance }: { usdBalance: number }) {
+  const { data: conversion, isLoading } = useBitcoinConversion(usdBalance);
+
+  if (isLoading || !conversion) {
+    return (
+      <div className="mt-1 animate-pulse">
+        <div className="h-3 bg-gray-600 rounded w-20"></div>
+      </div>
+    );
+  }
+
+  return (
+    <p className="text-xs text-orange-400 font-medium mt-1">
+      ≈ {conversion.formattedBtc}
+    </p>
+  );
+}
 
 export default function AdminConsole() {
   const [selectedUser, setSelectedUser] = useState("");
@@ -420,6 +481,7 @@ export default function AdminConsole() {
                                   <p className="text-xl font-bold text-green-400">
                                     ${userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                   </p>
+                                  {userBalance > 0 && <CompactBitcoinDisplay usdBalance={userBalance} />}
                                 </div>
                                 <div className="flex space-x-2">
                                   <Badge variant={user.isVerified ? "default" : "secondary"} className="text-xs">
@@ -494,6 +556,7 @@ export default function AdminConsole() {
                                       <p className="text-2xl font-bold text-green-400">
                                         ${userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                       </p>
+                                      <BitcoinBalanceDisplay usdBalance={userBalance} />
                                     </div>
                                     {user.address && (
                                       <div className="bg-gray-700 p-3 rounded-lg">

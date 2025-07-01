@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { insertUserSchema, insertTransactionSchema, insertAdminBalanceActionSchema } from "@shared/schema";
 import { z } from "zod";
 import jwt from "jsonwebtoken";
+import { bitcoinPriceService } from "./bitcoin-price";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-super-secure-admin-secret-key";
 
@@ -343,6 +344,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(actions);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch user balance actions" });
+    }
+  });
+
+  // Bitcoin price API endpoint
+  app.get("/api/bitcoin/price", async (req, res) => {
+    try {
+      const priceData = await bitcoinPriceService.getBitcoinPrice();
+      res.json(priceData);
+    } catch (error) {
+      console.error('Error fetching Bitcoin price:', error);
+      res.status(500).json({ message: "Failed to fetch Bitcoin price" });
+    }
+  });
+
+  // Convert USD to Bitcoin endpoint
+  app.get("/api/bitcoin/convert/:usdAmount", async (req, res) => {
+    try {
+      const usdAmount = parseFloat(req.params.usdAmount);
+      if (isNaN(usdAmount) || usdAmount < 0) {
+        return res.status(400).json({ message: "Invalid USD amount" });
+      }
+
+      const priceData = await bitcoinPriceService.getBitcoinPrice();
+      const btcAmount = bitcoinPriceService.convertUsdToBitcoin(usdAmount, priceData.price);
+      const formattedBtc = bitcoinPriceService.formatBitcoinAmount(btcAmount);
+
+      res.json({
+        usdAmount,
+        btcPrice: priceData.price,
+        btcAmount,
+        formattedBtc,
+        change24h: priceData.change24h,
+        lastUpdated: priceData.lastUpdated
+      });
+    } catch (error) {
+      console.error('Error converting USD to Bitcoin:', error);
+      res.status(500).json({ message: "Failed to convert USD to Bitcoin" });
     }
   });
 
