@@ -374,7 +374,7 @@ export default function AdminConsole() {
         </div>
 
         {/* Overview Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
           <Card className="bg-gradient-to-br from-blue-900 to-blue-800 border-blue-700 shadow-lg hover:shadow-xl transition-shadow duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-blue-100">Total Users</CardTitle>
@@ -391,9 +391,21 @@ export default function AdminConsole() {
               <CardTitle className="text-sm font-medium text-green-100">Total Balance</CardTitle>
               <DollarSign className="h-5 w-5 text-green-300" />
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-white">${totalSystemBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-              <p className="text-xs text-green-200">System-wide balance</p>
+            <CardContent className="pb-3">
+              <div className="space-y-1">
+                <div className="text-2xl lg:text-3xl font-bold text-white leading-tight break-all">
+                  ${(totalSystemBalance / 1000000 >= 1) 
+                    ? `${(totalSystemBalance / 1000000).toFixed(1)}M`
+                    : totalSystemBalance.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+                  }
+                </div>
+                <p className="text-xs text-green-200">System-wide balance</p>
+                {totalSystemBalance >= 1000000 && (
+                  <p className="text-xs text-green-300 font-mono">
+                    ${totalSystemBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </p>
+                )}
+              </div>
             </CardContent>
           </Card>
 
@@ -476,12 +488,24 @@ export default function AdminConsole() {
                                 </div>
                               </div>
                               <div className="text-right space-y-2">
-                                <div className="bg-gray-800 px-4 py-2 rounded-lg border border-gray-600">
+                                <div className="bg-gray-800 px-4 py-3 rounded-lg border border-gray-600 min-w-[140px]">
                                   <p className="text-xs text-gray-400 uppercase tracking-wide">Balance</p>
-                                  <p className="text-xl font-bold text-green-400">
-                                    ${userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                  </p>
-                                  {userBalance > 0 && <CompactBitcoinDisplay usdBalance={userBalance} />}
+                                  <div className="space-y-1">
+                                    <p className="text-lg lg:text-xl font-bold text-green-400 leading-tight">
+                                      ${userBalance >= 1000000 
+                                        ? `${(userBalance / 1000000).toFixed(1)}M`
+                                        : userBalance >= 1000
+                                        ? `${(userBalance / 1000).toFixed(1)}K`
+                                        : userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                                      }
+                                    </p>
+                                    {userBalance >= 1000 && (
+                                      <p className="text-xs text-gray-500 font-mono">
+                                        ${userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                      </p>
+                                    )}
+                                    {userBalance > 0 && <CompactBitcoinDisplay usdBalance={userBalance} />}
+                                  </div>
                                 </div>
                                 <div className="flex space-x-2">
                                   <Badge variant={user.isVerified ? "default" : "secondary"} className="text-xs">
@@ -551,12 +575,29 @@ export default function AdminConsole() {
                                         {user.isAdmin ? "🔐 Administrator" : "👤 Standard User"}
                                       </p>
                                     </div>
-                                    <div className="bg-gray-700 p-3 rounded-lg">
-                                      <p className="text-sm text-gray-300">Current Balance</p>
-                                      <p className="text-2xl font-bold text-green-400">
-                                        ${userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                      </p>
-                                      <BitcoinBalanceDisplay usdBalance={userBalance} />
+                                    <div className="bg-gray-700 p-4 rounded-lg">
+                                      <p className="text-sm text-gray-300 mb-2">Current Balance</p>
+                                      <div className="space-y-2">
+                                        <div className="flex items-baseline gap-2">
+                                          <p className="text-2xl font-bold text-green-400">
+                                            ${userBalance >= 1000000 
+                                              ? `${(userBalance / 1000000).toFixed(1)}M`
+                                              : userBalance >= 1000
+                                              ? `${(userBalance / 1000).toFixed(1)}K`
+                                              : userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                                            }
+                                          </p>
+                                          {userBalance >= 1000 && (
+                                            <span className="text-sm text-gray-400">USD</span>
+                                          )}
+                                        </div>
+                                        {userBalance >= 1000 && (
+                                          <p className="text-sm text-gray-400 font-mono">
+                                            ${userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                          </p>
+                                        )}
+                                        {userBalance > 0 && <BitcoinBalanceDisplay usdBalance={userBalance} />}
+                                      </div>
                                     </div>
                                     {user.address && (
                                       <div className="bg-gray-700 p-3 rounded-lg">
