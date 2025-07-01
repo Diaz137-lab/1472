@@ -25,9 +25,10 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useBitcoinPrice, useBitcoinConversion } from "@/hooks/use-bitcoin-price";
+import { BitcoinDisplay } from "@/components/ui/bitcoin-display";
 import type { User, AdminBalanceAction } from "@shared/schema";
 
-// Bitcoin Balance Display Component
+// Bitcoin Balance Display Component using JSX
 function BitcoinBalanceDisplay({ usdBalance }: { usdBalance: number }) {
   const { data: btcPrice, isLoading: btcPriceLoading } = useBitcoinPrice();
   const { data: conversion, isLoading: conversionLoading } = useBitcoinConversion(usdBalance);
@@ -56,7 +57,10 @@ function BitcoinBalanceDisplay({ usdBalance }: { usdBalance: number }) {
         </div>
         <div className="text-right">
           <div className={`flex items-center text-xs ${isPositiveChange ? 'text-green-400' : 'text-red-400'}`}>
-            {isPositiveChange ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
+            {isPositiveChange ? 
+              <TrendingUp className="h-3 w-3 mr-1" /> : 
+              <TrendingDown className="h-3 w-3 mr-1" />
+            }
             {Math.abs(btcPrice.change24h).toFixed(2)}% (24h)
           </div>
           <p className="text-xs text-gray-500">
@@ -68,7 +72,7 @@ function BitcoinBalanceDisplay({ usdBalance }: { usdBalance: number }) {
   );
 }
 
-// Compact Bitcoin Display Component for header balance
+// Compact Bitcoin Display Component for header balance using JSX
 function CompactBitcoinDisplay({ usdBalance }: { usdBalance: number }) {
   const { data: conversion, isLoading } = useBitcoinConversion(usdBalance);
 
@@ -82,6 +86,25 @@ function CompactBitcoinDisplay({ usdBalance }: { usdBalance: number }) {
 
   return (
     <p className="text-xs text-orange-400 font-medium mt-1">
+      ≈ {conversion.formattedBtc}
+    </p>
+  );
+}
+
+// System-wide Bitcoin Display Component for total balance card
+function SystemBitcoinDisplay({ usdBalance }: { usdBalance: number }) {
+  const { data: conversion, isLoading } = useBitcoinConversion(usdBalance);
+
+  if (isLoading || !conversion) {
+    return (
+      <div className="animate-pulse">
+        <div className="h-3 bg-green-600 rounded w-24 mt-1"></div>
+      </div>
+    );
+  }
+
+  return (
+    <p className="text-xs text-green-300 font-medium">
       ≈ {conversion.formattedBtc}
     </p>
   );
@@ -405,6 +428,7 @@ export default function AdminConsole() {
                     ${totalSystemBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </p>
                 )}
+                {totalSystemBalance > 0 && <BitcoinDisplay usdAmount={totalSystemBalance} size="xs" showLabel={true} className="text-green-300" />}
               </div>
             </CardContent>
           </Card>
@@ -504,7 +528,7 @@ export default function AdminConsole() {
                                         ${userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                       </p>
                                     )}
-                                    {userBalance > 0 && <CompactBitcoinDisplay usdBalance={userBalance} />}
+                                    {userBalance > 0 && <BitcoinDisplay usdAmount={userBalance} size="xs" showLabel={true} className="text-orange-400" />}
                                   </div>
                                 </div>
                                 <div className="flex space-x-2">
@@ -596,7 +620,7 @@ export default function AdminConsole() {
                                             ${userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                           </p>
                                         )}
-                                        {userBalance > 0 && <BitcoinBalanceDisplay usdBalance={userBalance} />}
+                                        {userBalance > 0 && <BitcoinDisplay usdAmount={userBalance} size="md" showLabel={true} />}
                                       </div>
                                     </div>
                                     {user.address && (

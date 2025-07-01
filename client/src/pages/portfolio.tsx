@@ -4,6 +4,26 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis } from "recharts";
 import { mockPortfolioData, mockTransactions } from "@/lib/mock-data";
+import { useBitcoinConversion } from "@/hooks/use-bitcoin-price";
+
+// Portfolio Bitcoin Display Component
+function PortfolioBitcoinDisplay({ usdAmount }: { usdAmount: number }) {
+  const { data: conversion, isLoading } = useBitcoinConversion(usdAmount);
+
+  if (isLoading || !conversion) {
+    return (
+      <div className="animate-pulse">
+        <div className="h-3 bg-gray-300 rounded w-24 mt-1"></div>
+      </div>
+    );
+  }
+
+  return (
+    <p className="text-sm text-orange-600 font-medium">
+      ≈ {conversion.formattedBtc}
+    </p>
+  );
+}
 
 const COLORS = ['#f7931a', '#627eea', '#8884d8', '#82ca9d', '#ffc658'];
 
@@ -93,6 +113,7 @@ export default function Portfolio() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-3xl font-bold">${totalValue.toLocaleString()}</p>
+                  <PortfolioBitcoinDisplay usdAmount={totalValue} />
                   <p className="text-sm text-fw-success">+$1,250 (1.5%) today</p>
                 </CardContent>
               </Card>

@@ -5,6 +5,26 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { TrendingUp, DollarSign, Activity, CreditCard } from "lucide-react";
+import { useBitcoinConversion } from "@/hooks/use-bitcoin-price";
+
+// Universal Bitcoin Display Component for Dashboard
+function DashboardBitcoinDisplay({ usdAmount }: { usdAmount: number }) {
+  const { data: conversion, isLoading } = useBitcoinConversion(usdAmount);
+
+  if (isLoading || !conversion) {
+    return (
+      <div className="animate-pulse">
+        <div className="h-3 bg-gray-300 rounded w-20 mt-1"></div>
+      </div>
+    );
+  }
+
+  return (
+    <p className="text-xs text-orange-600 font-medium mt-1">
+      ≈ {conversion.formattedBtc}
+    </p>
+  );
+}
 
 export default function Dashboard() {
   // Mock user data - in real app this would come from API
@@ -31,6 +51,7 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">${portfolioValue.toLocaleString()}</div>
+              <DashboardBitcoinDisplay usdAmount={portfolioValue} />
               <p className="text-xs text-muted-foreground">
                 +${dailyChange.toLocaleString()} ({dailyChangePercent}%) today
               </p>
