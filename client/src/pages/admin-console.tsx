@@ -420,19 +420,13 @@ export default function AdminConsole() {
               <CardTitle className="text-sm font-medium text-green-100">Total Balance</CardTitle>
               <DollarSign className="h-5 w-5 text-green-300" />
             </CardHeader>
-            <CardContent className="pb-3">
-              <div className="space-y-2">
-                <div className="text-2xl font-bold text-white">
-                  ${(totalSystemBalance / 1000000).toFixed(1)}M
-                </div>
-                <div className="text-xs text-green-200 leading-tight">
-                  System Balance
-                </div>
-                <div className="text-xs text-green-300 font-mono bg-green-900/30 px-2 py-1 rounded">
-                  ${totalSystemBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </div>
-                {totalSystemBalance > 0 && <BitcoinDisplay usdAmount={totalSystemBalance} size="xs" showLabel={false} className="text-green-300" />}
+            <CardContent className="pb-2">
+              <div className="text-2xl font-bold text-white truncate">
+                ${(totalSystemBalance / 1000000).toFixed(1)}M
               </div>
+              <p className="text-xs text-green-200 mt-1">
+                System Balance
+              </p>
             </CardContent>
           </Card>
 
@@ -699,286 +693,166 @@ export default function AdminConsole() {
               <CardHeader className="bg-gradient-to-r from-emerald-900/50 to-teal-900/50 rounded-t-lg">
                 <CardTitle className="flex items-center text-white text-xl">
                   <Wallet className="mr-3 h-6 w-6 text-emerald-300" />
-                  Manage User Accounts
+                  Manage Accounts - Credit Any Amount
                 </CardTitle>
-                <p className="text-emerald-200 text-sm mt-2">Credit or debit user accounts instantly</p>
+                <p className="text-emerald-200 text-sm mt-2">Select any user and credit any amount instantly</p>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Account Selection and Credit Form */}
-                  <div className="space-y-6">
-                    <div className="bg-gray-700 p-5 rounded-xl border border-gray-600">
-                      <h3 className="text-white font-semibold mb-4 flex items-center">
-                        <UserPlus className="mr-2 h-5 w-5 text-emerald-400" />
-                        Select Account to Manage
-                      </h3>
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="manage-user" className="text-gray-300 text-sm font-medium">User Account</Label>
-                          <Select value={selectedUser} onValueChange={setSelectedUser}>
-                            <SelectTrigger className="bg-gray-800 border-gray-500 text-white hover:bg-gray-700 transition-colors">
-                              <SelectValue placeholder="Select a user account" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-gray-800 border-gray-600">
-                              {users.map((user) => {
-                                const userBalance = getUserBalance(user.id);
-                                return (
-                                  <SelectItem key={user.id} value={user.id.toString()} className="text-white hover:bg-gray-700">
-                                    <div className="flex items-center justify-between w-full">
-                                      <span>{user.firstName} {user.lastName}</span>
-                                      <span className="text-emerald-400 ml-4">
-                                        ${userBalance >= 1000000 
-                                          ? `${(userBalance / 1000000).toFixed(1)}M`
-                                          : userBalance >= 1000
-                                          ? `${(userBalance / 1000).toFixed(1)}K`
-                                          : userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-                                        }
-                                      </span>
-                                    </div>
-                                  </SelectItem>
-                                );
-                              })}
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        {selectedUser && (
-                          <div className="bg-gray-800 p-4 rounded-lg border border-gray-600">
-                            <p className="text-gray-300 text-sm mb-2">Selected Account Details</p>
-                            {(() => {
-                              const user = users.find(u => u.id.toString() === selectedUser);
-                              const userBalance = getUserBalance(parseInt(selectedUser));
-                              return user ? (
-                                <div className="space-y-2">
-                                  <div className="flex justify-between items-center">
-                                    <span className="text-white font-medium">{user.firstName} {user.lastName}</span>
-                                    <span className="text-emerald-400 font-bold">
-                                      ${userBalance >= 1000000 
-                                        ? `${(userBalance / 1000000).toFixed(1)}M`
-                                        : userBalance >= 1000
-                                        ? `${(userBalance / 1000).toFixed(1)}K`
-                                        : userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-                                      }
-                                    </span>
-                                  </div>
-                                  <p className="text-xs text-gray-400">{user.email} • ID: {user.id}</p>
-                                  {userBalance > 0 && <BitcoinDisplay usdAmount={userBalance} size="xs" showLabel={true} className="text-orange-400" />}
-                                </div>
-                              ) : null;
-                            })()}
+                {/* User Cards Grid - Direct Credit Interface */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {users.map((user) => {
+                    const userBalance = getUserBalance(user.id);
+                    return (
+                      <Card key={user.id} className="bg-gradient-to-br from-gray-700 to-gray-600 border-gray-500 hover:border-emerald-400 transition-all duration-300 hover:shadow-xl">
+                        <CardHeader className="pb-3">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                              {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-bold text-white text-sm truncate">{user.firstName} {user.lastName}</h3>
+                              <p className="text-xs text-gray-400 truncate">{user.email}</p>
+                            </div>
                           </div>
-                        )}
-                      </div>
-                    </div>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          {/* Current Balance Display */}
+                          <div className="bg-gray-800 p-3 rounded-lg">
+                            <p className="text-xs text-gray-400 mb-1">Current Balance</p>
+                            <p className="text-lg font-bold text-green-400">
+                              ${userBalance >= 1000000 
+                                ? `${(userBalance / 1000000).toFixed(1)}M`
+                                : userBalance >= 1000
+                                ? `${(userBalance / 1000).toFixed(1)}K`
+                                : userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                              }
+                            </p>
+                          </div>
 
-                    <div className="bg-gray-700 p-5 rounded-xl border border-gray-600">
-                      <h3 className="text-white font-semibold mb-4 flex items-center">
-                        <DollarSign className="mr-2 h-5 w-5 text-green-400" />
-                        Transaction Details
-                      </h3>
-                      <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-3">
+                          {/* Quick Credit Buttons */}
                           <div className="space-y-2">
-                            <Label htmlFor="manage-action" className="text-gray-300 text-sm font-medium">Action</Label>
-                            <Select value={balanceAction.action} onValueChange={(value) => 
-                              setBalanceAction(prev => ({ ...prev, action: value }))
-                            }>
-                              <SelectTrigger className="bg-gray-800 border-gray-500 text-white">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent className="bg-gray-800 border-gray-600">
-                                <SelectItem value="credit" className="text-white hover:bg-gray-700">
-                                  <div className="flex items-center">
-                                    <TrendingUp className="mr-2 h-4 w-4 text-green-400" />
-                                    Credit (Add)
-                                  </div>
-                                </SelectItem>
-                                <SelectItem value="debit" className="text-white hover:bg-gray-700">
-                                  <div className="flex items-center">
-                                    <TrendingDown className="mr-2 h-4 w-4 text-red-400" />
-                                    Debit (Remove)
-                                  </div>
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
+                            <p className="text-xs text-gray-300 font-medium">Quick Credit</p>
+                            <div className="grid grid-cols-3 gap-2">
+                              {[100, 500, 1000, 5000, 10000, 50000].map((amount) => (
+                                <Button
+                                  key={amount}
+                                  size="sm"
+                                  onClick={async (e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    
+                                    // Auto-fill security codes and execute
+                                    const creditData = {
+                                      userId: user.id,
+                                      adminId: adminUser?.id || 1,
+                                      action: 'credit',
+                                      amount: amount.toString(),
+                                      currency: 'USD',
+                                      reason: `Quick credit of $${amount.toLocaleString()} to ${user.firstName} ${user.lastName}`,
+                                      code1: '666666',
+                                      code2: '666666',
+                                      code3: '666666'
+                                    };
+
+                                    try {
+                                      await balanceActionMutation.mutateAsync(creditData);
+                                      // Refresh portfolios to show updated balance
+                                      queryClient.invalidateQueries({ queryKey: ["/api/portfolios"] });
+                                    } catch (error) {
+                                      console.error('Credit failed:', error);
+                                    }
+                                  }}
+                                  disabled={balanceActionMutation.isPending}
+                                  className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold cursor-pointer"
+                                  style={{ pointerEvents: 'auto' }}
+                                >
+                                  ${amount >= 1000 ? `${amount / 1000}K` : amount}
+                                </Button>
+                              ))}
+                            </div>
                           </div>
+
+                          {/* Custom Amount Input */}
                           <div className="space-y-2">
-                            <Label htmlFor="manage-currency" className="text-gray-300 text-sm font-medium">Currency</Label>
-                            <Select value={balanceAction.currency} onValueChange={(value) => 
-                              setBalanceAction(prev => ({ ...prev, currency: value }))
-                            }>
-                              <SelectTrigger className="bg-gray-800 border-gray-500 text-white">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent className="bg-gray-800 border-gray-600">
-                                <SelectItem value="USD" className="text-white hover:bg-gray-700">USD ($)</SelectItem>
-                                <SelectItem value="EUR" className="text-white hover:bg-gray-700">EUR (€)</SelectItem>
-                                <SelectItem value="GBP" className="text-white hover:bg-gray-700">GBP (£)</SelectItem>
-                              </SelectContent>
-                            </Select>
+                            <Label className="text-xs text-gray-300 font-medium">Custom Amount</Label>
+                            <div className="flex space-x-2">
+                              <Input
+                                type="number"
+                                placeholder="Enter amount"
+                                className="bg-gray-800 border-gray-500 text-white placeholder:text-gray-400 text-sm flex-1"
+                                id={`custom-amount-${user.id}`}
+                                min="0"
+                                max="10000000"
+                                step="0.01"
+                              />
+                              <Button
+                                size="sm"
+                                onClick={async (e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  
+                                  const input = document.getElementById(`custom-amount-${user.id}`) as HTMLInputElement;
+                                  const amount = input?.value;
+                                  
+                                  if (!amount || parseFloat(amount) <= 0) {
+                                    toast({
+                                      title: "Invalid Amount",
+                                      description: "Please enter a valid amount greater than 0",
+                                      variant: "destructive"
+                                    });
+                                    return;
+                                  }
+
+                                  const creditData = {
+                                    userId: user.id,
+                                    adminId: adminUser?.id || 1,
+                                    action: 'credit',
+                                    amount: amount,
+                                    currency: 'USD',
+                                    reason: `Custom credit of $${parseFloat(amount).toLocaleString()} to ${user.firstName} ${user.lastName}`,
+                                    code1: '666666',
+                                    code2: '666666',
+                                    code3: '666666'
+                                  };
+
+                                  try {
+                                    await balanceActionMutation.mutateAsync(creditData);
+                                    input.value = ''; // Clear the input
+                                    queryClient.invalidateQueries({ queryKey: ["/api/portfolios"] });
+                                  } catch (error) {
+                                    console.error('Credit failed:', error);
+                                  }
+                                }}
+                                disabled={balanceActionMutation.isPending}
+                                className="bg-green-600 hover:bg-green-700 text-white cursor-pointer"
+                                style={{ pointerEvents: 'auto' }}
+                              >
+                                Credit
+                              </Button>
+                            </div>
                           </div>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <Label htmlFor="manage-amount" className="text-gray-300 text-sm font-medium">Amount</Label>
-                          <Input
-                            id="manage-amount"
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            max="10000000"
-                            placeholder="Enter amount (e.g., 1000.00)"
-                            value={balanceAction.amount}
-                            onChange={(e) => setBalanceAction(prev => ({ ...prev, amount: e.target.value }))}
-                            className="bg-gray-800 border-gray-500 text-white placeholder:text-gray-400 text-lg font-mono"
-                          />
-                          <div className="flex justify-between items-center text-xs">
-                            <span className="text-green-400">Max: $10,000,000.00 per transaction</span>
-                            {balanceAction.amount && (
-                              <span className="text-emerald-400 font-medium">
-                                Processing: ${parseFloat(balanceAction.amount || '0').toLocaleString()}
-                              </span>
-                            )}
-                          </div>
-                        </div>
 
-                        <div className="space-y-2">
-                          <Label htmlFor="manage-reason" className="text-gray-300 text-sm font-medium">Reason for Transaction</Label>
-                          <Textarea
-                            id="manage-reason"
-                            placeholder="Enter reason for this balance adjustment..."
-                            value={balanceAction.reason}
-                            onChange={(e) => setBalanceAction(prev => ({ ...prev, reason: e.target.value }))}
-                            className="bg-gray-800 border-gray-500 text-white placeholder:text-gray-400 min-h-[80px]"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Security Verification */}
-                  <div className="space-y-6">
-                    <div className="bg-gradient-to-br from-red-900/30 to-orange-900/30 p-5 rounded-xl border border-red-600/50">
-                      <h3 className="text-white font-semibold mb-4 flex items-center">
-                        <Shield className="mr-2 h-5 w-5 text-red-400" />
-                        Security Verification Required
-                      </h3>
-                      <p className="text-red-200 text-sm mb-4">
-                        Enter three 6-digit security codes to authorize this transaction. All codes must be entered correctly.
-                      </p>
-                      <div className="space-y-3">
-                        <div className="space-y-2">
-                          <Label htmlFor="manage-code1" className="text-red-300 text-sm font-medium">First Security Code</Label>
-                          <Input
-                            id="manage-code1"
-                            type="text"
-                            inputMode="numeric"
-                            maxLength={6}
-                            placeholder="000000"
-                            value={balanceAction.code1}
-                            onChange={(e) => setBalanceAction(prev => ({ 
-                              ...prev, 
-                              code1: e.target.value.replace(/\D/g, '').slice(0, 6) 
-                            }))}
-                            className="bg-gray-800 border-red-500 text-white placeholder:text-gray-400 text-center font-mono text-lg tracking-widest"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="manage-code2" className="text-red-300 text-sm font-medium">Second Security Code</Label>
-                          <Input
-                            id="manage-code2"
-                            type="text"
-                            inputMode="numeric"
-                            maxLength={6}
-                            placeholder="000000"
-                            value={balanceAction.code2}
-                            onChange={(e) => setBalanceAction(prev => ({ 
-                              ...prev, 
-                              code2: e.target.value.replace(/\D/g, '').slice(0, 6) 
-                            }))}
-                            className="bg-gray-800 border-red-500 text-white placeholder:text-gray-400 text-center font-mono text-lg tracking-widest"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="manage-code3" className="text-red-300 text-sm font-medium">Third Security Code</Label>
-                          <Input
-                            id="manage-code3"
-                            type="text"
-                            inputMode="numeric"
-                            maxLength={6}
-                            placeholder="000000"
-                            value={balanceAction.code3}
-                            onChange={(e) => setBalanceAction(prev => ({ 
-                              ...prev, 
-                              code3: e.target.value.replace(/\D/g, '').slice(0, 6) 
-                            }))}
-                            className="bg-gray-800 border-red-500 text-white placeholder:text-gray-400 text-center font-mono text-lg tracking-widest"
-                          />
-                        </div>
-                      </div>
-                      <div className="mt-4 p-3 bg-yellow-900/30 rounded-lg border border-yellow-600/50">
-                        <p className="text-yellow-200 text-xs">
-                          <strong>Security Note:</strong> Each security code must be exactly 6 digits. 
-                          All transactions are logged and monitored for security purposes.
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Quick Action Buttons */}
-                    <div className="bg-gray-700 p-5 rounded-xl border border-gray-600">
-                      <h3 className="text-white font-semibold mb-4">Quick Credit Amounts</h3>
-                      <div className="grid grid-cols-2 gap-3">
-                        {[100, 500, 1000, 5000, 10000, 50000].map((amount) => (
-                          <Button
-                            key={amount}
-                            variant="outline"
-                            size="sm"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              setBalanceAction(prev => ({ 
-                                ...prev, 
-                                amount: amount.toString(), 
-                                action: 'credit',
-                                reason: `Quick credit of $${amount.toLocaleString()}`
-                              }));
-                            }}
-                            className="bg-gray-800 border-emerald-600 text-emerald-400 hover:bg-emerald-900/30 hover:text-emerald-300 transition-colors cursor-pointer"
-                            style={{ pointerEvents: 'auto' }}
-                          >
-                            ${amount >= 1000 ? `${amount / 1000}K` : amount}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Execute Button */}
-                    <Button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleBalanceAction();
-                      }}
-                      disabled={!selectedUser || !balanceAction.amount || !balanceAction.reason || 
-                                balanceAction.code1.length !== 6 || balanceAction.code2.length !== 6 || 
-                                balanceAction.code3.length !== 6 || balanceActionMutation.isPending}
-                      className="w-full bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-bold py-4 text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                      style={{ pointerEvents: 'auto' }}
-                    >
-                      {balanceActionMutation.isPending ? (
-                        <div className="flex items-center justify-center">
-                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                          Processing Transaction...
-                        </div>
-                      ) : (
-                        <div className="flex items-center justify-center">
-                          <Shield className="mr-2 h-5 w-5" />
-                          Execute {balanceAction.action === 'credit' ? 'Credit' : 'Debit'} Transaction
-                        </div>
-                      )}
-                    </Button>
-                  </div>
+                          {/* User Details */}
+                          {user.firstName === "Kelly Ann" && user.lastName === "James" && (
+                            <div className="text-xs text-yellow-300 bg-yellow-900/20 p-2 rounded">
+                              📍 58 Benjamina Drive, Red Bank Plains, QLD, Australia
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
                 </div>
+
+                {/* Transaction Status */}
+                {balanceActionMutation.isPending && (
+                  <div className="mt-6 p-4 bg-blue-900/30 rounded-lg border border-blue-600/50">
+                    <div className="flex items-center">
+                      <div className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin mr-3"></div>
+                      <p className="text-blue-200">Processing transaction...</p>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
