@@ -42,8 +42,8 @@ export default function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`font-medium transition-colors duration-200 ${
-                    location === item.href
+                  className={`font-medium transition-colors duration-200 hover:scale-105 transform cursor-pointer ${
+                    location === item.href || (item.name === "Wallet" && location === "/dashboard")
                       ? "text-fw-blue border-b-2 border-fw-blue pb-1"
                       : "text-gray-700 hover:text-fw-blue"
                   }`}
@@ -109,7 +109,11 @@ export default function Header() {
                       key={item.name}
                       href={item.href}
                       onClick={() => setIsOpen(false)}
-                      className="text-lg font-medium text-gray-700 hover:text-fw-blue transition-colors"
+                      className={`text-lg font-medium transition-colors duration-200 hover:scale-105 transform cursor-pointer ${
+                        location === item.href || (item.name === "Wallet" && location === "/dashboard")
+                          ? "text-fw-blue font-bold"
+                          : "text-gray-700 hover:text-fw-blue"
+                      }`}
                     >
                       {item.name}
                     </Link>

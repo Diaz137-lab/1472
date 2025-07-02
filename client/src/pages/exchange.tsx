@@ -7,8 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowRightLeft } from "lucide-react";
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Exchange() {
+  const { toast } = useToast();
   const [fromAmount, setFromAmount] = useState("");
   const [fromCurrency, setFromCurrency] = useState("BTC");
   const [toCurrency, setToCurrency] = useState("ETH");
@@ -38,11 +40,42 @@ export default function Exchange() {
       "SOL-BTC": 0.0014,
       "ETH-SOL": 16.4,
       "SOL-ETH": 0.061,
+      "BTC-DOGE": 125000,
+      "DOGE-BTC": 0.000008,
+      "ETH-DOGE": 2880,
+      "DOGE-ETH": 0.000347,
+      "SOL-DOGE": 175.5,
+      "DOGE-SOL": 0.0057,
     };
     
     const rate = rates[`${fromCurrency}-${toCurrency}`] || 1;
     const result = (parseFloat(fromAmount) * rate).toFixed(6);
     setToAmount(result);
+  };
+
+  const handlePreviewSwap = () => {
+    if (!fromAmount || !toAmount) {
+      toast({
+        title: "Invalid Swap",
+        description: "Please enter an amount to swap.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (parseFloat(fromAmount) <= 0) {
+      toast({
+        title: "Invalid Amount",
+        description: "Amount must be greater than 0.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Swap Preview Ready",
+      description: `Swapping ${fromAmount} ${fromCurrency} for ${toAmount} ${toCurrency}`,
+    });
   };
 
   return (
@@ -142,7 +175,10 @@ export default function Exchange() {
                   </div>
                 </div>
 
-                <Button className="w-full bg-fw-blue hover:bg-blue-700">
+                <Button 
+                  onClick={handlePreviewSwap}
+                  className="w-full bg-fw-blue hover:bg-blue-700"
+                >
                   Preview Swap
                 </Button>
               </CardContent>

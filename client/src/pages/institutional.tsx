@@ -21,8 +21,10 @@ import {
   Clock
 } from "lucide-react";
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Institutional() {
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     company: "",
     name: "",
@@ -40,8 +42,34 @@ export default function Institutional() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log("Form submitted:", formData);
+    
+    // Validate required fields
+    if (!formData.company || !formData.name || !formData.email || !formData.message) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields (Company, Name, Email, Message).",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Simulate form submission
+    toast({
+      title: "Request Submitted Successfully",
+      description: "Our institutional team will contact you within 24 hours.",
+    });
+
+    // Reset form
+    setFormData({
+      company: "",
+      name: "",
+      email: "",
+      phone: "",
+      position: "",
+      assetsUnderManagement: "",
+      services: "",
+      message: ""
+    });
   };
 
   return (
