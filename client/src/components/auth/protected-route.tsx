@@ -13,7 +13,7 @@ export function AdminProtectedRoute({ children }: ProtectedRouteProps) {
 
   useEffect(() => {
     if (!isAdmin) {
-      setLocation("/admin-login");
+      setLocation("/admin");
     }
   }, [isAdmin, setLocation]);
 
@@ -30,7 +30,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      setLocation("/login");
+      setLocation("/auth/login");
     }
   }, [isAuthenticated, setLocation]);
 

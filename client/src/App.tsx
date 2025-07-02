@@ -27,6 +27,11 @@ function Router() {
       <Route path="/auth/login" component={Login} />
       <Route path="/auth/signup" component={Signup} />
       <Route path="/admin-login" component={AdminLogin} />
+      <Route path="/wallet">
+        <ProtectedRoute>
+          <Dashboard />
+        </ProtectedRoute>
+      </Route>
       <Route path="/dashboard">
         <ProtectedRoute>
           <Dashboard />

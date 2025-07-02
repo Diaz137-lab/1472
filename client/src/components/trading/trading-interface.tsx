@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 import { apiRequest } from "@/lib/queryClient";
 
 interface TradingInterfaceProps {
@@ -19,6 +20,7 @@ export default function TradingInterface({ selectedAsset = "BTC" }: TradingInter
   const [price, setPrice] = useState("");
   const [selectedSymbol, setSelectedSymbol] = useState(selectedAsset);
   const { toast } = useToast();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
 
   const tradeMutation = useMutation({
@@ -61,9 +63,17 @@ export default function TradingInterface({ selectedAsset = "BTC" }: TradingInter
       return;
     }
 
-    // Mock user ID - in real app this would come from auth context
+    if (!user?.id) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to make trades.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     tradeMutation.mutate({
-      userId: 1,
+      userId: user.id,
       type: tradeType,
       symbol: selectedSymbol,
       amount,
