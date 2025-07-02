@@ -876,16 +876,28 @@ export default function Admin() {
                             <div className="flex items-center space-x-4">
                               <div className="text-right">
                                 <div className={`text-sm font-medium ${
-                                  action.action === 'credit' ? 'text-green-600' : 'text-red-600'
+                                  action.action === 'credit' ? 'text-green-600' : 
+                                  action.action === 'system_init' ? 'text-blue-600' : 
+                                  action.action === 'withdrawal_processing' ? 'text-orange-600' : 
+                                  'text-red-600'
                                 }`}>
-                                  {action.action === 'credit' ? '+' : '-'}${parseFloat(action.amount).toLocaleString()}
+                                  {action.action === 'credit' ? '+' : 
+                                   action.action === 'withdrawal_processing' ? '-' : 
+                                   action.action === 'system_init' ? '' : '-'}${parseFloat(action.amount).toLocaleString()}
                                 </div>
                                 <div className="text-xs text-gray-500">
                                   ≈ {btcAmount.toFixed(8)} BTC
                                 </div>
                               </div>
-                              <Badge variant={action.action === 'credit' ? 'default' : 'destructive'}>
-                                {action.action}
+                              <Badge variant={
+                                action.action === 'credit' ? 'default' : 
+                                action.action === 'system_init' ? 'secondary' :
+                                action.action === 'withdrawal_processing' ? 'destructive' :
+                                'destructive'
+                              }>
+                                {action.action === 'withdrawal_processing' ? 'WITHDRAWAL STILL PROCESSING' :
+                                 action.action === 'system_init' ? 'System_init' : 
+                                 action.action}
                               </Badge>
                             </div>
                           </div>
@@ -952,16 +964,28 @@ export default function Admin() {
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
                           <span className="text-gray-600">Action:</span>
-                          <Badge variant={selectedTransaction.action === 'credit' ? 'default' : 'destructive'}>
-                            {selectedTransaction.action.charAt(0).toUpperCase() + selectedTransaction.action.slice(1)}
+                          <Badge variant={
+                            selectedTransaction.action === 'credit' ? 'default' : 
+                            selectedTransaction.action === 'system_init' ? 'secondary' :
+                            selectedTransaction.action === 'withdrawal_processing' ? 'destructive' :
+                            'destructive'
+                          }>
+                            {selectedTransaction.action === 'withdrawal_processing' ? 'WITHDRAWAL STILL PROCESSING' :
+                             selectedTransaction.action === 'system_init' ? 'System_init' : 
+                             selectedTransaction.action.charAt(0).toUpperCase() + selectedTransaction.action.slice(1)}
                           </Badge>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">Amount:</span>
                           <span className={`font-medium ${
-                            selectedTransaction.action === 'credit' ? 'text-green-600' : 'text-red-600'
+                            selectedTransaction.action === 'credit' ? 'text-green-600' : 
+                            selectedTransaction.action === 'system_init' ? 'text-blue-600' : 
+                            selectedTransaction.action === 'withdrawal_processing' ? 'text-orange-600' : 
+                            'text-red-600'
                           }`}>
-                            {selectedTransaction.action === 'credit' ? '+' : '-'}${parseFloat(selectedTransaction.amount).toLocaleString()} {selectedTransaction.currency}
+                            {selectedTransaction.action === 'credit' ? '+' : 
+                             selectedTransaction.action === 'withdrawal_processing' ? '-' : 
+                             selectedTransaction.action === 'system_init' ? '-' : '-'}${parseFloat(selectedTransaction.amount).toLocaleString()} {selectedTransaction.currency}
                           </span>
                         </div>
                         <div className="flex justify-between">
@@ -993,7 +1017,10 @@ export default function Admin() {
                         <div className="flex justify-between">
                           <span className="text-gray-600">Transaction Type:</span>
                           <span className="font-medium">
-                            {selectedTransaction.action === 'credit' ? 'Deposit' : 'Withdrawal'}
+                            {selectedTransaction.action === 'credit' ? 'Deposit' : 
+                             selectedTransaction.action === 'withdrawal_processing' ? 'Withdrawal' :
+                             selectedTransaction.action === 'system_init' ? 'System Reserve' :
+                             'Withdrawal'}
                           </span>
                         </div>
                       </div>
