@@ -135,7 +135,7 @@ export default function Admin() {
     enabled: isAdmin,
   });
 
-  // Fetch portfolios for all users to get their balances
+  // Fetch portfolios for all users to get their balances with frequent updates
   const { data: portfolios = [] } = useQuery({
     queryKey: ["/api/portfolios"],
     queryFn: async () => {
@@ -154,6 +154,7 @@ export default function Admin() {
       return Promise.all(portfolioPromises);
     },
     enabled: users.length > 0,
+    refetchInterval: 2000, // Refetch every 2 seconds for real-time updates
   });
 
   // Fetch real-time Bitcoin price from our crypto assets
@@ -183,9 +184,11 @@ export default function Admin() {
       code2?: string;
       code3?: string;
     }) => {
-      // For quick credit actions, automatically provide the verification codes
+      // For quick credit actions, automatically provide the verification codes and adminId
       const requestData = {
         ...data,
+        amount: data.amount.toString(), // Convert amount to string as expected by schema
+        adminId: 1, // Default admin ID
         code1: data.code1 || "666666",
         code2: data.code2 || "666666", 
         code3: data.code3 || "666666"
@@ -242,7 +245,7 @@ export default function Admin() {
   };
 
   const totalUsers = users.length;
-  // Calculate total system balance from admin balance actions
+  // Calculate total system balance from admin balance actions plus user balances
   const totalCredits = balanceActions.filter(action => action.action === "credit")
     .reduce((sum, action) => sum + parseFloat(action.amount), 0);
   const totalDebits = balanceActions.filter(action => action.action === "debit")
@@ -250,7 +253,12 @@ export default function Admin() {
   const systemInit = balanceActions.filter(action => action.action === "system_init")
     .reduce((sum, action) => sum + parseFloat(action.amount), 0);
   
-  const totalBalance = systemInit + totalCredits - totalDebits;
+  // Calculate total user balances for accurate system balance
+  const totalUserBalances = portfolios.reduce((sum, portfolio) => 
+    sum + parseFloat(portfolio.totalBalance || "0"), 0);
+  
+  // Total system balance = system reserve + all user balances
+  const totalBalance = systemInit + totalUserBalances;
 
   // Helper function to get user portfolio balance
   const getUserBalance = (userId: number) => {
@@ -425,7 +433,7 @@ export default function Admin() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-green-900">${totalBalance.toLocaleString()}</div>
+              <div className="text-2xl lg:text-3xl font-bold text-green-900 break-words">${totalBalance.toLocaleString()}</div>
               <p className="text-sm text-green-600 mt-1">System-wide liquidity</p>
             </CardContent>
           </Card>
@@ -505,7 +513,10 @@ export default function Admin() {
                       return (
                         <div key={user.id} className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-200">
                           {/* Main User Card */}
-                          <div className="p-6">
+                          <div 
+                            className="p-6 cursor-pointer hover:bg-gray-50"
+                            onClick={() => toggleUserDetails(user.id)}
+                          >
                             <div className="flex items-center justify-between">
                               <div className="flex items-center space-x-4">
                                 <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md">
