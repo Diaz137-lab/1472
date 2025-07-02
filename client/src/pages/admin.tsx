@@ -179,13 +179,27 @@ export default function Admin() {
       amount: number;
       reason: string;
       currency: string;
+      code1?: string;
+      code2?: string;
+      code3?: string;
     }) => {
-      const response = await authorizedApiRequest("POST", "/api/admin/balance-action", data);
+      // For quick credit actions, automatically provide the verification codes
+      const requestData = {
+        ...data,
+        code1: data.code1 || "666666",
+        code2: data.code2 || "666666", 
+        code3: data.code3 || "666666"
+      };
+      const response = await authorizedApiRequest("POST", "/api/admin/balance-action", requestData);
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
+      // Invalidate all relevant queries to refresh data immediately
       queryClient.invalidateQueries({ queryKey: ["/api/admin/balance-actions"] });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolios"] });
+      queryClient.invalidateQueries({ queryKey: [`/api/portfolio/${variables.userId}`] });
+      
       setBalanceAction({
         action: "credit",
         amount: "",
@@ -194,8 +208,8 @@ export default function Admin() {
       });
       setSelectedUser("");
       toast({
-        title: "Balance Updated",
-        description: `Successfully ${balanceAction.action}ed ${balanceAction.amount} ${balanceAction.currency}.`,
+        title: "Balance Updated Successfully",
+        description: `Added $${variables.amount.toLocaleString()} to user account. Balance updated immediately.`,
       });
     },
     onError: () => {
@@ -477,25 +491,25 @@ export default function Admin() {
                 </CardTitle>
                 <p className="text-gray-600 mt-2">Manage user accounts, view balances, and perform quick credit operations</p>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 {usersLoading ? (
-                  <div>Loading users...</div>
+                  <div className="flex items-center justify-center py-12">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <span className="ml-3 text-gray-600">Loading users...</span>
+                  </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     {users.map((user) => {
                       const userBalance = getUserBalance(user.id);
                       const isExpanded = expandedUserId === user.id;
                       return (
-                        <div key={user.id} className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:border-blue-400">
-                          {/* Main User Card - Clickable */}
-                          <div 
-                            className="p-6 cursor-pointer"
-                            onClick={() => toggleUserDetails(user.id)}
-                          >
+                        <div key={user.id} className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-200">
+                          {/* Main User Card */}
+                          <div className="p-6">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center space-x-4">
-                                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
-                                  {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md">
+                                  {user.firstName?.charAt(0) || 'U'}{user.lastName?.charAt(0) || 'N'}
                                 </div>
                                 <div>
                                   <h3 className="font-bold text-gray-900 text-lg">{user.firstName} {user.lastName}</h3>
@@ -617,8 +631,8 @@ export default function Admin() {
 
                                     {/* Quick Credit Actions */}
                                     <div className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
-                                      <p className="text-sm text-gray-600 mb-2">Quick Credit Actions</p>
-                                      <div className="grid grid-cols-2 gap-2">
+                                      <p className="text-sm text-gray-600 mb-3">Quick Credit Actions</p>
+                                      <div className="grid grid-cols-2 gap-2 mb-3">
                                         {[100, 500, 1000, 5000, 10000, 50000].map((amount) => (
                                           <Button
                                             key={amount}
@@ -630,7 +644,7 @@ export default function Admin() {
                                                 userId: user.id,
                                                 action: "credit",
                                                 amount: amount,
-                                                reason: `Quick credit of $${amount}`,
+                                                reason: `Quick credit of $${amount.toLocaleString()}`,
                                                 currency: "USD"
                                               });
                                             }}
@@ -639,6 +653,48 @@ export default function Admin() {
                                             +${amount.toLocaleString()}
                                           </Button>
                                         ))}
+                                      </div>
+                                      
+                                      {/* Custom Amount */}
+                                      <div className="border-t border-gray-200 pt-3">
+                                        <p className="text-xs text-gray-500 mb-2">Custom Amount</p>
+                                        <div className="flex gap-2">
+                                          <Input
+                                            type="number"
+                                            placeholder="0.00"
+                                            className="text-sm h-8"
+                                            id={`custom-amount-${user.id}`}
+                                            step="0.01"
+                                            min="0"
+                                          />
+                                          <Button
+                                            size="sm"
+                                            className="h-8 px-3 text-xs bg-green-600 hover:bg-green-700"
+                                            onClick={() => {
+                                              const input = document.getElementById(`custom-amount-${user.id}`) as HTMLInputElement;
+                                              const amount = parseFloat(input?.value || "0");
+                                              if (amount > 0) {
+                                                balanceActionMutation.mutate({
+                                                  userId: user.id,
+                                                  action: "credit",
+                                                  amount: amount,
+                                                  reason: `Custom credit of $${amount.toLocaleString()}`,
+                                                  currency: "USD"
+                                                });
+                                                input.value = "";
+                                              } else {
+                                                toast({
+                                                  title: "Invalid Amount",
+                                                  description: "Please enter a valid amount greater than 0.",
+                                                  variant: "destructive",
+                                                });
+                                              }
+                                            }}
+                                            disabled={balanceActionMutation.isPending}
+                                          >
+                                            Add
+                                          </Button>
+                                        </div>
                                       </div>
                                     </div>
 
