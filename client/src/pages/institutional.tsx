@@ -348,7 +348,7 @@ export default function Institutional() {
                   </div>
                   <div>
                     <p className="font-semibold">Phone</p>
-                    <p className="text-gray-600">+1 (555) 123-4567</p>
+                    <p className="text-gray-600">(573) 401-4160 • (940) 618-3710</p>
                   </div>
                 </div>
 
@@ -358,7 +358,7 @@ export default function Institutional() {
                   </div>
                   <div>
                     <p className="font-semibold">Email</p>
-                    <p className="text-gray-600">institutional@quotexwallet.com</p>
+                    <p className="text-gray-600">support.quotex@quotexes.online</p>
                   </div>
                 </div>
 
@@ -368,7 +368,7 @@ export default function Institutional() {
                   </div>
                   <div>
                     <p className="font-semibold">Office</p>
-                    <p className="text-gray-600">New York • London • Singapore</p>
+                    <p className="text-gray-600">8666 Nolan Loop, Belton, Texas 76513</p>
                   </div>
                 </div>
               </div>
