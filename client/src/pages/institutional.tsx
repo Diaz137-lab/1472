@@ -7,6 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import SmartAddressInput from "@/components/ui/smart-address-input";
+import BitcoinFormValidator from "@/components/ui/bitcoin-form-validator";
+import BitcoinPriceDisplay from "@/components/ui/bitcoin-price-display";
 import { 
   Building2, 
   Shield, 
@@ -18,7 +21,12 @@ import {
   CheckCircle,
   BarChart3,
   DollarSign,
-  Clock
+  Clock,
+  Bitcoin,
+  Coins,
+  TrendingDown,
+  Sparkles,
+  Star
 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -77,21 +85,69 @@ export default function Institutional() {
       <Header />
       
       {/* Hero Section */}
-      <section className="bg-fw-dark text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative bg-gradient-to-br from-fw-dark via-black to-bitcoin-dark text-white py-20 overflow-hidden">
+        {/* Floating Bitcoin animations */}
+        <div className="absolute inset-0 overflow-hidden">
+          <Bitcoin className="absolute top-20 left-10 w-8 h-8 text-bitcoin-orange/20 bitcoin-float" style={{animationDelay: '0s'}} />
+          <Coins className="absolute top-40 right-20 w-6 h-6 text-gold/30 bitcoin-float" style={{animationDelay: '1s'}} />
+          <Bitcoin className="absolute bottom-32 left-1/4 w-4 h-4 text-bitcoin-orange/15 bitcoin-float" style={{animationDelay: '2s'}} />
+          <Sparkles className="absolute top-60 right-1/3 w-5 h-5 text-gold/25 bitcoin-float" style={{animationDelay: '0.5s'}} />
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
-            <h1 className="text-5xl font-bold mb-6">Institutional</h1>
-            <h2 className="text-3xl font-semibold text-gray-300 mb-8">
-              High-touch crypto solutions for institutions
+            <div className="flex items-center justify-center space-x-4 mb-6">
+              <div className="p-3 bg-bitcoin-gradient rounded-2xl bitcoin-glow">
+                <Bitcoin className="w-12 h-12 text-white" />
+              </div>
+              <h1 className="text-6xl font-bold bg-gradient-to-r from-white via-bitcoin-orange to-gold bg-clip-text text-transparent">
+                Institutional
+              </h1>
+            </div>
+            
+            <h2 className="text-4xl font-semibold text-gray-300 mb-8">
+              High-touch <span className="text-bitcoin-orange">Bitcoin</span> solutions for institutions
             </h2>
-            <p className="text-xl text-gray-400 mb-12 max-w-3xl mx-auto">
-              Spot OTC, derivatives, structured products, and margin lending designed for institutional-grade requirements.
+            
+            <p className="text-xl text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed">
+              Professional Bitcoin trading, custody, and financial services designed for institutional-grade requirements. 
+              Powered by cutting-edge blockchain technology.
             </p>
-            <img
-              src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&h=400"
-              alt="Financial technology and institutional services"
-              className="rounded-2xl shadow-2xl w-full h-64 object-cover mb-8"
-            />
+
+            {/* Live Bitcoin price ticker */}
+            <div className="flex items-center justify-center space-x-8 mb-12">
+              <div className="bg-bitcoin-gradient/20 backdrop-blur-sm rounded-xl px-8 py-4 border border-bitcoin-orange/30 shadow-lg">
+                <BitcoinPriceDisplay 
+                  className="text-white" 
+                  showDetails={true}
+                  animated={true}
+                />
+              </div>
+            </div>
+            
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl mb-8 bitcoin-glow">
+              <img
+                src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=400"
+                alt="Bitcoin and institutional trading technology"
+                className="w-full h-64 object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-bitcoin-orange/20 to-gold/20"></div>
+            </div>
+            
+            <div className="flex items-center justify-center space-x-6">
+              <Badge className="bg-bitcoin-gradient text-white border-0 px-4 py-2">
+                <Star className="w-4 h-4 mr-2" />
+                Bitcoin Native
+              </Badge>
+              <Badge className="bg-gold/20 text-gold border-gold/30 px-4 py-2">
+                <Shield className="w-4 h-4 mr-2" />
+                Institutional Grade
+              </Badge>
+              <Badge className="bg-green-500/20 text-green-400 border-green-500/30 px-4 py-2">
+                <CheckCircle className="w-4 h-4 mr-2" />
+                24/7 Trading
+              </Badge>
+            </div>
           </div>
         </div>
       </section>
@@ -107,48 +163,48 @@ export default function Institutional() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="text-center p-6">
+            <Card className="text-center p-6 hover:shadow-xl transition-all duration-300 border-bitcoin-orange/20 hover:border-bitcoin-orange/40 bitcoin-glow">
               <CardHeader>
-                <div className="w-16 h-16 bg-fw-light-blue rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <BarChart3 className="text-fw-blue text-2xl" />
+                <div className="w-16 h-16 bg-bitcoin-gradient rounded-2xl flex items-center justify-center mx-auto mb-4 bitcoin-float">
+                  <Bitcoin className="text-white text-2xl" />
                 </div>
-                <CardTitle className="text-xl">OTC Trading</CardTitle>
+                <CardTitle className="text-xl text-gray-900">Bitcoin OTC Trading</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 mb-4">
-                  Large block trades with minimal market impact. Access deep liquidity pools for institutional-size transactions.
+                  Large Bitcoin block trades with minimal market impact. Access deep liquidity pools for institutional-size Bitcoin transactions.
                 </p>
-                <Badge variant="secondary">$100M+ daily volume</Badge>
+                <Badge className="bg-bitcoin-gradient text-white border-0">$100M+ daily volume</Badge>
               </CardContent>
             </Card>
 
-            <Card className="text-center p-6">
+            <Card className="text-center p-6 hover:shadow-xl transition-all duration-300 border-gold/20 hover:border-gold/40">
               <CardHeader>
-                <div className="w-16 h-16 bg-fw-light-blue rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <TrendingUp className="text-fw-blue text-2xl" />
+                <div className="w-16 h-16 bg-gradient-to-br from-gold to-yellow-500 rounded-2xl flex items-center justify-center mx-auto mb-4 bitcoin-float" style={{animationDelay: '0.2s'}}>
+                  <TrendingUp className="text-white text-2xl" />
                 </div>
-                <CardTitle className="text-xl">Derivatives</CardTitle>
+                <CardTitle className="text-xl text-gray-900">Bitcoin Derivatives</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 mb-4">
-                  Futures, options, and structured products for sophisticated hedging and trading strategies.
+                  Bitcoin futures, options, and structured products for sophisticated hedging and trading strategies in the crypto market.
                 </p>
-                <Badge variant="secondary">Multi-asset exposure</Badge>
+                <Badge className="bg-gold text-white border-0">Multi-crypto exposure</Badge>
               </CardContent>
             </Card>
 
-            <Card className="text-center p-6">
+            <Card className="text-center p-6 hover:shadow-xl transition-all duration-300 border-green-500/20 hover:border-green-500/40">
               <CardHeader>
-                <div className="w-16 h-16 bg-fw-light-blue rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <DollarSign className="text-fw-blue text-2xl" />
+                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 bitcoin-float" style={{animationDelay: '0.4s'}}>
+                  <Coins className="text-white text-2xl" />
                 </div>
-                <CardTitle className="text-xl">Lending</CardTitle>
+                <CardTitle className="text-xl text-gray-900">Crypto Lending</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 mb-4">
-                  Margin lending and borrowing services with competitive rates and flexible terms.
+                  Bitcoin and crypto margin lending services with competitive rates and flexible terms backed by digital assets.
                 </p>
-                <Badge variant="secondary">Up to 10x leverage</Badge>
+                <Badge className="bg-green-500 text-white border-0">Up to 10x leverage</Badge>
               </CardContent>
             </Card>
 
@@ -374,114 +430,170 @@ export default function Institutional() {
               </div>
             </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Request Information</CardTitle>
+            <Card className="border-bitcoin-orange/20 shadow-xl">
+              <CardHeader className="bg-bitcoin-gradient/5">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-bitcoin-gradient rounded-lg">
+                    <Bitcoin className="w-6 h-6 text-white" />
+                  </div>
+                  <CardTitle className="text-2xl">Request Bitcoin Institutional Services</CardTitle>
+                </div>
+                <p className="text-gray-600">Get started with our premium Bitcoin trading and custody solutions</p>
               </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="company">Company</Label>
-                      <Input
-                        id="company"
-                        placeholder="Company name"
-                        value={formData.company}
-                        onChange={(e) => handleInputChange("company", e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Name</Label>
-                      <Input
-                        id="name"
-                        placeholder="Your name"
-                        value={formData.name}
-                        onChange={(e) => handleInputChange("name", e.target.value)}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="your@email.com"
-                        value={formData.email}
-                        onChange={(e) => handleInputChange("email", e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">Phone</Label>
-                      <Input
-                        id="phone"
-                        placeholder="+1 (555) 123-4567"
-                        value={formData.phone}
-                        onChange={(e) => handleInputChange("phone", e.target.value)}
-                      />
-                    </div>
-                  </div>
-
+              <CardContent className="p-6">
+                {/* Enhanced Contact Information */}
+                <div className="grid grid-cols-2 gap-6 mb-6">
                   <div className="space-y-2">
-                    <Label htmlFor="position">Position</Label>
+                    <Label htmlFor="company" className="flex items-center space-x-2">
+                      <Building2 className="w-4 h-4 text-bitcoin-orange" />
+                      <span>Company Name</span>
+                      <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="company"
+                      placeholder="Your company name..."
+                      value={formData.company}
+                      onChange={(e) => handleInputChange("company", e.target.value)}
+                      required
+                      className="border-bitcoin-orange/30 focus:border-bitcoin-orange"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="flex items-center space-x-2">
+                      <Users className="w-4 h-4 text-bitcoin-orange" />
+                      <span>Full Name</span>
+                      <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="name"
+                      placeholder="Your full name..."
+                      value={formData.name}
+                      onChange={(e) => handleInputChange("name", e.target.value)}
+                      required
+                      className="border-bitcoin-orange/30 focus:border-bitcoin-orange"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-6 mb-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="flex items-center space-x-2">
+                      <Mail className="w-4 h-4 text-bitcoin-orange" />
+                      <span>Email Address</span>
+                      <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="your@email.com"
+                      value={formData.email}
+                      onChange={(e) => handleInputChange("email", e.target.value)}
+                      required
+                      className="border-bitcoin-orange/30 focus:border-bitcoin-orange"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone" className="flex items-center space-x-2">
+                      <Phone className="w-4 h-4 text-bitcoin-orange" />
+                      <span>Phone Number</span>
+                    </Label>
+                    <Input
+                      id="phone"
+                      placeholder="(555) 123-4567"
+                      value={formData.phone}
+                      onChange={(e) => handleInputChange("phone", e.target.value)}
+                      className="border-bitcoin-orange/30 focus:border-bitcoin-orange"
+                    />
+                  </div>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-6 mt-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="position" className="flex items-center space-x-2">
+                      <Building2 className="w-4 h-4 text-bitcoin-orange" />
+                      <span>Position/Title</span>
+                    </Label>
                     <Input
                       id="position"
-                      placeholder="Your position/title"
+                      placeholder="CEO, CTO, Fund Manager, etc."
                       value={formData.position}
                       onChange={(e) => handleInputChange("position", e.target.value)}
+                      className="border-bitcoin-orange/30 focus:border-bitcoin-orange"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="aum">Assets Under Management</Label>
+                    <Label htmlFor="aum" className="flex items-center space-x-2">
+                      <DollarSign className="w-4 h-4 text-bitcoin-orange" />
+                      <span>Assets Under Management</span>
+                    </Label>
                     <Select onValueChange={(value) => handleInputChange("assetsUnderManagement", value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select range" />
+                      <SelectTrigger className="border-bitcoin-orange/30 focus:border-bitcoin-orange">
+                        <SelectValue placeholder="Select your AUM range" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="10m-50m">$10M - $50M</SelectItem>
                         <SelectItem value="50m-100m">$50M - $100M</SelectItem>
                         <SelectItem value="100m-500m">$100M - $500M</SelectItem>
                         <SelectItem value="500m-1b">$500M - $1B</SelectItem>
-                        <SelectItem value="1b+">$1B+</SelectItem>
+                        <SelectItem value="1b+">$1B+ (Whale Status 🐋)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="services">Services of Interest</Label>
+                    <Label htmlFor="services" className="flex items-center space-x-2">
+                      <Bitcoin className="w-4 h-4 text-bitcoin-orange" />
+                      <span>Bitcoin Services of Interest</span>
+                    </Label>
                     <Select onValueChange={(value) => handleInputChange("services", value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select services" />
+                      <SelectTrigger className="border-bitcoin-orange/30 focus:border-bitcoin-orange">
+                        <SelectValue placeholder="Select Bitcoin services" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="otc">OTC Trading</SelectItem>
-                        <SelectItem value="derivatives">Derivatives</SelectItem>
-                        <SelectItem value="lending">Lending</SelectItem>
-                        <SelectItem value="custody">Custody</SelectItem>
-                        <SelectItem value="prime">Prime Services</SelectItem>
-                        <SelectItem value="all">All Services</SelectItem>
+                        <SelectItem value="otc">Bitcoin OTC Trading</SelectItem>
+                        <SelectItem value="derivatives">Bitcoin Derivatives</SelectItem>
+                        <SelectItem value="lending">Bitcoin Lending</SelectItem>
+                        <SelectItem value="custody">Bitcoin Custody</SelectItem>
+                        <SelectItem value="prime">Bitcoin Prime Services</SelectItem>
+                        <SelectItem value="all">All Bitcoin Services</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="message">Message</Label>
+                    <Label htmlFor="message" className="flex items-center space-x-2">
+                      <Mail className="w-4 h-4 text-bitcoin-orange" />
+                      <span>Message</span>
+                      <span className="text-red-500">*</span>
+                    </Label>
                     <Textarea
                       id="message"
-                      placeholder="Tell us about your requirements..."
+                      placeholder="Tell us about your Bitcoin trading requirements, expected volume, and institutional needs..."
                       value={formData.message}
                       onChange={(e) => handleInputChange("message", e.target.value)}
                       rows={4}
+                      required
+                      className="border-bitcoin-orange/30 focus:border-bitcoin-orange resize-none"
                     />
                   </div>
 
-                  <Button type="submit" className="w-full bg-fw-blue hover:bg-blue-700">
-                    Submit Request
+                  <div className="bg-bitcoin-gradient/10 p-4 rounded-lg border border-bitcoin-orange/20 mb-6">
+                    <div className="flex items-center space-x-3">
+                      <Bitcoin className="w-6 h-6 text-bitcoin-orange bitcoin-float" />
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Bitcoin-First Approach</h4>
+                        <p className="text-sm text-gray-600">Our institutional services are designed specifically for Bitcoin trading and custody with enterprise-grade security.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-bitcoin-gradient hover:opacity-90 text-white font-semibold py-3 text-lg bitcoin-glow transition-all duration-300"
+                  >
+                    <Bitcoin className="w-5 h-5 mr-2" />
+                    Submit Bitcoin Service Request
                   </Button>
                 </form>
               </CardContent>

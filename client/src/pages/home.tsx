@@ -24,7 +24,9 @@ import {
   Globe,
   Zap,
   MessageCircle,
-  Link as LinkIcon
+  Link as LinkIcon,
+  Bitcoin,
+  Coins
 } from "lucide-react";
 
 export default function Home() {

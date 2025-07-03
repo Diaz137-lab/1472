@@ -24,12 +24,17 @@
   --ring: hsl(20, 14.3%, 4.1%);
   --radius: 0.5rem;
   
-  /* QuotexWallet custom colors */
+  /* QuotexWallet Bitcoin-themed colors */
   --fw-blue: hsl(220, 91%, 61%);
   --fw-light-blue: hsl(217, 91%, 95%);
   --fw-dark: hsl(220, 13%, 7%);
   --fw-success: hsl(153, 100%, 42%);
   --fw-warning: hsl(38, 92%, 50%);
+  --bitcoin-orange: hsl(30, 100%, 50%);
+  --bitcoin-light: hsl(30, 100%, 90%);
+  --bitcoin-dark: hsl(30, 100%, 20%);
+  --gold: hsl(51, 100%, 50%);
+  --gold-light: hsl(51, 100%, 90%);
 }
 
 .dark {
@@ -111,5 +116,73 @@
   
   .text-fw-warning {
     color: var(--fw-warning);
+  }
+
+  /* Bitcoin-themed utilities */
+  .bg-bitcoin-orange {
+    background-color: var(--bitcoin-orange);
+  }
+  
+  .text-bitcoin-orange {
+    color: var(--bitcoin-orange);
+  }
+  
+  .bg-bitcoin-light {
+    background-color: var(--bitcoin-light);
+  }
+  
+  .bg-bitcoin-dark {
+    background-color: var(--bitcoin-dark);
+  }
+  
+  .bg-gold {
+    background-color: var(--gold);
+  }
+  
+  .text-gold {
+    color: var(--gold);
+  }
+  
+  .bg-gold-light {
+    background-color: var(--gold-light);
+  }
+
+  /* Bitcoin gradient backgrounds */
+  .bg-bitcoin-gradient {
+    background: linear-gradient(135deg, var(--bitcoin-orange) 0%, var(--gold) 100%);
+  }
+  
+  .bg-bitcoin-radial {
+    background: radial-gradient(circle at center, var(--bitcoin-orange) 0%, var(--bitcoin-dark) 100%);
+  }
+
+  /* Floating animations for Bitcoin elements */
+  .bitcoin-float {
+    animation: bitcoin-float 3s ease-in-out infinite;
+  }
+  
+  @keyframes bitcoin-float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+  }
+
+  /* Glowing effect for important elements */
+  .bitcoin-glow {
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.3);
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .bitcoin-glow:hover {
+    box-shadow: 0 0 30px rgba(255, 165, 0, 0.5);
+  }
+
+  /* Price ticker animation */
+  .price-ticker {
+    animation: price-pulse 2s ease-in-out infinite;
+  }
+  
+  @keyframes price-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; transform: scale(1.02); }
   }
 }
