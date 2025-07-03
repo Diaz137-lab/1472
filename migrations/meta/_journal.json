@@ -8,6 +8,13 @@
       "when": 1751356068453,
       "tag": "0000_lucky_the_renegades",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1751507374637,
+      "tag": "0001_optimal_pretty_boy",
+      "breakpoints": true
     }
   ]
 }
