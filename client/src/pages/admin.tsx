@@ -326,7 +326,7 @@ export default function Admin() {
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />
-        <Dialog open={showAdminLogin} onOpenChange={() => {}}>
+        <Dialog open={showAdminLogin} onOpenChange={setShowAdminLogin}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <div className="flex justify-center mb-4">

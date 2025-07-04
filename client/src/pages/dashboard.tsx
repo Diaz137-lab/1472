@@ -4,33 +4,52 @@ import PriceChart from "@/components/crypto/price-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import { TrendingUp, DollarSign, Activity, CreditCard } from "lucide-react";
+import { TrendingUp, DollarSign, Activity, CreditCard, Bitcoin } from "lucide-react";
 import { useBitcoinConversion } from "@/hooks/use-bitcoin-price";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/use-auth";
 
-// Universal Bitcoin Display Component for Dashboard
+// Enhanced Bitcoin Display Component for Dashboard
 function DashboardBitcoinDisplay({ usdAmount }: { usdAmount: number }) {
   const { data: conversion, isLoading } = useBitcoinConversion(usdAmount);
 
   if (isLoading || !conversion) {
     return (
       <div className="animate-pulse">
-        <div className="h-3 bg-gray-300 rounded w-20 mt-1"></div>
+        <div className="h-6 bg-orange-200 rounded w-32 mb-2"></div>
+        <div className="h-4 bg-gray-200 rounded w-24"></div>
       </div>
     );
   }
 
   return (
-    <p className="text-xs text-orange-600 font-medium mt-1">
-      ≈ {conversion.formattedBtc}
-    </p>
+    <div>
+      <div className="text-2xl font-bold text-orange-600 mb-1">
+        ₿ {conversion.formattedBtc}
+      </div>
+      <p className="text-sm text-gray-600">
+        @ ${conversion.btcPrice.toLocaleString()} per BTC
+      </p>
+      <div className={`text-xs font-medium ${conversion.change24h >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+        {conversion.change24h >= 0 ? '+' : ''}{conversion.change24h.toFixed(2)}% (24h)
+      </div>
+    </div>
   );
 }
 
 export default function Dashboard() {
-  // Mock user data - in real app this would come from API
-  const portfolioValue = 85000;
-  const dailyChange = 1250;
-  const dailyChangePercent = 1.5;
+  const { user } = useAuth();
+  
+  // Fetch real portfolio data
+  const { data: portfolio, isLoading: portfolioLoading } = useQuery({
+    queryKey: ['portfolio', user?.id],
+    queryFn: () => fetch(`/api/portfolio/${user?.id}`).then(res => res.json()),
+    enabled: !!user?.id,
+  });
+
+  const portfolioValue = portfolio ? parseFloat(portfolio.totalBalance) : 0;
+  const dailyChange = 1250; // This would come from transaction history analysis
+  const dailyChangePercent = portfolioValue > 0 ? (dailyChange / portfolioValue) * 100 : 0;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -42,19 +61,53 @@ export default function Dashboard() {
           <p className="text-gray-600">Welcome back! Here's your portfolio overview.</p>
         </div>
 
-        {/* Portfolio Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Portfolio Value</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
+        {/* Enhanced Bitcoin Portfolio Overview */}
+        <div className="mb-8">
+          <Card className="bg-gradient-to-br from-orange-50 to-yellow-50 border-orange-200">
+            <CardHeader>
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-yellow-600 rounded-full flex items-center justify-center">
+                  <Bitcoin className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl font-bold text-gray-900">
+                    {user?.firstName} {user?.lastName}'s Portfolio
+                  </CardTitle>
+                  <p className="text-sm text-gray-600">Bitcoin-focused digital assets</p>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">${portfolioValue.toLocaleString()}</div>
-              <DashboardBitcoinDisplay usdAmount={portfolioValue} />
-              <p className="text-xs text-muted-foreground">
-                +${dailyChange.toLocaleString()} ({dailyChangePercent}%) today
-              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 mb-2">Total USD Value</p>
+                  <div className="text-4xl font-bold text-gray-900 mb-2">
+                    ${portfolioValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </div>
+                  <p className="text-sm text-green-600 font-medium">
+                    +${dailyChange.toLocaleString()} ({dailyChangePercent.toFixed(2)}%) today
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-orange-600 mb-2">Bitcoin Equivalent</p>
+                  <DashboardBitcoinDisplay usdAmount={portfolioValue} />
+                  <p className="text-xs text-gray-500 mt-2">Live market conversion</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Portfolio Overview Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <Card className="hover:shadow-lg transition-shadow duration-300">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Portfolio Value</CardTitle>
+              <DollarSign className="h-4 w-4 text-blue-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-900">${portfolioValue.toLocaleString()}</div>
+              <p className="text-xs text-gray-500 mt-1">Total account balance</p>
             </CardContent>
           </Card>
 

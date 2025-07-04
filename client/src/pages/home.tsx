@@ -109,11 +109,18 @@ export default function Home() {
                   <p className="text-gray-600">Use dapps, collect NFTs, and unlock the power of web3.</p>
                 </div>
               </div>
-              <Link href="/auth/signup">
-                <Button className="bg-fw-blue text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
-                  Get started
-                </Button>
-              </Link>
+              <div className="flex space-x-4">
+                <Link href="/dashboard">
+                  <Button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg transform hover:scale-105 font-semibold">
+                    Open Wallet
+                  </Button>
+                </Link>
+                <Link href="/auth/signup">
+                  <Button variant="outline" className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-3 rounded-lg transition-all duration-300 font-semibold">
+                    Get Started
+                  </Button>
+                </Link>
+              </div>
             </div>
             <div className="relative">
               <img
@@ -180,11 +187,18 @@ export default function Home() {
                   <p className="text-gray-600">Integrated margin trading tools for advanced strategies.</p>
                 </div>
               </div>
-              <Link href="/trading">
-                <Button className="bg-fw-blue text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
-                  Trade Now
-                </Button>
-              </Link>
+              <div className="flex space-x-4">
+                <Link href="/exchange">
+                  <Button className="bg-gradient-to-r from-green-600 to-blue-600 text-white px-8 py-3 rounded-lg hover:from-green-700 hover:to-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 font-semibold">
+                    Start Trading
+                  </Button>
+                </Link>
+                <Link href="/trading">
+                  <Button variant="outline" className="border-2 border-green-600 text-green-600 hover:bg-green-50 px-8 py-3 rounded-lg transition-all duration-300 font-semibold">
+                    View Markets
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -204,11 +218,16 @@ export default function Home() {
               alt="Financial technology and institutional services"
               className="rounded-2xl shadow-2xl w-full h-64 object-cover mb-8"
             />
-            <Link href="/institutional">
-              <Button className="bg-white text-fw-dark px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors font-semibold">
-                Become a client
+            <div className="flex space-x-4 justify-center">
+              <Link href="/institutional">
+                <Button className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-300 shadow-lg transform hover:scale-105 font-semibold">
+                  Become a Client
+                </Button>
+              </Link>
+              <Button variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-fw-dark px-8 py-3 rounded-lg transition-all duration-300 font-semibold">
+                Learn More
               </Button>
-            </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -256,11 +275,18 @@ export default function Home() {
               alt="Investment charts and graphs showcase"
               className="rounded-2xl shadow-2xl w-full h-80 object-cover mb-8"
             />
-            <Link href="/explorer">
-              <Button className="bg-fw-blue text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
-                Explore now
-              </Button>
-            </Link>
+            <div className="flex space-x-4 justify-center">
+              <Link href="/explorer">
+                <Button className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-8 py-3 rounded-lg hover:from-orange-700 hover:to-red-700 transition-all duration-300 shadow-lg transform hover:scale-105 font-semibold">
+                  Start Exploring
+                </Button>
+              </Link>
+              <Link href="/trading">
+                <Button variant="outline" className="border-2 border-orange-600 text-orange-600 hover:bg-orange-50 px-8 py-3 rounded-lg transition-all duration-300 font-semibold">
+                  View Charts
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

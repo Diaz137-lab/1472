@@ -11,10 +11,10 @@ export default function Header() {
   const { isAuthenticated, isAdmin, user, admin, logout, adminLogout } = useAuth();
 
   const navigation = [
-    { name: "Wallet", href: "/dashboard" },
-    { name: "Exchange", href: "/exchange" },
-    { name: "Institutional", href: "/institutional" },
-    { name: "Explore", href: "/explorer" },
+    { name: "Wallet", href: "/dashboard", description: "Manage your portfolio" },
+    { name: "Exchange", href: "/exchange", description: "Buy & sell crypto" },
+    { name: "Institutional", href: "/institutional", description: "Enterprise solutions" },
+    { name: "Explore", href: "/explorer", description: "Discover markets" },
   ];
 
   const handleLogout = () => {
@@ -37,19 +37,25 @@ export default function Header() {
                 </h1>
               </Link>
             </div>
-            <nav className="hidden md:ml-12 md:flex md:space-x-10">
+            <nav className="hidden md:ml-12 md:flex md:space-x-8">
               {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`font-medium transition-colors duration-200 hover:scale-105 transform cursor-pointer ${
-                    location === item.href || (item.name === "Wallet" && location === "/dashboard")
-                      ? "text-fw-blue border-b-2 border-fw-blue pb-1"
-                      : "text-gray-700 hover:text-fw-blue"
-                  }`}
-                >
-                  {item.name}
-                </Link>
+                <div key={item.name} className="group relative">
+                  <Link
+                    href={item.href}
+                    className={`font-semibold transition-all duration-300 hover:scale-105 transform cursor-pointer px-4 py-2 rounded-lg ${
+                      location === item.href || (item.name === "Wallet" && location === "/dashboard")
+                        ? "text-white bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg"
+                        : "text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-500 hover:shadow-md"
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                    <div className="bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                      {item.description}
+                    </div>
+                  </div>
+                </div>
               ))}
               {isAuthenticated && (
                 <>
