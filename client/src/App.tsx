@@ -37,21 +37,13 @@ function Router() {
           <Dashboard />
         </ProtectedRoute>
       </Route>
-      <Route path="/trading">
-        <ProtectedRoute>
-          <Trading />
-        </ProtectedRoute>
-      </Route>
+      <Route path="/trading" component={Trading} />
       <Route path="/portfolio">
         <ProtectedRoute>
           <Portfolio />
         </ProtectedRoute>
       </Route>
-      <Route path="/exchange">
-        <ProtectedRoute>
-          <Exchange />
-        </ProtectedRoute>
-      </Route>
+      <Route path="/exchange" component={Exchange} />
       <Route path="/admin" component={Admin} />
       <Route path="/admin-console" component={Admin} />
       <Route component={NotFound} />
