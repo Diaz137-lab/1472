@@ -24,6 +24,10 @@ import About from "@/pages/about";
 import Careers from "@/pages/careers";
 import Press from "@/pages/press";
 import Blog from "@/pages/blog";
+import Help from "@/pages/help";
+import Contact from "@/pages/contact";
+import Status from "@/pages/status";
+import Security from "@/pages/security";
 
 function Router() {
   return (
@@ -55,6 +59,10 @@ function Router() {
       <Route path="/careers" component={Careers} />
       <Route path="/press" component={Press} />
       <Route path="/blog" component={Blog} />
+      <Route path="/help" component={Help} />
+      <Route path="/contact" component={Contact} />
+      <Route path="/status" component={Status} />
+      <Route path="/security" component={Security} />
       <Route component={NotFound} />
     </Switch>
   );

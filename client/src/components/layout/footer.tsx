@@ -64,24 +64,24 @@ export default function Footer() {
             <h4 className="text-lg font-semibold mb-4">Support</h4>
             <ul className="space-y-2 text-gray-400">
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link href="/help" className="hover:text-white transition-colors">
                   Help Center
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link href="/contact" className="hover:text-white transition-colors">
                   Contact
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link href="/status" className="hover:text-white transition-colors">
                   Status
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link href="/security" className="hover:text-white transition-colors">
                   Security
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
