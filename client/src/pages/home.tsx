@@ -33,82 +33,114 @@ export default function Home() {
   const [email, setEmail] = useState("");
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Professional Bitcoin-themed Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-20 left-20 w-32 h-32 bg-bitcoin-orange rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute top-40 right-32 w-24 h-24 bg-gold rounded-full blur-2xl animate-pulse delay-1000"></div>
+          <div className="absolute bottom-32 left-1/4 w-28 h-28 bg-blue-500 rounded-full blur-3xl animate-pulse delay-2000"></div>
+          <div className="absolute bottom-20 right-20 w-36 h-36 bg-purple-500 rounded-full blur-3xl animate-pulse delay-3000"></div>
+          <div className="absolute top-60 left-1/2 w-20 h-20 bg-green-500 rounded-full blur-2xl animate-pulse delay-4000"></div>
+        </div>
+        {/* Animated Bitcoin Icons */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-1/4 left-1/4 text-bitcoin-orange/20 bitcoin-float">
+            <Bitcoin size={48} />
+          </div>
+          <div className="absolute top-1/3 right-1/3 text-gold/20 bitcoin-float" style={{ animationDelay: '1s' }}>
+            <Bitcoin size={36} />
+          </div>
+          <div className="absolute bottom-1/4 left-1/3 text-blue-400/20 bitcoin-float" style={{ animationDelay: '2s' }}>
+            <Bitcoin size={42} />
+          </div>
+          <div className="absolute top-1/2 right-1/4 text-purple-400/20 bitcoin-float" style={{ animationDelay: '3s' }}>
+            <Coins size={40} />
+          </div>
+        </div>
+        {/* Quotex Logo Pattern */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-5">
+          <div className="text-9xl font-bold text-white transform rotate-12">Q</div>
+        </div>
+      </div>
+      
+      <div className="relative z-10">
+        <Header />
 
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-fw-light-blue to-white py-20">
+        {/* Hero Section */}
+        <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-            Be early to the future<br />of finance
+          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+            Be early to the future<br />of <span className="text-bitcoin-orange">finance</span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+          <p className="text-xl text-white/80 mb-8 max-w-3xl mx-auto">
             Buy Bitcoin, Ethereum, and other leading cryptocurrencies on a platform trusted by millions.
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-12">
             <Input
               type="email"
               placeholder="Your email address"
-              className="px-6 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-fw-blue min-w-80"
+              className="px-6 py-3 rounded-lg bg-white/10 border border-white/20 focus:outline-none focus:ring-2 focus:ring-bitcoin-orange min-w-80 text-white placeholder-white/60 backdrop-blur-md"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             <Link href="/auth/signup">
-              <Button className="bg-fw-blue text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+              <Button className="bg-gradient-to-r from-bitcoin-orange to-gold text-white px-8 py-3 rounded-lg hover:from-gold hover:to-bitcoin-orange transition-all duration-300 font-semibold bitcoin-glow">
                 Sign Up
               </Button>
             </Link>
           </div>
         </div>
-      </section>
+        </section>
 
-      <PriceTicker />
+        <PriceTicker />
 
-      {/* Create Account Section */}
-      <section id="create-account" className="py-20 bg-gradient-to-br from-blue-50 to-white">
+        {/* Create Account Section */}
+        <section id="create-account" className="py-20 bg-black/20 backdrop-blur-md">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="bg-white rounded-3xl shadow-xl p-12 border border-blue-100">
+          <div className="bg-white/10 backdrop-blur-md rounded-3xl shadow-xl p-12 border border-white/20 bitcoin-glow">
             <div className="flex justify-center mb-8">
-              <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
+              <div className="w-20 h-20 bg-gradient-to-r from-bitcoin-orange to-gold rounded-full flex items-center justify-center bitcoin-glow">
                 <Users className="text-white text-3xl" />
               </div>
             </div>
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Create Your Account</h2>
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+            <h2 className="text-4xl font-bold text-white mb-4">Create Your Account</h2>
+            <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
               Join millions of users who trust QuotexWallet with their cryptocurrency investments. Get started in just minutes.
             </p>
             <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
               <Link href="/auth/signup">
-                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-4 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg transform hover:scale-105 font-semibold text-lg">
+                <Button className="bg-gradient-to-r from-bitcoin-orange to-gold text-white px-10 py-4 rounded-lg hover:from-gold hover:to-bitcoin-orange transition-all duration-300 shadow-lg transform hover:scale-105 font-semibold text-lg bitcoin-glow">
                   Create Account
                 </Button>
               </Link>
               <Link href="/auth/login">
-                <Button variant="outline" className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-10 py-4 rounded-lg transition-all duration-300 font-semibold text-lg">
+                <Button variant="outline" className="border-2 border-white/30 text-white hover:bg-white/10 px-10 py-4 rounded-lg transition-all duration-300 font-semibold text-lg backdrop-blur-md">
                   Sign In
                 </Button>
               </Link>
             </div>
             <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
               <div>
-                <CheckCircle className="text-green-500 mx-auto mb-2" size={24} />
-                <p className="text-sm text-gray-600">Secure & Trusted</p>
+                <CheckCircle className="text-green-400 mx-auto mb-2" size={24} />
+                <p className="text-sm text-white/70">Secure & Trusted</p>
               </div>
               <div>
-                <CheckCircle className="text-green-500 mx-auto mb-2" size={24} />
-                <p className="text-sm text-gray-600">Easy Setup</p>
+                <CheckCircle className="text-green-400 mx-auto mb-2" size={24} />
+                <p className="text-sm text-white/70">Easy Setup</p>
               </div>
               <div>
-                <CheckCircle className="text-green-500 mx-auto mb-2" size={24} />
-                <p className="text-sm text-gray-600">24/7 Support</p>
+                <CheckCircle className="text-green-400 mx-auto mb-2" size={24} />
+                <p className="text-sm text-white/70">24/7 Support</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Wallet Section */}
-      <section id="wallet" className="py-20 bg-white">
+        {/* Wallet Section */}
+        <section id="wallet" className="py-20 bg-black/20 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Wallet</h2>
@@ -462,9 +494,10 @@ export default function Home() {
             </Button>
           </Link>
         </div>
-      </section>
+        </section>
 
-      <Footer />
+        <Footer />
+      </div>
     </div>
   );
 }

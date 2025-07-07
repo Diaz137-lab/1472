@@ -36,7 +36,7 @@ export default function P2P() {
   const [selectedPayment, setSelectedPayment] = useState("all");
   const [activeTab, setActiveTab] = useState("buy");
 
-  // Mock P2P orders data
+  // Mock P2P orders data with more merchants and currencies
   const p2pOrders = [
     {
       id: 1,
@@ -49,7 +49,8 @@ export default function P2P() {
       max: 25000,
       payment: ["Bank Transfer", "PayPal"],
       type: "sell",
-      verified: true
+      verified: true,
+      currency: "BTC"
     },
     {
       id: 2,
@@ -62,7 +63,8 @@ export default function P2P() {
       max: 50000,
       payment: ["Cash App", "Zelle"],
       type: "sell",
-      verified: true
+      verified: true,
+      currency: "BTC"
     },
     {
       id: 3,
@@ -75,7 +77,8 @@ export default function P2P() {
       max: 30000,
       payment: ["Bank Transfer", "Wise"],
       type: "sell",
-      verified: true
+      verified: true,
+      currency: "BTC"
     },
     {
       id: 4,
@@ -88,7 +91,120 @@ export default function P2P() {
       max: 15000,
       payment: ["Venmo", "Cash App"],
       type: "sell",
-      verified: false
+      verified: false,
+      currency: "BTC"
+    },
+    {
+      id: 5,
+      merchant: "EthereumPro",
+      rating: 4.9,
+      trades: 1580,
+      price: 2501,
+      available: 15.3,
+      min: 300,
+      max: 40000,
+      payment: ["Bank Transfer", "Wise", "PayPal"],
+      type: "sell",
+      verified: true,
+      currency: "ETH"
+    },
+    {
+      id: 6,
+      merchant: "CryptoElite",
+      rating: 4.6,
+      trades: 823,
+      price: 2498,
+      available: 8.7,
+      min: 150,
+      max: 20000,
+      payment: ["Cash App", "Zelle"],
+      type: "sell",
+      verified: true,
+      currency: "ETH"
+    },
+    {
+      id: 7,
+      merchant: "SolanaTrader",
+      rating: 4.8,
+      trades: 945,
+      price: 152,
+      available: 120.5,
+      min: 50,
+      max: 10000,
+      payment: ["Bank Transfer", "Venmo"],
+      type: "sell",
+      verified: true,
+      currency: "SOL"
+    },
+    {
+      id: 8,
+      merchant: "USDTExchange",
+      rating: 4.9,
+      trades: 2350,
+      price: 1.00,
+      available: 50000,
+      min: 100,
+      max: 100000,
+      payment: ["Bank Transfer", "Wise", "PayPal", "Zelle"],
+      type: "sell",
+      verified: true,
+      currency: "USDT"
+    },
+    {
+      id: 9,
+      merchant: "DogeTrader",
+      rating: 4.5,
+      trades: 567,
+      price: 0.17,
+      available: 100000,
+      min: 20,
+      max: 5000,
+      payment: ["Cash App", "Venmo"],
+      type: "sell",
+      verified: true,
+      currency: "DOGE"
+    },
+    {
+      id: 10,
+      merchant: "ADAMaster",
+      rating: 4.7,
+      trades: 798,
+      price: 0.45,
+      available: 25000,
+      min: 50,
+      max: 8000,
+      payment: ["Bank Transfer", "PayPal"],
+      type: "sell",
+      verified: true,
+      currency: "ADA"
+    },
+    {
+      id: 11,
+      merchant: "XRPTrader",
+      rating: 4.6,
+      trades: 1123,
+      price: 0.62,
+      available: 30000,
+      min: 30,
+      max: 12000,
+      payment: ["Wise", "Zelle"],
+      type: "sell",
+      verified: true,
+      currency: "XRP"
+    },
+    {
+      id: 12,
+      merchant: "LTCExchange",
+      rating: 4.8,
+      trades: 674,
+      price: 89.50,
+      available: 55.2,
+      min: 100,
+      max: 15000,
+      payment: ["Bank Transfer", "Cash App"],
+      type: "sell",
+      verified: true,
+      currency: "LTC"
     }
   ];
 
@@ -201,6 +317,10 @@ export default function P2P() {
                         <SelectItem value="ETH">Ethereum (ETH)</SelectItem>
                         <SelectItem value="USDT">Tether (USDT)</SelectItem>
                         <SelectItem value="SOL">Solana (SOL)</SelectItem>
+                        <SelectItem value="DOGE">Dogecoin (DOGE)</SelectItem>
+                        <SelectItem value="ADA">Cardano (ADA)</SelectItem>
+                        <SelectItem value="XRP">Ripple (XRP)</SelectItem>
+                        <SelectItem value="LTC">Litecoin (LTC)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -278,7 +398,7 @@ export default function P2P() {
                     </TabsList>
                     
                     <TabsContent value="buy" className="space-y-4">
-                    {p2pOrders.map((order) => (
+                    {p2pOrders.filter(order => order.currency === selectedAsset).map((order) => (
                       <Card key={order.id} className="bg-white/10 backdrop-blur-md border-white/20 hover:border-bitcoin-orange/50 transition-all duration-300 bitcoin-glow">
                         <CardContent className="p-6">
                           <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
@@ -314,7 +434,7 @@ export default function P2P() {
                                 ${order.price.toLocaleString()}
                               </div>
                               <div className="text-sm text-white/60">
-                                {order.available} {selectedAsset} available
+                                {order.available} {order.currency} available
                               </div>
                             </div>
 

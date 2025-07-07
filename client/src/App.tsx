@@ -19,6 +19,10 @@ import AdminLogin from "@/pages/admin-auth/admin-login";
 import NotFound from "@/pages/not-found";
 import Login from "@/pages/auth/login";
 import Signup from "@/pages/auth/signup";
+import About from "@/pages/about";
+import Careers from "@/pages/careers";
+import Press from "@/pages/press";
+import Blog from "@/pages/blog";
 
 function Router() {
   return (
@@ -45,6 +49,10 @@ function Router() {
       <Route path="/exchange" component={Exchange} />
       <Route path="/admin" component={Admin} />
       <Route path="/admin-console" component={Admin} />
+      <Route path="/about" component={About} />
+      <Route path="/careers" component={Careers} />
+      <Route path="/press" component={Press} />
+      <Route path="/blog" component={Blog} />
       <Route component={NotFound} />
     </Switch>
   );
