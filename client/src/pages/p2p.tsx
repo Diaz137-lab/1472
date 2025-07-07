@@ -22,7 +22,8 @@ import {
   Bitcoin,
   CreditCard,
   Banknote,
-  Smartphone
+  Smartphone,
+  DollarSign
 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -63,7 +64,7 @@ export default function P2P() {
       available: 1.2,
       min: 100,
       max: 50000,
-      payment: ["Cash App", "Zelle"],
+      payment: ["Credit Card", "Check Deposit"],
       type: "sell",
       verified: true,
       currency: "BTC",
@@ -93,7 +94,7 @@ export default function P2P() {
       available: 8.7,
       min: 150,
       max: 20000,
-      payment: ["Cash App", "Zelle"],
+      payment: ["Debit Card", "Crypto Transfer"],
       type: "sell",
       verified: true,
       currency: "ETH",
@@ -108,7 +109,7 @@ export default function P2P() {
       available: 100000,
       min: 20,
       max: 5000,
-      payment: ["Cash App", "Venmo"],
+      payment: ["Wire Transfer", "ACH"],
       type: "sell",
       verified: true,
       currency: "DOGE",
@@ -1071,6 +1072,12 @@ export default function P2P() {
                       <SelectContent>
                         <SelectItem value="all">All Methods</SelectItem>
                         <SelectItem value="bank">Bank Transfer</SelectItem>
+                        <SelectItem value="wire">Wire Transfer</SelectItem>
+                        <SelectItem value="ach">ACH</SelectItem>
+                        <SelectItem value="check">Check Deposit</SelectItem>
+                        <SelectItem value="credit">Credit Card</SelectItem>
+                        <SelectItem value="debit">Debit Card</SelectItem>
+                        <SelectItem value="crypto">Crypto Transfer</SelectItem>
                         <SelectItem value="paypal">PayPal</SelectItem>
                         <SelectItem value="cashapp">Cash App</SelectItem>
                         <SelectItem value="venmo">Venmo</SelectItem>
@@ -1080,11 +1087,11 @@ export default function P2P() {
                   </div>
 
                   <div>
-                    <Label className="text-white/90">Search Merchant</Label>
+                    <Label className="text-white/90">AMOUNTS</Label>
                     <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60" size={16} />
+                      <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60" size={16} />
                       <Input
-                        placeholder="Merchant name..."
+                        placeholder="Min - Max amount..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-10 bg-white/10 border-white/20 text-white placeholder-white/60"
