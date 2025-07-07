@@ -13,6 +13,7 @@ export default function Header() {
   const navigation = [
     { name: "Wallet", href: "/dashboard", description: "Manage your portfolio" },
     { name: "Exchange", href: "/exchange", description: "Buy & sell crypto" },
+    { name: "P2P", href: "/p2p", description: "Peer-to-peer trading" },
     { name: "Institutional", href: "/institutional", description: "Enterprise solutions" },
     { name: "Explore", href: "/explorer", description: "Discover markets" },
   ];

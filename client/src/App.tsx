@@ -13,6 +13,7 @@ import Portfolio from "@/pages/portfolio";
 import Exchange from "@/pages/exchange";
 import Explorer from "@/pages/explorer";
 import Institutional from "@/pages/institutional";
+import P2P from "@/pages/p2p";
 import Admin from "@/pages/admin";
 import AdminLogin from "@/pages/admin-auth/admin-login";
 import NotFound from "@/pages/not-found";
@@ -25,6 +26,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/explorer" component={Explorer} />
       <Route path="/institutional" component={Institutional} />
+      <Route path="/p2p" component={P2P} />
       <Route path="/auth/login" component={Login} />
       <Route path="/auth/signup" component={Signup} />
       <Route path="/admin-login" component={AdminLogin} />

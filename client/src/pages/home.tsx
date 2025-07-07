@@ -247,6 +247,76 @@ export default function Home() {
         </div>
       </section>
 
+      {/* P2P Trading Section */}
+      <section id="p2p" className="py-20 bg-gradient-to-br from-purple-50 to-blue-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">P2P Trading</h2>
+            <h3 className="text-2xl font-semibold text-gray-700">Trade directly with users worldwide</h3>
+          </div>
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-8">
+              <div className="flex items-start space-x-4">
+                <div className="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                  <Users className="text-purple-600 text-xl" />
+                </div>
+                <div>
+                  <h4 className="text-xl font-semibold text-gray-900 mb-2">Direct peer-to-peer trading</h4>
+                  <p className="text-gray-600">Connect with verified traders and exchange crypto using your preferred payment methods.</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4">
+                <div className="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                  <Shield className="text-purple-600 text-xl" />
+                </div>
+                <div>
+                  <h4 className="text-xl font-semibold text-gray-900 mb-2">Secure escrow protection</h4>
+                  <p className="text-gray-600">Your funds are safely held in escrow until both parties complete the transaction.</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4">
+                <div className="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                  <MessageCircle className="text-purple-600 text-xl" />
+                </div>
+                <div>
+                  <h4 className="text-xl font-semibold text-gray-900 mb-2">Real-time chat support</h4>
+                  <p className="text-gray-600">Communicate with traders through our secure messaging system with dispute resolution.</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4">
+                <div className="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                  <DollarSign className="text-purple-600 text-xl" />
+                </div>
+                <div>
+                  <h4 className="text-xl font-semibold text-gray-900 mb-2">Multiple payment options</h4>
+                  <p className="text-gray-600">Bank transfers, PayPal, Cash App, Venmo, Zelle, and more payment methods supported.</p>
+                </div>
+              </div>
+              <div className="flex space-x-4">
+                <Link href="/p2p">
+                  <Button className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-3 rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 font-semibold">
+                    Start P2P Trading
+                  </Button>
+                </Link>
+                <Link href="/exchange">
+                  <Button variant="outline" className="border-2 border-purple-600 text-purple-600 hover:bg-purple-50 px-8 py-3 rounded-lg transition-all duration-300 font-semibold">
+                    View Marketplace
+                  </Button>
+                </Link>
+              </div>
+            </div>
+            <div className="relative">
+              <img
+                src="https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600"
+                alt="People connecting and trading globally"
+                className="rounded-2xl shadow-2xl w-full h-auto"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-purple-600/20 to-transparent rounded-2xl"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Institutional Section */}
       <section id="institutional" className="py-20 bg-fw-dark text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
