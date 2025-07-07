@@ -895,7 +895,7 @@ export default function Admin() {
                                    action.action === 'system_init' ? '' : '-'}${parseFloat(action.amount).toLocaleString()}
                                 </div>
                                 <div className="text-xs text-gray-500">
-                                  ≈ {btcAmount.toFixed(8)} BTC
+                                  ≈ {convertToBitcoin(parseFloat(action.amount)).formatted}
                                 </div>
                               </div>
                               <Badge variant={
@@ -999,7 +999,7 @@ export default function Admin() {
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">BTC Equivalent:</span>
-                          <span className="font-medium">≈ {btcAmount.toFixed(8)} BTC</span>
+                          <span className="font-medium">≈ {convertToBitcoin(parseFloat(selectedTransaction.amount)).formatted}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">Reason:</span>
