@@ -46,6 +46,15 @@ export default function ChatWidget() {
   const [isTyping, setIsTyping] = useState(false);
   const [showAgentForm, setShowAgentForm] = useState(false);
   const [agentForm, setAgentForm] = useState({ email: "", phone: "", issue: "" });
+  const [conversationContext, setConversationContext] = useState<{
+    askedForAgent: boolean;
+    providedEmail: boolean;
+    currentTopic: string | null;
+  }>({
+    askedForAgent: false,
+    providedEmail: false,
+    currentTopic: null
+  });
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -56,22 +65,60 @@ export default function ChatWidget() {
     scrollToBottom();
   }, [messages]);
 
-  const getAutoResponse = (userMessage: string): string => {
+  const getAutoResponse = (userMessage: string, messageHistory: Message[]): string => {
     const lowerMessage = userMessage.toLowerCase();
     
-    // Check for exact keyword matches first
-    for (const [key, response] of Object.entries(autoResponses)) {
-      if (key !== "default" && lowerMessage.includes(key)) {
-        return response;
+    // Check if user just provided email address
+    const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/;
+    if (emailRegex.test(userMessage) && !lowerMessage.includes("support") && !lowerMessage.includes("contact")) {
+      // Update context
+      setConversationContext(prev => ({ ...prev, providedEmail: true }));
+      
+      return "Perfect! I've received your email address. An agent will contact you within 2 hours during business hours.\n\n📧 Email: support.quotex@quotexes.online\n📞 Phone: (672) 380-5729\n⏰ 24/7 Support Available\n\nIn the meantime, is there anything else I can help you with right now?";
+    }
+    
+    // Check if user is asking for human help
+    if (lowerMessage.includes("human") || lowerMessage.includes("person") || lowerMessage.includes("real agent") || lowerMessage.includes("live agent") || lowerMessage.includes("speak to someone")) {
+      setConversationContext(prev => ({ ...prev, askedForAgent: true }));
+      return "I'll connect you with a human agent right away! Please provide your email address and I'll have someone reach out to you within 2 hours.\n\nOr you can contact us directly:\n📧 support.quotex@quotexes.online\n📞 (672) 380-5729";
+    }
+    
+    // Check for gratitude or acknowledgment
+    if (lowerMessage.includes("thank") || lowerMessage.includes("thanks") || lowerMessage.includes("got it") || lowerMessage.includes("okay") || lowerMessage.includes("ok")) {
+      return "You're welcome! Is there anything else I can help you with today? I'm here 24/7 for any questions about your QuotexWallet account.";
+    }
+    
+    // Check for specific problems or issues
+    if (lowerMessage.includes("problem") || lowerMessage.includes("issue") || lowerMessage.includes("error") || lowerMessage.includes("trouble") || lowerMessage.includes("help")) {
+      return "I'm here to help resolve any issues! Common problems I can assist with:\n\n• Login difficulties\n• Transaction problems\n• Account verification\n• 2FA setup issues\n• Deposit/withdrawal questions\n\nWhat specific problem are you experiencing?";
+    }
+    
+    // Check for specific keywords (avoid triggering on email addresses)
+    if (!emailRegex.test(userMessage)) {
+      for (const [key, response] of Object.entries(autoResponses)) {
+        if (key !== "default" && lowerMessage.includes(key)) {
+          setConversationContext(prev => ({ ...prev, currentTopic: key }));
+          return response;
+        }
       }
     }
     
-    // Check for common question patterns
-    if (lowerMessage.includes("how") || lowerMessage.includes("what") || lowerMessage.includes("where")) {
-      return "I'd be happy to help answer your question! For detailed assistance, let me connect you with one of our specialists.\n\nPlease provide your email address and I'll have an agent reach out to you.";
+    // Check for question patterns
+    if (lowerMessage.includes("how") || lowerMessage.includes("what") || lowerMessage.includes("where") || lowerMessage.includes("when") || lowerMessage.includes("why")) {
+      return "I'd be happy to help answer your question! Here are some topics I can assist with:\n\n• Account setup and verification\n• Trading and wallet operations\n• Security and 2FA setup\n• Deposits and withdrawals\n• P2P trading\n\nWhat specific area would you like help with?";
     }
     
-    return autoResponses.default;
+    // Check for greetings
+    if (lowerMessage.includes("hello") || lowerMessage.includes("hi ") || lowerMessage.startsWith("hi")) {
+      return autoResponses.hello;
+    }
+    
+    // Default response based on context
+    if (conversationContext.askedForAgent && !conversationContext.providedEmail) {
+      return "To connect you with an agent, I'll need your email address. Once you provide it, an agent will reach out within 2 hours.";
+    }
+    
+    return "I understand you need assistance. I can help with account questions, trading, security, deposits, withdrawals, and more. What would you like help with today?";
   };
 
   const handleSendMessage = () => {
@@ -90,7 +137,7 @@ export default function ChatWidget() {
 
     // Simulate bot typing delay
     setTimeout(() => {
-      const botResponse = getAutoResponse(inputValue);
+      const botResponse = getAutoResponse(inputValue, messages);
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: "bot",
@@ -101,9 +148,10 @@ export default function ChatWidget() {
       setMessages(prev => [...prev, botMessage]);
       setIsTyping(false);
 
-      // Check if user wants to speak to an agent
-      if (inputValue.toLowerCase().includes("agent") || inputValue.toLowerCase().includes("human")) {
-        setShowAgentForm(true);
+      // Check if user wants to speak to an agent (but not if they just provided email)
+      const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/;
+      if ((inputValue.toLowerCase().includes("agent") || inputValue.toLowerCase().includes("human")) && !emailRegex.test(inputValue)) {
+        setTimeout(() => setShowAgentForm(true), 500);
       }
     }, 1000);
   };
@@ -300,7 +348,10 @@ export default function ChatWidget() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setInputValue("I want to speak to an agent")}
+                onClick={() => {
+                  setInputValue("I want to speak to an agent");
+                  setConversationContext(prev => ({ ...prev, askedForAgent: true }));
+                }}
                 className="text-xs"
               >
                 <Phone className="h-3 w-3 mr-1" />
