@@ -14,6 +14,7 @@ export default function Header() {
     { name: "Wallet", href: "/dashboard", description: "Manage your portfolio" },
     { name: "Exchange", href: "/exchange", description: "Buy & sell crypto" },
     { name: "P2P", href: "/p2p", description: "Peer-to-peer trading" },
+    { name: "Admin", href: "/admin", description: "Administrator panel", isAdmin: true },
     { name: "Institutional", href: "/institutional", description: "Enterprise solutions" },
     { name: "Explore", href: "/explorer", description: "Discover markets" },
   ];
@@ -44,7 +45,11 @@ export default function Header() {
                   <Link
                     href={item.href}
                     className={`font-semibold transition-all duration-300 hover:scale-105 transform cursor-pointer px-4 py-2 rounded-lg ${
-                      location === item.href || (item.name === "Wallet" && location === "/dashboard")
+                      item.isAdmin
+                        ? location === item.href
+                          ? "text-white bg-gradient-to-r from-red-600 to-orange-600 shadow-lg"
+                          : "text-red-600 hover:text-white hover:bg-gradient-to-r hover:from-red-500 hover:to-orange-500 hover:shadow-md"
+                        : location === item.href || (item.name === "Wallet" && location === "/dashboard")
                         ? "text-white bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg"
                         : "text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-500 hover:shadow-md"
                     }`}
@@ -58,18 +63,7 @@ export default function Header() {
                   </div>
                 </div>
               ))}
-              {isAuthenticated && (
-                <>
-                  <Link href="/dashboard" className="font-medium text-gray-700 hover:text-fw-blue transition-colors duration-200">
-                    Dashboard
-                  </Link>
-                </>
-              )}
-              <div className="border-l border-gray-300 pl-6 ml-4">
-                <Link href="/admin" className="font-medium text-red-600 hover:text-red-700 transition-colors duration-200 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg">
-                  Administrator
-                </Link>
-              </div>
+
             </nav>
           </div>
           <div className="flex items-center space-x-6">
@@ -117,7 +111,11 @@ export default function Header() {
                       href={item.href}
                       onClick={() => setIsOpen(false)}
                       className={`text-lg font-medium transition-colors duration-200 hover:scale-105 transform cursor-pointer ${
-                        location === item.href || (item.name === "Wallet" && location === "/dashboard")
+                        item.isAdmin
+                          ? location === item.href
+                            ? "text-red-600 font-bold"
+                            : "text-red-600 hover:text-red-700"
+                          : location === item.href || (item.name === "Wallet" && location === "/dashboard")
                           ? "text-fw-blue font-bold"
                           : "text-gray-700 hover:text-fw-blue"
                       }`}
@@ -125,38 +123,7 @@ export default function Header() {
                       {item.name}
                     </Link>
                   ))}
-                  {isAuthenticated && (
-                    <>
-                      <Link
-                        href="/dashboard"
-                        onClick={() => setIsOpen(false)}
-                        className="text-lg font-medium text-gray-700 hover:text-fw-blue transition-colors"
-                      >
-                        Dashboard
-                      </Link>
-                      {/* <Link
-                        href="/trading"
-                        onClick={() => setIsOpen(false)}
-                        className="text-lg font-medium text-gray-700 hover:text-fw-blue transition-colors"
-                      >
-                        Trading
-                      </Link>
-                      <Link
-                        href="/portfolio"
-                        onClick={() => setIsOpen(false)}
-                        className="text-lg font-medium text-gray-700 hover:text-fw-blue transition-colors"
-                      >
-                        Portfolio
-                      </Link> */}
-                    </>
-                  )}
-                  <Link
-                    href="/admin"
-                    onClick={() => setIsOpen(false)}
-                    className="text-lg font-medium text-red-600 hover:text-red-700 transition-colors"
-                  >
-                    Admin
-                  </Link>
+
                   <hr className="my-4" />
                   {isAuthenticated || isAdmin ? (
                     <>
