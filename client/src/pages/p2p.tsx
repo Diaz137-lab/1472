@@ -242,15 +242,18 @@ export default function P2P() {
           <div className="lg:col-span-3">
             <Card>
               <CardHeader>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold">P2P Marketplace</h3>
+                </div>
+              </CardHeader>
+              <CardContent>
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
-                  <TabsList className="grid w-full grid-cols-2">
+                  <TabsList className="grid w-full grid-cols-2 mb-6">
                     <TabsTrigger value="buy" className="text-green-600">Buy {selectedAsset}</TabsTrigger>
                     <TabsTrigger value="sell" className="text-red-600">Sell {selectedAsset}</TabsTrigger>
                   </TabsList>
-                </Tabs>
-              </CardHeader>
-              <CardContent>
-                <TabsContent value="buy" className="space-y-4">
+                  
+                  <TabsContent value="buy" className="space-y-4">
                   {p2pOrders.map((order) => (
                     <Card key={order.id} className="border border-gray-200 hover:border-blue-300 transition-colors">
                       <CardContent className="p-6">
@@ -338,6 +341,7 @@ export default function P2P() {
                     </Button>
                   </div>
                 </TabsContent>
+                </Tabs>
               </CardContent>
             </Card>
           </div>
