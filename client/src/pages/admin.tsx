@@ -28,6 +28,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { apiRequest } from "@/lib/queryClient";
+import { useBitcoinPrice, useBitcoinConversion } from "@/hooks/use-bitcoin-price";
 import type { User, AdminBalanceAction } from "@shared/schema";
 
 export default function Admin() {
@@ -157,21 +158,10 @@ export default function Admin() {
     refetchInterval: 2000, // Refetch every 2 seconds for real-time updates
   });
 
-  // Fetch real-time Bitcoin price from our crypto assets
-  const { data: btcPrice = 108524.84 } = useQuery({
-    queryKey: ["btc-price"],
-    queryFn: async () => {
-      try {
-        const response = await fetch("/api/crypto/assets");
-        const assets = await response.json();
-        const btcAsset = assets.find((asset: any) => asset.symbol === "BTC");
-        return btcAsset ? parseFloat(btcAsset.currentPrice) : 108524.84;
-      } catch {
-        return 108524.84; // Fallback price
-      }
-    },
-    refetchInterval: 30000, // Update every 30 seconds
-  });
+  // Use our Bitcoin price hook for real-time data
+  const { data: bitcoinData } = useBitcoinPrice();
+  const btcPrice = bitcoinData?.price || 108524.84;
+  const btcChange = bitcoinData?.change24h || 0;
 
   const balanceActionMutation = useMutation({
     mutationFn: async (data: {
@@ -266,6 +256,16 @@ export default function Admin() {
     return userPortfolio ? parseFloat(userPortfolio.totalBalance || "0") : 0;
   };
 
+  // Helper function to convert USD to Bitcoin
+  const convertToBitcoin = (usdAmount: number) => {
+    if (!btcPrice || btcPrice <= 0) return { btc: 0, formatted: "0.00000000 BTC" };
+    const btcAmount = usdAmount / btcPrice;
+    return {
+      btc: btcAmount,
+      formatted: `${btcAmount.toFixed(8)} BTC`
+    };
+  };
+
   // Generate wallet address for user
   const generateWalletAddress = (userId: number, symbol: string) => {
     // Kelly Ann James (ID: 1) has specific wallet addresses
@@ -305,11 +305,7 @@ export default function Admin() {
     setExpandedUserId(expandedUserId === userId ? null : userId);
   };
 
-  // Convert USD to Bitcoin
-  const convertToBitcoin = (usdAmount: number) => {
-    if (!btcPrice || btcPrice === 0) return 0;
-    return usdAmount / btcPrice;
-  };
+
 
   const showTransactionDetail = (transaction: AdminBalanceAction) => {
     setSelectedTransaction(transaction);
@@ -453,6 +449,22 @@ export default function Admin() {
 
           <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200 shadow-md hover:shadow-lg transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-semibold text-orange-800">Live Bitcoin Price</CardTitle>
+              <div className="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center">
+                <TrendingUp className="h-4 w-4 text-white" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-orange-900">${btcPrice.toLocaleString()}</div>
+              <div className={`text-sm mt-1 flex items-center ${btcChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {btcChange >= 0 ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
+                {btcChange >= 0 ? '+' : ''}{btcChange.toFixed(2)}% (24h)
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200 shadow-md hover:shadow-lg transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <CardTitle className="text-sm font-semibold text-orange-800">System Status</CardTitle>
               <div className="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center">
                 <Settings className="h-4 w-4 text-white" />
@@ -544,7 +556,7 @@ export default function Admin() {
                                   {userBalance > 0 && (
                                     <div className="mt-1 text-xs text-gray-600">
                                       <span className="text-orange-600 font-semibold">
-                                        ₿ {convertToBitcoin(userBalance).toFixed(8)} BTC
+                                        ₿ {convertToBitcoin(userBalance).formatted}
                                       </span>
                                       <p className="text-xs text-gray-500">
                                         @ ${btcPrice.toLocaleString()} per BTC
@@ -628,13 +640,10 @@ export default function Admin() {
                                       {userBalance > 0 && (
                                         <div className="mt-2 p-2 bg-orange-50 rounded border border-orange-200">
                                           <p className="text-sm text-orange-800 font-semibold">
-                                            ₿ {convertToBitcoin(userBalance).toFixed(8)} BTC
+                                            ₿ {convertToBitcoin(userBalance).formatted}
                                           </p>
                                           <p className="text-xs text-orange-600">
                                             Live rate: ${btcPrice.toLocaleString()} per BTC
-                                          </p>
-                                          <p className="text-xs text-gray-500 mt-1">
-                                            Updates every 30 seconds
                                           </p>
                                         </div>
                                       )}
