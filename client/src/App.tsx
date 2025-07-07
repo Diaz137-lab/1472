@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/use-auth";
 import ProtectedRoute, { AdminProtectedRoute } from "@/components/auth/protected-route";
+import ChatWidget from "@/components/support/chat-widget";
 import Home from "@/pages/home";
 import Dashboard from "@/pages/dashboard";
 import SmartWallet from "@/pages/smart-wallet";
@@ -75,6 +76,7 @@ function App() {
         <TooltipProvider>
           <Toaster />
           <Router />
+          <ChatWidget />
         </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>
