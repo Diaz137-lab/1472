@@ -50,7 +50,8 @@ export default function P2P() {
       payment: ["Bank Transfer", "PayPal"],
       type: "sell",
       verified: true,
-      currency: "BTC"
+      currency: "BTC",
+      country: "USA"
     },
     {
       id: 2,
@@ -64,7 +65,8 @@ export default function P2P() {
       payment: ["Cash App", "Zelle"],
       type: "sell",
       verified: true,
-      currency: "BTC"
+      currency: "BTC",
+      country: "USA"
     },
     {
       id: 3,
@@ -78,7 +80,8 @@ export default function P2P() {
       payment: ["Bank Transfer", "Wise"],
       type: "sell",
       verified: true,
-      currency: "BTC"
+      currency: "BTC",
+      country: "UK"
     },
     {
       id: 4,
@@ -92,7 +95,8 @@ export default function P2P() {
       payment: ["Venmo", "Cash App"],
       type: "sell",
       verified: false,
-      currency: "BTC"
+      currency: "BTC",
+      country: "USA"
     },
     {
       id: 5,
@@ -106,7 +110,8 @@ export default function P2P() {
       payment: ["Bank Transfer", "Wise", "PayPal"],
       type: "sell",
       verified: true,
-      currency: "ETH"
+      currency: "ETH",
+      country: "Netherlands"
     },
     {
       id: 6,
@@ -120,7 +125,8 @@ export default function P2P() {
       payment: ["Cash App", "Zelle"],
       type: "sell",
       verified: true,
-      currency: "ETH"
+      currency: "ETH",
+      country: "USA"
     },
     {
       id: 7,
@@ -134,7 +140,8 @@ export default function P2P() {
       payment: ["Bank Transfer", "Venmo"],
       type: "sell",
       verified: true,
-      currency: "SOL"
+      currency: "SOL",
+      country: "Portugal"
     },
     {
       id: 8,
@@ -148,7 +155,8 @@ export default function P2P() {
       payment: ["Bank Transfer", "Wise", "PayPal", "Zelle"],
       type: "sell",
       verified: true,
-      currency: "USDT"
+      currency: "USDT",
+      country: "Hong Kong"
     },
     {
       id: 9,
@@ -162,7 +170,8 @@ export default function P2P() {
       payment: ["Cash App", "Venmo"],
       type: "sell",
       verified: true,
-      currency: "DOGE"
+      currency: "DOGE",
+      country: "USA"
     },
     {
       id: 10,
@@ -176,7 +185,8 @@ export default function P2P() {
       payment: ["Bank Transfer", "PayPal"],
       type: "sell",
       verified: true,
-      currency: "ADA"
+      currency: "ADA",
+      country: "Italy"
     },
     {
       id: 11,
@@ -190,7 +200,8 @@ export default function P2P() {
       payment: ["Wise", "Zelle"],
       type: "sell",
       verified: true,
-      currency: "XRP"
+      currency: "XRP",
+      country: "Spain"
     },
     {
       id: 12,
@@ -204,7 +215,248 @@ export default function P2P() {
       payment: ["Bank Transfer", "Cash App"],
       type: "sell",
       verified: true,
-      currency: "LTC"
+      currency: "LTC",
+      country: "USA"
+    },
+    {
+      id: 13,
+      merchant: "TokyoBitcoin",
+      rating: 4.9,
+      trades: 1890,
+      price: 109300,
+      available: 2.3,
+      min: 1000,
+      max: 80000,
+      payment: ["Bank Transfer", "PayPal"],
+      type: "sell",
+      verified: true,
+      currency: "BTC",
+      country: "Japan"
+    },
+    {
+      id: 14,
+      merchant: "LondonCrypto",
+      rating: 4.7,
+      trades: 1456,
+      price: 109800,
+      available: 1.8,
+      min: 500,
+      max: 45000,
+      payment: ["Bank Transfer", "Wise"],
+      type: "sell",
+      verified: true,
+      currency: "BTC",
+      country: "UK"
+    },
+    {
+      id: 15,
+      merchant: "SingaporeETH",
+      rating: 4.8,
+      trades: 967,
+      price: 2495,
+      available: 12.7,
+      min: 200,
+      max: 35000,
+      payment: ["Bank Transfer", "PayPal", "Wise"],
+      type: "sell",
+      verified: true,
+      currency: "ETH",
+      country: "Singapore"
+    },
+    {
+      id: 16,
+      merchant: "CanadianTrader",
+      rating: 4.6,
+      trades: 723,
+      price: 109100,
+      available: 0.9,
+      min: 300,
+      max: 25000,
+      payment: ["Bank Transfer", "Interac"],
+      type: "sell",
+      verified: true,
+      currency: "BTC",
+      country: "Canada"
+    },
+    {
+      id: 17,
+      merchant: "BerlinSOL",
+      rating: 4.9,
+      trades: 1123,
+      price: 151,
+      available: 89.4,
+      min: 100,
+      max: 18000,
+      payment: ["SEPA", "Bank Transfer"],
+      type: "sell",
+      verified: true,
+      currency: "SOL",
+      country: "Germany"
+    },
+    {
+      id: 18,
+      merchant: "AussieCrypto",
+      rating: 4.5,
+      trades: 845,
+      price: 109700,
+      available: 1.5,
+      min: 400,
+      max: 30000,
+      payment: ["Bank Transfer", "PayID"],
+      type: "sell",
+      verified: true,
+      currency: "BTC",
+      country: "Australia"
+    },
+    {
+      id: 19,
+      merchant: "BrazilUSDT",
+      rating: 4.7,
+      trades: 1567,
+      price: 1.01,
+      available: 75000,
+      min: 150,
+      max: 50000,
+      payment: ["PIX", "Bank Transfer"],
+      type: "sell",
+      verified: true,
+      currency: "USDT",
+      country: "Brazil"
+    },
+    {
+      id: 20,
+      merchant: "SwissBTC",
+      rating: 5.0,
+      trades: 2890,
+      price: 110200,
+      available: 3.2,
+      min: 2000,
+      max: 100000,
+      payment: ["Bank Transfer", "PostFinance"],
+      type: "sell",
+      verified: true,
+      currency: "BTC",
+      country: "Switzerland"
+    },
+    {
+      id: 21,
+      merchant: "KoreanETH",
+      rating: 4.8,
+      trades: 1234,
+      price: 2503,
+      available: 18.9,
+      min: 250,
+      max: 40000,
+      payment: ["Bank Transfer", "KakaoPay"],
+      type: "sell",
+      verified: true,
+      currency: "ETH",
+      country: "South Korea"
+    },
+    {
+      id: 22,
+      merchant: "DubaiDOGE",
+      rating: 4.4,
+      trades: 678,
+      price: 0.168,
+      available: 150000,
+      min: 50,
+      max: 8000,
+      payment: ["Bank Transfer", "Wise"],
+      type: "sell",
+      verified: false,
+      currency: "DOGE",
+      country: "UAE"
+    },
+    {
+      id: 23,
+      merchant: "FrenchADA",
+      rating: 4.6,
+      trades: 1089,
+      price: 0.46,
+      available: 45000,
+      min: 80,
+      max: 12000,
+      payment: ["SEPA", "Bank Transfer"],
+      type: "sell",
+      verified: true,
+      currency: "ADA",
+      country: "France"
+    },
+    {
+      id: 24,
+      merchant: "NordicXRP",
+      rating: 4.9,
+      trades: 1456,
+      price: 0.61,
+      available: 55000,
+      min: 100,
+      max: 15000,
+      payment: ["Bank Transfer", "Swish"],
+      type: "sell",
+      verified: true,
+      currency: "XRP",
+      country: "Sweden"
+    },
+    {
+      id: 25,
+      merchant: "IndianLTC",
+      rating: 4.3,
+      trades: 567,
+      price: 88.75,
+      available: 78.5,
+      min: 50,
+      max: 10000,
+      payment: ["UPI", "Bank Transfer"],
+      type: "sell",
+      verified: true,
+      currency: "LTC",
+      country: "India"
+    },
+    {
+      id: 26,
+      merchant: "RussianBTC",
+      rating: 4.7,
+      trades: 1789,
+      price: 109000,
+      available: 2.8,
+      min: 800,
+      max: 60000,
+      payment: ["Bank Transfer", "Qiwi"],
+      type: "sell",
+      verified: true,
+      currency: "BTC",
+      country: "Russia"
+    },
+    {
+      id: 27,
+      merchant: "MexicanUSDT",
+      rating: 4.5,
+      trades: 934,
+      price: 1.02,
+      available: 90000,
+      min: 100,
+      max: 25000,
+      payment: ["SPEI", "Bank Transfer"],
+      type: "sell",
+      verified: true,
+      currency: "USDT",
+      country: "Mexico"
+    },
+    {
+      id: 28,
+      merchant: "TurkishSOL",
+      rating: 4.4,
+      trades: 612,
+      price: 153.50,
+      available: 67.3,
+      min: 75,
+      max: 12000,
+      payment: ["Bank Transfer", "Papara"],
+      type: "sell",
+      verified: false,
+      currency: "SOL",
+      country: "Turkey"
     }
   ];
 
@@ -423,6 +675,9 @@ export default function P2P() {
                                     <Star className="text-yellow-400" size={14} />
                                     <span>{order.rating}</span>
                                     <span>({order.trades} trades)</span>
+                                  </div>
+                                  <div className="text-xs text-white/50 mt-1">
+                                    📍 {order.country}
                                   </div>
                                 </div>
                               </div>
