@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowRightLeft } from "lucide-react";
+import { ArrowRightLeft, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { Link } from "wouter";
 
 export default function Exchange() {
   const { toast } = useToast();
@@ -83,6 +84,15 @@ export default function Exchange() {
       <Header />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Back Button */}
+        <div className="mb-6">
+          <Link href="/">
+            <Button variant="ghost" className="flex items-center space-x-2 text-gray-600 hover:text-gray-900">
+              <ArrowLeft size={20} />
+              <span>Back to Home</span>
+            </Button>
+          </Link>
+        </div>
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Exchange</h1>
           <p className="text-gray-600">Swap between different cryptocurrencies instantly.</p>

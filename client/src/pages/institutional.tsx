@@ -26,10 +26,12 @@ import {
   Coins,
   TrendingDown,
   Sparkles,
-  Star
+  Star,
+  ArrowLeft
 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { Link } from "wouter";
 
 export default function Institutional() {
   const { toast } = useToast();
@@ -95,6 +97,16 @@ export default function Institutional() {
         </div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          {/* Back Button */}
+          <div className="mb-8 text-left">
+            <Link href="/">
+              <Button variant="ghost" className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
+                <ArrowLeft size={20} />
+                <span>Back to Home</span>
+              </Button>
+            </Link>
+          </div>
+          
           <div className="text-center">
             <div className="flex items-center justify-center space-x-4 mb-6">
               <div className="p-3 bg-bitcoin-gradient rounded-2xl bitcoin-glow">

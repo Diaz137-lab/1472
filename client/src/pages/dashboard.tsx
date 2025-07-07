@@ -4,7 +4,7 @@ import PriceChart from "@/components/crypto/price-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import { TrendingUp, DollarSign, Activity, CreditCard, Bitcoin } from "lucide-react";
+import { TrendingUp, DollarSign, Activity, CreditCard, Bitcoin, ArrowLeft } from "lucide-react";
 import { useBitcoinConversion } from "@/hooks/use-bitcoin-price";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
@@ -56,6 +56,16 @@ export default function Dashboard() {
       <Header />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Back Button */}
+        <div className="mb-6">
+          <Link href="/">
+            <Button variant="ghost" className="flex items-center space-x-2 text-gray-600 hover:text-gray-900">
+              <ArrowLeft size={20} />
+              <span>Back to Home</span>
+            </Button>
+          </Link>
+        </div>
+        
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
           <p className="text-gray-600">Welcome back! Here's your portfolio overview.</p>

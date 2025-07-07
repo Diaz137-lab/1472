@@ -64,6 +64,49 @@ export default function Home() {
 
       <PriceTicker />
 
+      {/* Create Account Section */}
+      <section id="create-account" className="py-20 bg-gradient-to-br from-blue-50 to-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="bg-white rounded-3xl shadow-xl p-12 border border-blue-100">
+            <div className="flex justify-center mb-8">
+              <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
+                <Users className="text-white text-3xl" />
+              </div>
+            </div>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Create Your Account</h2>
+            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+              Join millions of users who trust QuotexWallet with their cryptocurrency investments. Get started in just minutes.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
+              <Link href="/auth/signup">
+                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-4 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg transform hover:scale-105 font-semibold text-lg">
+                  Create Account
+                </Button>
+              </Link>
+              <Link href="/auth/login">
+                <Button variant="outline" className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-10 py-4 rounded-lg transition-all duration-300 font-semibold text-lg">
+                  Sign In
+                </Button>
+              </Link>
+            </div>
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+              <div>
+                <CheckCircle className="text-green-500 mx-auto mb-2" size={24} />
+                <p className="text-sm text-gray-600">Secure & Trusted</p>
+              </div>
+              <div>
+                <CheckCircle className="text-green-500 mx-auto mb-2" size={24} />
+                <p className="text-sm text-gray-600">Easy Setup</p>
+              </div>
+              <div>
+                <CheckCircle className="text-green-500 mx-auto mb-2" size={24} />
+                <p className="text-sm text-gray-600">24/7 Support</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Wallet Section */}
       <section id="wallet" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -3,7 +3,10 @@ import Footer from "@/components/layout/footer";
 import TradingInterface from "@/components/trading/trading-interface";
 import PriceChart from "@/components/crypto/price-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "wouter";
+import { ArrowLeft } from "lucide-react";
 
 export default function Trading() {
   const { data: assets } = useQuery({
@@ -15,6 +18,15 @@ export default function Trading() {
       <Header />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Back Button */}
+        <div className="mb-6">
+          <Link href="/">
+            <Button variant="ghost" className="flex items-center space-x-2 text-gray-600 hover:text-gray-900">
+              <ArrowLeft size={20} />
+              <span>Back to Home</span>
+            </Button>
+          </Link>
+        </div>
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Trading</h1>
           <p className="text-gray-600">Buy and sell cryptocurrencies with ease.</p>

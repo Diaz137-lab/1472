@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/use-auth";
 import ProtectedRoute, { AdminProtectedRoute } from "@/components/auth/protected-route";
 import Home from "@/pages/home";
 import Dashboard from "@/pages/dashboard";
+import SmartWallet from "@/pages/smart-wallet";
 import Trading from "@/pages/trading";
 import Portfolio from "@/pages/portfolio";
 import Exchange from "@/pages/exchange";
@@ -27,11 +28,7 @@ function Router() {
       <Route path="/auth/login" component={Login} />
       <Route path="/auth/signup" component={Signup} />
       <Route path="/admin-login" component={AdminLogin} />
-      <Route path="/wallet">
-        <ProtectedRoute>
-          <Dashboard />
-        </ProtectedRoute>
-      </Route>
+      <Route path="/wallet" component={SmartWallet} />
       <Route path="/dashboard">
         <ProtectedRoute>
           <Dashboard />
