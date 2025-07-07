@@ -36,11 +36,12 @@ export default function P2P() {
   const [selectedPayment, setSelectedPayment] = useState("all");
   const [activeTab, setActiveTab] = useState("buy");
 
-  // Mock P2P orders data with more merchants and currencies
+  // Mock P2P orders data with realistic merchants from global locations
   const p2pOrders = [
+    // USA Merchants
     {
       id: 1,
-      merchant: "CryptoKing99",
+      merchant: "Michael_Chen",
       rating: 4.9,
       trades: 1250,
       price: 109500,
@@ -55,7 +56,7 @@ export default function P2P() {
     },
     {
       id: 2,
-      merchant: "BitcoinMaster",
+      merchant: "Sarah_Johnson",
       rating: 4.8,
       trades: 890,
       price: 109400,
@@ -70,22 +71,7 @@ export default function P2P() {
     },
     {
       id: 3,
-      merchant: "SafeTrader",
-      rating: 5.0,
-      trades: 2100,
-      price: 109600,
-      available: 0.8,
-      min: 1000,
-      max: 30000,
-      payment: ["Bank Transfer", "Wise"],
-      type: "sell",
-      verified: true,
-      currency: "BTC",
-      country: "UK"
-    },
-    {
-      id: 4,
-      merchant: "QuickBuy24",
+      merchant: "David_Wilson",
       rating: 4.7,
       trades: 650,
       price: 109200,
@@ -99,23 +85,8 @@ export default function P2P() {
       country: "USA"
     },
     {
-      id: 5,
-      merchant: "EthereumPro",
-      rating: 4.9,
-      trades: 1580,
-      price: 2501,
-      available: 15.3,
-      min: 300,
-      max: 40000,
-      payment: ["Bank Transfer", "Wise", "PayPal"],
-      type: "sell",
-      verified: true,
-      currency: "ETH",
-      country: "Netherlands"
-    },
-    {
-      id: 6,
-      merchant: "CryptoElite",
+      id: 4,
+      merchant: "Emily_Davis",
       rating: 4.6,
       trades: 823,
       price: 2498,
@@ -129,38 +100,8 @@ export default function P2P() {
       country: "USA"
     },
     {
-      id: 7,
-      merchant: "SolanaTrader",
-      rating: 4.8,
-      trades: 945,
-      price: 152,
-      available: 120.5,
-      min: 50,
-      max: 10000,
-      payment: ["Bank Transfer", "Venmo"],
-      type: "sell",
-      verified: true,
-      currency: "SOL",
-      country: "Portugal"
-    },
-    {
-      id: 8,
-      merchant: "USDTExchange",
-      rating: 4.9,
-      trades: 2350,
-      price: 1.00,
-      available: 50000,
-      min: 100,
-      max: 100000,
-      payment: ["Bank Transfer", "Wise", "PayPal", "Zelle"],
-      type: "sell",
-      verified: true,
-      currency: "USDT",
-      country: "Hong Kong"
-    },
-    {
-      id: 9,
-      merchant: "DogeTrader",
+      id: 5,
+      merchant: "Robert_Garcia",
       rating: 4.5,
       trades: 567,
       price: 0.17,
@@ -174,38 +115,8 @@ export default function P2P() {
       country: "USA"
     },
     {
-      id: 10,
-      merchant: "ADAMaster",
-      rating: 4.7,
-      trades: 798,
-      price: 0.45,
-      available: 25000,
-      min: 50,
-      max: 8000,
-      payment: ["Bank Transfer", "PayPal"],
-      type: "sell",
-      verified: true,
-      currency: "ADA",
-      country: "Italy"
-    },
-    {
-      id: 11,
-      merchant: "XRPTrader",
-      rating: 4.6,
-      trades: 1123,
-      price: 0.62,
-      available: 30000,
-      min: 30,
-      max: 12000,
-      payment: ["Wise", "Zelle"],
-      type: "sell",
-      verified: true,
-      currency: "XRP",
-      country: "Spain"
-    },
-    {
-      id: 12,
-      merchant: "LTCExchange",
+      id: 6,
+      merchant: "Jennifer_Miller",
       rating: 4.8,
       trades: 674,
       price: 89.50,
@@ -218,24 +129,25 @@ export default function P2P() {
       currency: "LTC",
       country: "USA"
     },
+    // UK Merchants
     {
-      id: 13,
-      merchant: "TokyoBitcoin",
-      rating: 4.9,
-      trades: 1890,
-      price: 109300,
-      available: 2.3,
+      id: 7,
+      merchant: "James_Smith",
+      rating: 5.0,
+      trades: 2100,
+      price: 109600,
+      available: 0.8,
       min: 1000,
-      max: 80000,
-      payment: ["Bank Transfer", "PayPal"],
+      max: 30000,
+      payment: ["Bank Transfer", "Wise"],
       type: "sell",
       verified: true,
       currency: "BTC",
-      country: "Japan"
+      country: "UK"
     },
     {
-      id: 14,
-      merchant: "LondonCrypto",
+      id: 8,
+      merchant: "Charlotte_Brown",
       rating: 4.7,
       trades: 1456,
       price: 109800,
@@ -249,23 +161,39 @@ export default function P2P() {
       country: "UK"
     },
     {
-      id: 15,
-      merchant: "SingaporeETH",
-      rating: 4.8,
-      trades: 967,
-      price: 2495,
-      available: 12.7,
-      min: 200,
+      id: 9,
+      merchant: "Oliver_Taylor",
+      rating: 4.6,
+      trades: 934,
+      price: 2505,
+      available: 12.4,
+      min: 250,
       max: 35000,
-      payment: ["Bank Transfer", "PayPal", "Wise"],
+      payment: ["Bank Transfer", "Wise"],
       type: "sell",
       verified: true,
       currency: "ETH",
-      country: "Singapore"
+      country: "UK"
     },
     {
-      id: 16,
-      merchant: "CanadianTrader",
+      id: 10,
+      merchant: "Sophie_Anderson",
+      rating: 4.8,
+      trades: 1234,
+      price: 0.63,
+      available: 45000,
+      min: 80,
+      max: 18000,
+      payment: ["Bank Transfer", "Wise"],
+      type: "sell",
+      verified: true,
+      currency: "XRP",
+      country: "UK"
+    },
+    // Canada Merchants
+    {
+      id: 11,
+      merchant: "Alex_Martin",
       rating: 4.6,
       trades: 723,
       price: 109100,
@@ -279,8 +207,39 @@ export default function P2P() {
       country: "Canada"
     },
     {
-      id: 17,
-      merchant: "BerlinSOL",
+      id: 12,
+      merchant: "Jessica_Lee",
+      rating: 4.7,
+      trades: 856,
+      price: 2499,
+      available: 15.6,
+      min: 200,
+      max: 30000,
+      payment: ["Bank Transfer", "Interac"],
+      type: "sell",
+      verified: true,
+      currency: "ETH",
+      country: "Canada"
+    },
+    {
+      id: 13,
+      merchant: "Ryan_Thompson",
+      rating: 4.5,
+      trades: 612,
+      price: 154,
+      available: 89.3,
+      min: 100,
+      max: 15000,
+      payment: ["Bank Transfer", "Interac"],
+      type: "sell",
+      verified: true,
+      currency: "SOL",
+      country: "Canada"
+    },
+    // Germany Merchants
+    {
+      id: 14,
+      merchant: "Hans_Mueller",
       rating: 4.9,
       trades: 1123,
       price: 151,
@@ -294,8 +253,102 @@ export default function P2P() {
       country: "Germany"
     },
     {
+      id: 15,
+      merchant: "Anna_Schmidt",
+      rating: 4.8,
+      trades: 1567,
+      price: 109450,
+      available: 1.4,
+      min: 500,
+      max: 40000,
+      payment: ["SEPA", "Bank Transfer"],
+      type: "sell",
+      verified: true,
+      currency: "BTC",
+      country: "Germany"
+    },
+    {
+      id: 16,
+      merchant: "Maximilian_Weber",
+      rating: 4.6,
+      trades: 789,
+      price: 2502,
+      available: 18.7,
+      min: 300,
+      max: 35000,
+      payment: ["SEPA", "Bank Transfer"],
+      type: "sell",
+      verified: true,
+      currency: "ETH",
+      country: "Germany"
+    },
+    // Netherlands
+    {
+      id: 17,
+      merchant: "Emma_Van_Berg",
+      rating: 4.9,
+      trades: 1580,
+      price: 2501,
+      available: 15.3,
+      min: 300,
+      max: 40000,
+      payment: ["Bank Transfer", "Wise", "PayPal"],
+      type: "sell",
+      verified: true,
+      currency: "ETH",
+      country: "Netherlands"
+    },
+    // Japan
+    {
       id: 18,
-      merchant: "AussieCrypto",
+      merchant: "Hiroshi_Tanaka",
+      rating: 4.9,
+      trades: 1890,
+      price: 109300,
+      available: 2.3,
+      min: 1000,
+      max: 80000,
+      payment: ["Bank Transfer", "PayPal"],
+      type: "sell",
+      verified: true,
+      currency: "BTC",
+      country: "Japan"
+    },
+    {
+      id: 19,
+      merchant: "Yuki_Sato",
+      rating: 4.7,
+      trades: 1245,
+      price: 2496,
+      available: 22.1,
+      min: 400,
+      max: 50000,
+      payment: ["Bank Transfer", "PayPal"],
+      type: "sell",
+      verified: true,
+      currency: "ETH",
+      country: "Japan"
+    },
+    // Singapore
+    {
+      id: 20,
+      merchant: "Wei_Lim",
+      rating: 4.8,
+      trades: 967,
+      price: 2495,
+      available: 12.7,
+      min: 200,
+      max: 35000,
+      payment: ["Bank Transfer", "PayPal", "Wise"],
+      type: "sell",
+      verified: true,
+      currency: "ETH",
+      country: "Singapore"
+    },
+    // Australia
+    {
+      id: 21,
+      merchant: "Matt_Clarke",
       rating: 4.5,
       trades: 845,
       price: 109700,
@@ -308,9 +361,10 @@ export default function P2P() {
       currency: "BTC",
       country: "Australia"
     },
+    // Brazil
     {
-      id: 19,
-      merchant: "BrazilUSDT",
+      id: 22,
+      merchant: "Carlos_Silva",
       rating: 4.7,
       trades: 1567,
       price: 1.01,
@@ -323,9 +377,10 @@ export default function P2P() {
       currency: "USDT",
       country: "Brazil"
     },
+    // Switzerland
     {
-      id: 20,
-      merchant: "SwissBTC",
+      id: 23,
+      merchant: "Andreas_Fischer",
       rating: 5.0,
       trades: 2890,
       price: 110200,
@@ -338,9 +393,10 @@ export default function P2P() {
       currency: "BTC",
       country: "Switzerland"
     },
+    // South Korea
     {
-      id: 21,
-      merchant: "KoreanETH",
+      id: 24,
+      merchant: "Min_Jun_Kim",
       rating: 4.8,
       trades: 1234,
       price: 2503,
@@ -353,9 +409,10 @@ export default function P2P() {
       currency: "ETH",
       country: "South Korea"
     },
+    // UAE
     {
-      id: 22,
-      merchant: "DubaiDOGE",
+      id: 25,
+      merchant: "Ahmed_Al_Rashid",
       rating: 4.4,
       trades: 678,
       price: 0.168,
@@ -368,9 +425,10 @@ export default function P2P() {
       currency: "DOGE",
       country: "UAE"
     },
+    // France
     {
-      id: 23,
-      merchant: "FrenchADA",
+      id: 26,
+      merchant: "Pierre_Dubois",
       rating: 4.6,
       trades: 1089,
       price: 0.46,
@@ -383,9 +441,10 @@ export default function P2P() {
       currency: "ADA",
       country: "France"
     },
+    // Sweden
     {
-      id: 24,
-      merchant: "NordicXRP",
+      id: 27,
+      merchant: "Erik_Andersson",
       rating: 4.9,
       trades: 1456,
       price: 0.61,
@@ -398,9 +457,10 @@ export default function P2P() {
       currency: "XRP",
       country: "Sweden"
     },
+    // India
     {
-      id: 25,
-      merchant: "IndianLTC",
+      id: 28,
+      merchant: "Raj_Patel",
       rating: 4.3,
       trades: 567,
       price: 88.75,
@@ -414,8 +474,24 @@ export default function P2P() {
       country: "India"
     },
     {
-      id: 26,
-      merchant: "RussianBTC",
+      id: 29,
+      merchant: "Priya_Sharma",
+      rating: 4.6,
+      trades: 834,
+      price: 109350,
+      available: 1.8,
+      min: 300,
+      max: 25000,
+      payment: ["UPI", "Bank Transfer"],
+      type: "sell",
+      verified: true,
+      currency: "BTC",
+      country: "India"
+    },
+    // Russia
+    {
+      id: 30,
+      merchant: "Dmitri_Volkov",
       rating: 4.7,
       trades: 1789,
       price: 109000,
@@ -428,9 +504,10 @@ export default function P2P() {
       currency: "BTC",
       country: "Russia"
     },
+    // Mexico
     {
-      id: 27,
-      merchant: "MexicanUSDT",
+      id: 31,
+      merchant: "Luis_Rodriguez",
       rating: 4.5,
       trades: 934,
       price: 1.02,
@@ -443,9 +520,10 @@ export default function P2P() {
       currency: "USDT",
       country: "Mexico"
     },
+    // Turkey
     {
-      id: 28,
-      merchant: "TurkishSOL",
+      id: 32,
+      merchant: "Mehmet_Ozkan",
       rating: 4.4,
       trades: 612,
       price: 153.50,
@@ -457,6 +535,413 @@ export default function P2P() {
       verified: false,
       currency: "SOL",
       country: "Turkey"
+    },
+    // African Countries
+    // Nigeria
+    {
+      id: 33,
+      merchant: "Chukwu_Okafor",
+      rating: 4.8,
+      trades: 1245,
+      price: 109250,
+      available: 1.6,
+      min: 200,
+      max: 30000,
+      payment: ["Bank Transfer", "Flutterwave"],
+      type: "sell",
+      verified: true,
+      currency: "BTC",
+      country: "Nigeria"
+    },
+    {
+      id: 34,
+      merchant: "Aisha_Ibrahim",
+      rating: 4.6,
+      trades: 867,
+      price: 2497,
+      available: 14.2,
+      min: 150,
+      max: 25000,
+      payment: ["Bank Transfer", "Paystack"],
+      type: "sell",
+      verified: true,
+      currency: "ETH",
+      country: "Nigeria"
+    },
+    {
+      id: 35,
+      merchant: "Emeka_Nwankwo",
+      rating: 4.7,
+      trades: 1123,
+      price: 1.005,
+      available: 80000,
+      min: 100,
+      max: 40000,
+      payment: ["Bank Transfer", "Flutterwave"],
+      type: "sell",
+      verified: true,
+      currency: "USDT",
+      country: "Nigeria"
+    },
+    // South Africa
+    {
+      id: 36,
+      merchant: "Thabo_Mthembu",
+      rating: 4.5,
+      trades: 678,
+      price: 109150,
+      available: 1.2,
+      min: 500,
+      max: 35000,
+      payment: ["Bank Transfer", "EFT"],
+      type: "sell",
+      verified: true,
+      currency: "BTC",
+      country: "South Africa"
+    },
+    {
+      id: 37,
+      merchant: "Nomsa_Dlamini",
+      rating: 4.6,
+      trades: 534,
+      price: 2494,
+      available: 11.8,
+      min: 200,
+      max: 20000,
+      payment: ["Bank Transfer", "EFT"],
+      type: "sell",
+      verified: true,
+      currency: "ETH",
+      country: "South Africa"
+    },
+    // Kenya
+    {
+      id: 38,
+      merchant: "Joseph_Kiprotich",
+      rating: 4.7,
+      trades: 945,
+      price: 109180,
+      available: 0.9,
+      min: 300,
+      max: 25000,
+      payment: ["M-Pesa", "Bank Transfer"],
+      type: "sell",
+      verified: true,
+      currency: "BTC",
+      country: "Kenya"
+    },
+    {
+      id: 39,
+      merchant: "Grace_Wanjiku",
+      rating: 4.4,
+      trades: 612,
+      price: 1.008,
+      available: 60000,
+      min: 50,
+      max: 15000,
+      payment: ["M-Pesa", "Bank Transfer"],
+      type: "sell",
+      verified: true,
+      currency: "USDT",
+      country: "Kenya"
+    },
+    // Ghana
+    {
+      id: 40,
+      merchant: "Kwame_Asante",
+      rating: 4.5,
+      trades: 756,
+      price: 109120,
+      available: 1.1,
+      min: 250,
+      max: 20000,
+      payment: ["Mobile Money", "Bank Transfer"],
+      type: "sell",
+      verified: true,
+      currency: "BTC",
+      country: "Ghana"
+    },
+    {
+      id: 41,
+      merchant: "Akosua_Mensah",
+      rating: 4.3,
+      trades: 489,
+      price: 2493,
+      available: 8.9,
+      min: 150,
+      max: 15000,
+      payment: ["Mobile Money", "Bank Transfer"],
+      type: "sell",
+      verified: true,
+      currency: "ETH",
+      country: "Ghana"
+    },
+    // Egypt
+    {
+      id: 42,
+      merchant: "Omar_Hassan",
+      rating: 4.6,
+      trades: 823,
+      price: 109300,
+      available: 1.3,
+      min: 400,
+      max: 30000,
+      payment: ["Bank Transfer", "Vodafone Cash"],
+      type: "sell",
+      verified: true,
+      currency: "BTC",
+      country: "Egypt"
+    },
+    // Morocco
+    {
+      id: 43,
+      merchant: "Youssef_Benali",
+      rating: 4.4,
+      trades: 567,
+      price: 1.012,
+      available: 45000,
+      min: 100,
+      max: 18000,
+      payment: ["Bank Transfer", "CIH Mobile"],
+      type: "sell",
+      verified: true,
+      currency: "USDT",
+      country: "Morocco"
+    },
+    
+    // BUY ORDERS - People wanting to buy crypto
+    // USA Buy Orders
+    {
+      id: 44,
+      merchant: "Lisa_Rodriguez",
+      rating: 4.8,
+      trades: 1156,
+      price: 109600,
+      available: 0,
+      min: 500,
+      max: 35000,
+      payment: ["Bank Transfer", "PayPal"],
+      type: "buy",
+      verified: true,
+      currency: "BTC",
+      country: "USA"
+    },
+    {
+      id: 45,
+      merchant: "Mark_Thompson",
+      rating: 4.7,
+      trades: 934,
+      price: 109550,
+      available: 0,
+      min: 200,
+      max: 25000,
+      payment: ["Cash App", "Zelle"],
+      type: "buy",
+      verified: true,
+      currency: "BTC",
+      country: "USA"
+    },
+    {
+      id: 46,
+      merchant: "Amanda_White",
+      rating: 4.9,
+      trades: 1278,
+      price: 2505,
+      available: 0,
+      min: 300,
+      max: 40000,
+      payment: ["Venmo", "Cash App"],
+      type: "buy",
+      verified: true,
+      currency: "ETH",
+      country: "USA"
+    },
+    // UK Buy Orders
+    {
+      id: 47,
+      merchant: "William_Jones",
+      rating: 4.6,
+      trades: 789,
+      price: 109650,
+      available: 0,
+      min: 800,
+      max: 50000,
+      payment: ["Bank Transfer", "Wise"],
+      type: "buy",
+      verified: true,
+      currency: "BTC",
+      country: "UK"
+    },
+    {
+      id: 48,
+      merchant: "Emma_Williams",
+      rating: 4.8,
+      trades: 1045,
+      price: 2508,
+      available: 0,
+      min: 400,
+      max: 30000,
+      payment: ["Bank Transfer", "Wise"],
+      type: "buy",
+      verified: true,
+      currency: "ETH",
+      country: "UK"
+    },
+    // Germany Buy Orders
+    {
+      id: 49,
+      merchant: "Klaus_Bauer",
+      rating: 4.7,
+      trades: 856,
+      price: 109580,
+      available: 0,
+      min: 600,
+      max: 45000,
+      payment: ["SEPA", "Bank Transfer"],
+      type: "buy",
+      verified: true,
+      currency: "BTC",
+      country: "Germany"
+    },
+    // Canada Buy Orders
+    {
+      id: 50,
+      merchant: "Sarah_MacDonald",
+      rating: 4.5,
+      trades: 623,
+      price: 109520,
+      available: 0,
+      min: 400,
+      max: 28000,
+      payment: ["Bank Transfer", "Interac"],
+      type: "buy",
+      verified: true,
+      currency: "BTC",
+      country: "Canada"
+    },
+    // Nigeria Buy Orders
+    {
+      id: 51,
+      merchant: "Blessing_Adebayo",
+      rating: 4.6,
+      trades: 745,
+      price: 109400,
+      available: 0,
+      min: 300,
+      max: 20000,
+      payment: ["Bank Transfer", "Flutterwave"],
+      type: "buy",
+      verified: true,
+      currency: "BTC",
+      country: "Nigeria"
+    },
+    {
+      id: 52,
+      merchant: "Tunde_Ogundimu",
+      rating: 4.8,
+      trades: 967,
+      price: 2500,
+      available: 0,
+      min: 200,
+      max: 25000,
+      payment: ["Bank Transfer", "Paystack"],
+      type: "buy",
+      verified: true,
+      currency: "ETH",
+      country: "Nigeria"
+    },
+    // South Africa Buy Orders
+    {
+      id: 53,
+      merchant: "Sipho_Ndaba",
+      rating: 4.4,
+      trades: 578,
+      price: 109480,
+      available: 0,
+      min: 600,
+      max: 30000,
+      payment: ["Bank Transfer", "EFT"],
+      type: "buy",
+      verified: true,
+      currency: "BTC",
+      country: "South Africa"
+    },
+    // Kenya Buy Orders
+    {
+      id: 54,
+      merchant: "Mary_Wambui",
+      rating: 4.7,
+      trades: 834,
+      price: 109350,
+      available: 0,
+      min: 250,
+      max: 18000,
+      payment: ["M-Pesa", "Bank Transfer"],
+      type: "buy",
+      verified: true,
+      currency: "BTC",
+      country: "Kenya"
+    },
+    // Additional sellers from various countries
+    {
+      id: 55,
+      merchant: "Francesco_Rossi",
+      rating: 4.7,
+      trades: 798,
+      price: 0.45,
+      available: 25000,
+      min: 50,
+      max: 8000,
+      payment: ["Bank Transfer", "PayPal"],
+      type: "sell",
+      verified: true,
+      currency: "ADA",
+      country: "Italy"
+    },
+    {
+      id: 56,
+      merchant: "Isabella_Garcia",
+      rating: 4.6,
+      trades: 1123,
+      price: 0.62,
+      available: 30000,
+      min: 30,
+      max: 12000,
+      payment: ["Wise", "Zelle"],
+      type: "sell",
+      verified: true,
+      currency: "XRP",
+      country: "Spain"
+    },
+    {
+      id: 57,
+      merchant: "Chen_Wei_Ming",
+      rating: 4.9,
+      trades: 2350,
+      price: 1.00,
+      available: 50000,
+      min: 100,
+      max: 100000,
+      payment: ["Bank Transfer", "Wise", "PayPal", "Zelle"],
+      type: "sell",
+      verified: true,
+      currency: "USDT",
+      country: "Hong Kong"
+    },
+    {
+      id: 58,
+      merchant: "Maria_Santos",
+      rating: 4.8,
+      trades: 945,
+      price: 152,
+      available: 120.5,
+      min: 50,
+      max: 10000,
+      payment: ["Bank Transfer", "Venmo"],
+      type: "sell",
+      verified: true,
+      currency: "SOL",
+      country: "Portugal"
     }
   ];
 
@@ -650,7 +1135,7 @@ export default function P2P() {
                     </TabsList>
                     
                     <TabsContent value="buy" className="space-y-4">
-                    {p2pOrders.filter(order => order.currency === selectedAsset).map((order) => (
+                    {p2pOrders.filter(order => order.currency === selectedAsset && order.type === "sell").map((order) => (
                       <Card key={order.id} className="bg-white/10 backdrop-blur-md border-white/20 hover:border-bitcoin-orange/50 transition-all duration-300 bitcoin-glow">
                         <CardContent className="p-6">
                           <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
@@ -731,14 +1216,95 @@ export default function P2P() {
                   </TabsContent>
 
                   <TabsContent value="sell" className="space-y-4">
-                    <div className="text-center py-12">
-                      <Bitcoin className="mx-auto text-bitcoin-orange mb-4" size={48} />
-                      <h3 className="text-xl font-semibold text-white mb-2">Create Your Sell Order</h3>
-                      <p className="text-white/70 mb-6">Set your price and payment methods to start selling {selectedAsset}</p>
-                      <Button className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg">
-                        Create Sell Order
-                      </Button>
-                    </div>
+                    {p2pOrders.filter(order => order.currency === selectedAsset && order.type === "buy").map((order) => (
+                      <Card key={order.id} className="bg-white/10 backdrop-blur-md border-white/20 hover:border-red-400/50 transition-all duration-300 bitcoin-glow">
+                        <CardContent className="p-6">
+                          <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
+                            {/* Merchant Info */}
+                            <div className="md:col-span-2">
+                              <div className="flex items-center space-x-3">
+                                <Avatar>
+                                  <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${order.merchant}`} />
+                                  <AvatarFallback className="bg-red-500 text-white">{order.merchant.slice(0, 2)}</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <div className="flex items-center space-x-2">
+                                    <span className="font-semibold text-white">{order.merchant}</span>
+                                    {order.verified && (
+                                      <Badge variant="secondary" className="bg-green-500/20 text-green-400 border-green-400/30">
+                                        <Shield size={12} className="mr-1" />
+                                        Verified
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  <div className="flex items-center space-x-1 text-sm text-white/60">
+                                    <Star className="text-yellow-400" size={14} />
+                                    <span>{order.rating}</span>
+                                    <span>({order.trades} trades)</span>
+                                  </div>
+                                  <div className="text-xs text-white/50 mt-1">
+                                    📍 {order.country}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Price & Wants to Buy */}
+                            <div className="text-center">
+                              <div className="text-lg font-bold text-white">
+                                ${order.price.toLocaleString()}
+                              </div>
+                              <div className="text-sm text-white/60">
+                                Wants to buy {order.currency}
+                              </div>
+                            </div>
+
+                            {/* Limits */}
+                            <div className="text-center">
+                              <div className="text-sm font-medium text-white">
+                                ${order.min.toLocaleString()} - ${order.max.toLocaleString()}
+                              </div>
+                              <div className="text-xs text-white/60">Limit</div>
+                            </div>
+
+                            {/* Payment Methods */}
+                            <div>
+                              <div className="flex flex-wrap gap-1">
+                                {order.payment.map((method, index) => (
+                                  <Badge key={index} variant="outline" className="text-xs text-white/80 border-white/30">
+                                    <div className="flex items-center space-x-1">
+                                      {getPaymentIcon(method)}
+                                      <span>{method}</span>
+                                    </div>
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Action Button */}
+                            <div>
+                              <Button 
+                                onClick={() => handleTrade(order.id)}
+                                className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg"
+                              >
+                                Sell
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                    
+                    {p2pOrders.filter(order => order.currency === selectedAsset && order.type === "buy").length === 0 && (
+                      <div className="text-center py-12">
+                        <Bitcoin className="mx-auto text-bitcoin-orange mb-4" size={48} />
+                        <h3 className="text-xl font-semibold text-white mb-2">No Buy Orders</h3>
+                        <p className="text-white/70 mb-6">No one is currently looking to buy {selectedAsset}</p>
+                        <Button className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg">
+                          Create Sell Order
+                        </Button>
+                      </div>
+                    )}
                   </TabsContent>
                   </Tabs>
                 </CardContent>
