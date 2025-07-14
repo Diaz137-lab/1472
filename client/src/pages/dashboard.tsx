@@ -62,7 +62,7 @@ export default function Dashboard() {
     enabled: !!user?.id,
   });
 
-  const portfolioValue = portfolio ? parseFloat(portfolio.totalBalance) : 0;
+  const portfolioValue = portfolio ? parseFloat(portfolio.totalValue || portfolio.totalBalance || '0') : 0;
   const dailyChange = 1250; // This would come from transaction history analysis
   const dailyChangePercent = portfolioValue > 0 ? (dailyChange / portfolioValue) * 100 : 0;
 

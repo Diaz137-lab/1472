@@ -5,7 +5,7 @@ import {
   type CryptoAsset, type InsertCryptoAsset, type AdminBalanceAction, type InsertAdminBalanceAction
 } from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -530,7 +530,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserBalanceActions(userId: number): Promise<AdminBalanceAction[]> {
-    return await db.select().from(adminBalanceActions).where(eq(adminBalanceActions.userId, userId));
+    try {
+      const actions = await db.select().from(adminBalanceActions).where(eq(adminBalanceActions.userId, userId)).orderBy(desc(adminBalanceActions.createdAt));
+      return actions;
+    } catch (error) {
+      console.error('Error fetching user balance actions:', error);
+      return [];
+    }
   }
 }
 
