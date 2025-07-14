@@ -42,11 +42,7 @@ function Router() {
       <Route path="/auth/signup" component={Signup} />
       <Route path="/admin-login" component={AdminLogin} />
       <Route path="/wallet" component={SmartWallet} />
-      <Route path="/dashboard">
-        <ProtectedRoute>
-          <Dashboard />
-        </ProtectedRoute>
-      </Route>
+      <Route path="/dashboard" component={Dashboard} />
       <Route path="/trading" component={Trading} />
       <Route path="/portfolio">
         <ProtectedRoute>

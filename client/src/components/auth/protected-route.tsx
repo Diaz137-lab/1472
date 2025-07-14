@@ -29,9 +29,14 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const [, setLocation] = useLocation();
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      setLocation("/auth/login");
-    }
+    // Small delay to allow auth state to settle
+    const timer = setTimeout(() => {
+      if (!isAuthenticated) {
+        setLocation("/auth/login");
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, [isAuthenticated, setLocation]);
 
   if (!isAuthenticated) {

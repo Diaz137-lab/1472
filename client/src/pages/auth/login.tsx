@@ -27,8 +27,8 @@ export default function Login() {
         title: "Welcome back!",
         description: "You have successfully logged in.",
       });
-      // Force immediate redirect to dashboard
-      window.location.href = "/dashboard";
+      // Immediate redirect to dashboard
+      setLocation("/dashboard");
     },
     onError: () => {
       toast({
