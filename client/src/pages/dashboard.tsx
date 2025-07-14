@@ -55,12 +55,8 @@ export default function Dashboard() {
     enabled: !!user?.id,
   });
 
-  // Fetch user transactions
-  const { data: transactions, isLoading: transactionsLoading } = useQuery({
-    queryKey: ['transactions', user?.id],
-    queryFn: () => fetch(`/api/transactions/${user?.id}`).then(res => res.json()),
-    enabled: !!user?.id,
-  });
+  // Remove broken transaction API call since balance actions provide the transaction history
+  const transactions = balanceActions || [];
 
   const portfolioValue = portfolio ? parseFloat(portfolio.totalValue || portfolio.totalBalance || '0') : 0;
   const dailyChange = 1250; // This would come from transaction history analysis
@@ -125,74 +121,94 @@ export default function Dashboard() {
 
         {/* Enhanced Bitcoin Portfolio Overview */}
         <div className="mb-8">
-          <Card className="bg-gradient-to-br from-orange-50 to-yellow-50 border-orange-200">
-            <CardHeader>
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-yellow-600 rounded-full flex items-center justify-center">
-                  <Bitcoin className="h-6 w-6 text-white" />
+          <Card className="bg-gradient-to-br from-orange-50 via-yellow-50 to-orange-100 border-orange-200 shadow-2xl">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-orange-500 via-orange-600 to-yellow-600 rounded-full flex items-center justify-center shadow-lg">
+                    <Bitcoin className="h-8 w-8 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-2xl font-bold text-gray-900">
+                      {user?.firstName} {user?.lastName}'s Portfolio
+                    </CardTitle>
+                    <p className="text-base text-gray-600">Premium Bitcoin-focused digital assets</p>
+                  </div>
                 </div>
-                <div>
-                  <CardTitle className="text-xl font-bold text-gray-900">
-                    {user?.firstName} {user?.lastName}'s Portfolio
-                  </CardTitle>
-                  <p className="text-sm text-gray-600">Bitcoin-focused digital assets</p>
-                </div>
+                <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+                  <CheckCircle className="w-4 h-4 mr-1" />
+                  Premium
+                </Badge>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 mb-2">Total USD Value</p>
-                  <div className="text-4xl font-bold text-gray-900 mb-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <DollarSign className="w-5 h-5 text-green-600" />
+                    <p className="text-base font-semibold text-gray-700">Total USD Value</p>
+                  </div>
+                  <div className="text-5xl font-bold text-gray-900 mb-3">
                     ${portfolioValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
-                  <p className="text-sm text-green-600 font-medium">
-                    +${dailyChange.toLocaleString()} ({dailyChangePercent.toFixed(2)}%) today
-                  </p>
+                  <div className="flex items-center space-x-2">
+                    <TrendingUp className="w-4 h-4 text-green-600" />
+                    <p className="text-base text-green-600 font-semibold">
+                      +${dailyChange.toLocaleString()} ({dailyChangePercent.toFixed(2)}%) today
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-orange-600 mb-2">Bitcoin Equivalent</p>
-                  <DashboardBitcoinDisplay usdAmount={portfolioValue} />
-                  <p className="text-xs text-gray-500 mt-2">Live market conversion</p>
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <Bitcoin className="w-5 h-5 text-orange-600" />
+                    <p className="text-base font-semibold text-orange-600">Bitcoin Equivalent</p>
+                  </div>
+                  <div className="bg-gradient-to-br from-orange-100 to-yellow-100 rounded-xl p-4 shadow-inner">
+                    <DashboardBitcoinDisplay usdAmount={portfolioValue} />
+                    <div className="flex items-center mt-3 text-sm text-gray-600">
+                      <Clock className="w-4 h-4 mr-1" />
+                      <span>Live market conversion</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Portfolio Overview Cards */}
+        {/* Enhanced Portfolio Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="hover:shadow-lg transition-shadow duration-300">
+          <Card className="hover:shadow-xl transition-all duration-300 transform hover:scale-105 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Portfolio Value</CardTitle>
-              <DollarSign className="h-4 w-4 text-blue-600" />
+              <CardTitle className="text-base font-semibold text-gray-800">Portfolio Value</CardTitle>
+              <DollarSign className="h-6 w-6 text-blue-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-900">${portfolioValue.toLocaleString()}</div>
-              <p className="text-xs text-gray-500 mt-1">Total account balance</p>
+              <div className="text-3xl font-bold text-gray-900">${portfolioValue.toLocaleString()}</div>
+              <p className="text-sm text-gray-600 mt-1">Total account balance</p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="hover:shadow-xl transition-all duration-300 transform hover:scale-105 bg-gradient-to-br from-green-50 to-green-100 border-green-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">24h Change</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-base font-semibold text-gray-800">24h Change</CardTitle>
+              <TrendingUp className="h-6 w-6 text-green-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-fw-success">+{dailyChangePercent}%</div>
-              <p className="text-xs text-muted-foreground">
+              <div className="text-3xl font-bold text-green-600">+{dailyChangePercent.toFixed(2)}%</div>
+              <p className="text-sm text-gray-600 mt-1">
                 ${dailyChange.toLocaleString()} increase
               </p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="hover:shadow-xl transition-all duration-300 transform hover:scale-105 bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Assets</CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-base font-semibold text-gray-800">Active Assets</CardTitle>
+              <Activity className="h-6 w-6 text-purple-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">5</div>
+              <div className="text-3xl font-bold text-purple-600">5</div>
               <p className="text-xs text-muted-foreground">
                 Assets in portfolio
               </p>
@@ -231,36 +247,44 @@ export default function Dashboard() {
               ) : balanceActions && balanceActions.length > 0 ? (
                 <div className="space-y-3">
                   {balanceActions.slice(0, 10).map((action: any, index: number) => (
-                    <div key={action.id} className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg hover:shadow-md transition-shadow">
+                    <div key={action.id} className="flex items-center justify-between p-6 bg-gradient-to-r from-white to-gray-50 rounded-xl hover:shadow-lg transition-all duration-300 border border-gray-100">
                       <div className="flex items-center space-x-4">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                          action.action === 'credit' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-md ${
+                          action.action === 'credit' ? 'bg-gradient-to-br from-green-400 to-green-600 text-white' : 'bg-gradient-to-br from-red-400 to-red-600 text-white'
                         }`}>
-                          {action.action === 'credit' ? <TrendingUp className="w-5 h-5" /> : <DollarSign className="w-5 h-5" />}
+                          {action.action === 'credit' ? <TrendingUp className="w-6 h-6" /> : <DollarSign className="w-6 h-6" />}
                         </div>
-                        <div>
-                          <div className="flex items-center space-x-2">
-                            <p className="font-semibold text-gray-900 capitalize">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-3 mb-1">
+                            <p className="font-bold text-gray-900 text-lg">
                               {action.action === 'credit' ? 'Account Credit' : 'Account Debit'}
                             </p>
-                            <Badge variant="outline" className="text-xs">
+                            <Badge variant="outline" className={`text-xs font-medium ${
+                              action.action === 'credit' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'
+                            }`}>
                               {action.action === 'credit' ? 'Deposit' : 'Withdrawal'}
                             </Badge>
                           </div>
-                          <p className="text-sm text-gray-600">{action.reason}</p>
-                          <div className="flex items-center space-x-2 text-xs text-gray-500">
-                            <Clock className="w-3 h-3" />
-                            <span>{formatDate(action.createdAt)}</span>
+                          <p className="text-sm text-gray-600 mb-2">{action.reason}</p>
+                          <div className="flex items-center space-x-4 text-xs text-gray-500">
+                            <div className="flex items-center space-x-1">
+                              <Clock className="w-3 h-3" />
+                              <span>{formatDate(action.createdAt)}</span>
+                            </div>
+                            <div className="flex items-center space-x-1">
+                              <Bitcoin className="w-3 h-3 text-orange-500" />
+                              <DashboardBitcoinDisplay usdAmount={parseFloat(action.amount)} />
+                            </div>
                           </div>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className={`text-lg font-bold ${
+                        <p className={`text-2xl font-bold ${
                           action.action === 'credit' ? 'text-green-600' : 'text-red-600'
                         }`}>
                           {action.action === 'credit' ? '+' : '-'}{formatCurrency(action.amount)}
                         </p>
-                        <p className="text-sm text-gray-500">{action.currency}</p>
+                        <p className="text-sm text-gray-500 font-medium">{action.currency}</p>
                       </div>
                     </div>
                   ))}
