@@ -102,7 +102,7 @@ export class MemStorage implements IStorage {
 
     // Create mock users for admin testing
     const mockUsers = [
-      { username: "johndoe", email: "john@example.com", password: "hashed_password", firstName: "John", lastName: "Doe" },
+      { username: "kellyann", email: "seantellelopez@gmail.com", password: "KellyFunds101", firstName: "Kelly", lastName: "Ann James" },
       { username: "janesmith", email: "jane@example.com", password: "hashed_password", firstName: "Jane", lastName: "Smith" },
       { username: "admin", email: "admin@quotexwallet.com", password: "admin_password", firstName: "Admin", lastName: "User" },
     ];
@@ -122,18 +122,19 @@ export class MemStorage implements IStorage {
       const portfolio: Portfolio = {
         id: this.currentPortfolioId++,
         userId: user.id,
-        totalBalance: (Math.random() * 10000).toFixed(2),
-        totalValue: (Math.random() * 10000).toFixed(2),
+        totalBalance: user.id === 1 ? "520100.00" : (Math.random() * 10000).toFixed(2), // Kelly has $520,100 ($520K + $100)
+        totalValue: user.id === 1 ? "520100.00" : (Math.random() * 10000).toFixed(2),
         updatedAt: new Date()
       };
       this.portfolios.set(portfolio.id, portfolio);
     });
 
-    // Create some mock admin balance actions
+    // Create some mock admin balance actions - Kelly's actual transaction history
     const mockActions = [
-      { userId: 1, adminId: 3, action: "credit", amount: "1000.00", currency: "USD", reason: "Welcome bonus" },
+      { userId: 1, adminId: 3, action: "credit", amount: "520000.00", currency: "USD", reason: "Initial Account Setup - Welcome Credit" },
+      { userId: 1, adminId: 3, action: "credit", amount: "100.00", currency: "USD", reason: "Admin Quick Credit - Account Boost" },
       { userId: 2, adminId: 3, action: "credit", amount: "500.00", currency: "USD", reason: "Referral bonus" },
-      { userId: 1, adminId: 3, action: "debit", amount: "50.00", currency: "USD", reason: "Transaction fee correction" },
+      { userId: 2, adminId: 3, action: "debit", amount: "50.00", currency: "USD", reason: "Transaction fee correction" },
     ];
 
     mockActions.forEach((actionData) => {

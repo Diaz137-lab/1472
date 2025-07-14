@@ -213,6 +213,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User balance actions (admin actions on user account)
+  app.get("/api/user/:userId/balance-actions", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const actions = await storage.getUserBalanceActions(userId);
+      res.json(actions);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch balance actions" });
+    }
+  });
+
   // Admin authentication routes
   app.post("/api/admin/auth/login", async (req, res) => {
     try {
