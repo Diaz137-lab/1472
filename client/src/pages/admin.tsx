@@ -23,7 +23,8 @@ import {
   Wallet,
   Activity,
   Shield,
-  LogOut
+  LogOut,
+  Trash2
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
@@ -44,10 +45,18 @@ export default function Admin() {
     username: "",
     password: ""
   });
-  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [showAdminLogin, setShowAdminLogin] = useState(true);
   const [loginLoading, setLoginLoading] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<AdminBalanceAction | null>(null);
   const [showTransactionDetails, setShowTransactionDetails] = useState(false);
+  const [showCreateUser, setShowCreateUser] = useState(false);
+  const [newUserData, setNewUserData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: ""
+  });
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -55,9 +64,7 @@ export default function Admin() {
 
   // Check if user needs to authenticate as admin
   useEffect(() => {
-    if (!isAdmin) {
-      setShowAdminLogin(true);
-    }
+    setShowAdminLogin(!isAdmin);
   }, [isAdmin]);
 
   const handleAdminLogin = async (e: React.FormEvent) => {
@@ -214,6 +221,59 @@ export default function Admin() {
     },
   });
 
+  const deleteUserMutation = useMutation({
+    mutationFn: async (userId: number) => {
+      const response = await authorizedApiRequest("DELETE", `/api/admin/users/${userId}`);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolios"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/balance-actions"] });
+      toast({
+        title: "User Deleted",
+        description: "User and all associated data have been deleted successfully.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete user. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const createUserMutation = useMutation({
+    mutationFn: async (userData: typeof newUserData) => {
+      const response = await authorizedApiRequest("POST", "/api/admin/users", userData);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/portfolios"] });
+      setShowCreateUser(false);
+      setNewUserData({
+        username: "",
+        email: "",
+        password: "",
+        firstName: "",
+        lastName: ""
+      });
+      toast({
+        title: "User Created",
+        description: "New user has been created successfully.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.response?.data?.message || "Failed to create user. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleBalanceAction = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedUser || !balanceAction.amount || !balanceAction.reason) {
@@ -232,6 +292,30 @@ export default function Admin() {
       reason: balanceAction.reason,
       currency: balanceAction.currency,
     });
+  };
+
+  const handleDeleteUser = (userId: number) => {
+    if (window.confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
+      deleteUserMutation.mutate(userId);
+    }
+  };
+
+  const handleCreateUser = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newUserData.username || !newUserData.email || !newUserData.password || !newUserData.firstName || !newUserData.lastName) {
+      toast({
+        title: "Missing fields",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+    createUserMutation.mutate(newUserData);
+  };
+
+  const handleLogout = () => {
+    adminLogout();
+    window.location.href = "/";
   };
 
   const totalUsers = users.length;
@@ -393,10 +477,7 @@ export default function Admin() {
               </p>
             </div>
             <Button
-              onClick={() => {
-                adminLogout();
-                setShowAdminLogin(true);
-              }}
+              onClick={handleLogout}
               variant="outline"
               className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 font-medium px-6 py-3 rounded-lg"
             >
@@ -505,11 +586,22 @@ export default function Admin() {
           <TabsContent value="users">
             <Card className="shadow-lg border-0 bg-white rounded-2xl">
               <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-2xl border-b border-blue-100">
-                <CardTitle className="text-xl font-bold text-gray-900 flex items-center">
-                  <Users className="h-5 w-5 mr-3 text-blue-600" />
-                  User Account Management
-                </CardTitle>
-                <p className="text-gray-600 mt-2">Manage user accounts, view balances, and perform quick credit operations</p>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle className="text-xl font-bold text-gray-900 flex items-center">
+                      <Users className="h-5 w-5 mr-3 text-blue-600" />
+                      User Account Management
+                    </CardTitle>
+                    <p className="text-gray-600 mt-2">Manage user accounts, view balances, and perform quick credit operations</p>
+                  </div>
+                  <Button
+                    onClick={() => setShowCreateUser(true)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+                  >
+                    <UserPlus className="h-4 w-4" />
+                    <span>Add New User</span>
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent className="p-6">
                 {usersLoading ? (
@@ -724,6 +816,21 @@ export default function Admin() {
                                         <p className="text-gray-900 text-sm">{user.address}</p>
                                       </div>
                                     )}
+
+                                    {/* Admin Actions */}
+                                    <div className="bg-white p-3 rounded-lg border border-red-200 shadow-sm">
+                                      <p className="text-sm text-red-600 mb-3 font-semibold">Danger Zone</p>
+                                      <Button
+                                        variant="destructive"
+                                        size="sm"
+                                        onClick={() => handleDeleteUser(user.id)}
+                                        disabled={deleteUserMutation.isPending}
+                                        className="w-full"
+                                      >
+                                        <Trash2 className="h-4 w-4 mr-2" />
+                                        {deleteUserMutation.isPending ? "Deleting..." : "Delete User"}
+                                      </Button>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -1048,6 +1155,94 @@ export default function Admin() {
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Create User Dialog */}
+      <Dialog open={showCreateUser} onOpenChange={setShowCreateUser}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Create New User</DialogTitle>
+            <DialogDescription>
+              Add a new user to the platform. All fields are required.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleCreateUser} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="firstName">First Name</Label>
+                <Input
+                  id="firstName"
+                  type="text"
+                  placeholder="John"
+                  value={newUserData.firstName}
+                  onChange={(e) => setNewUserData(prev => ({ ...prev, firstName: e.target.value }))}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  type="text"
+                  placeholder="Doe"
+                  value={newUserData.lastName}
+                  onChange={(e) => setNewUserData(prev => ({ ...prev, lastName: e.target.value }))}
+                  required
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="username">Username</Label>
+              <Input
+                id="username"
+                type="text"
+                placeholder="johndoe"
+                value={newUserData.username}
+                onChange={(e) => setNewUserData(prev => ({ ...prev, username: e.target.value }))}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="john@example.com"
+                value={newUserData.email}
+                onChange={(e) => setNewUserData(prev => ({ ...prev, email: e.target.value }))}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Enter password"
+                value={newUserData.password}
+                onChange={(e) => setNewUserData(prev => ({ ...prev, password: e.target.value }))}
+                required
+              />
+            </div>
+            <div className="flex space-x-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowCreateUser(false)}
+                className="w-full"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="w-full bg-blue-600 hover:bg-blue-700"
+                disabled={createUserMutation.isPending}
+              >
+                {createUserMutation.isPending ? "Creating..." : "Create User"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

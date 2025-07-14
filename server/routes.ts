@@ -276,6 +276,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/admin/users/:id", verifyAdminToken, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      
+      const deleted = await storage.deleteUser(userId);
+      if (!deleted) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      res.json({ message: "User deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete user" });
+    }
+  });
+
+  app.post("/api/admin/users", verifyAdminToken, async (req, res) => {
+    try {
+      const userData = insertUserSchema.parse(req.body);
+      
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail(userData.email);
+      if (existingUser) {
+        return res.status(400).json({ message: "User already exists" });
+      }
+      
+      const existingUsername = await storage.getUserByUsername(userData.username);
+      if (existingUsername) {
+        return res.status(400).json({ message: "Username already taken" });
+      }
+      
+      const user = await storage.createUser(userData);
+      
+      // Create portfolio for new user
+      await storage.createPortfolio({
+        userId: user.id,
+        totalBalance: "0.00",
+        totalValue: "0.00"
+      });
+      
+      // Remove password from response
+      const { password, ...safeUser } = user;
+      res.json(safeUser);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid user data" });
+    }
+  });
+
   app.post("/api/admin/balance-action", verifyAdminToken, async (req, res) => {
     try {
       // Extract and validate codes first

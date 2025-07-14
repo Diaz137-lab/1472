@@ -15,6 +15,7 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   getAllUsers(): Promise<User[]>;
   updateUser(id: number, updates: Partial<User>): Promise<User | undefined>;
+  deleteUser(id: number): Promise<boolean>;
   
   // Portfolio methods
   getPortfolio(userId: number): Promise<Portfolio | undefined>;
@@ -297,6 +298,35 @@ export class MemStorage implements IStorage {
     return undefined;
   }
 
+  async deleteUser(id: number): Promise<boolean> {
+    const user = this.users.get(id);
+    if (user) {
+      // Delete user's portfolio and holdings
+      const userPortfolio = Array.from(this.portfolios.values()).find(p => p.userId === id);
+      if (userPortfolio) {
+        // Delete holdings first
+        const userHoldings = Array.from(this.holdings.values()).filter(h => h.portfolioId === userPortfolio.id);
+        userHoldings.forEach(h => this.holdings.delete(h.id));
+        
+        // Delete portfolio
+        this.portfolios.delete(userPortfolio.id);
+      }
+      
+      // Delete user's transactions
+      const userTransactions = Array.from(this.transactions.values()).filter(t => t.userId === id);
+      userTransactions.forEach(t => this.transactions.delete(t.id));
+      
+      // Delete user's admin balance actions
+      const userActions = Array.from(this.adminBalanceActions.values()).filter(a => a.userId === id);
+      userActions.forEach(a => this.adminBalanceActions.delete(a.id));
+      
+      // Delete user
+      this.users.delete(id);
+      return true;
+    }
+    return false;
+  }
+
   async getAdminBalanceActions(): Promise<AdminBalanceAction[]> {
     return Array.from(this.adminBalanceActions.values())
       .sort((a, b) => b.createdAt!.getTime() - a.createdAt!.getTime());
@@ -356,6 +386,32 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, id))
       .returning();
     return user || undefined;
+  }
+
+  async deleteUser(id: number): Promise<boolean> {
+    try {
+      // Delete user's holdings first (referential integrity)
+      const userPortfolio = await db.select().from(portfolios).where(eq(portfolios.userId, id));
+      if (userPortfolio.length > 0) {
+        await db.delete(holdings).where(eq(holdings.portfolioId, userPortfolio[0].id));
+      }
+      
+      // Delete user's transactions
+      await db.delete(transactions).where(eq(transactions.userId, id));
+      
+      // Delete user's admin balance actions
+      await db.delete(adminBalanceActions).where(eq(adminBalanceActions.userId, id));
+      
+      // Delete user's portfolio
+      await db.delete(portfolios).where(eq(portfolios.userId, id));
+      
+      // Delete user
+      const result = await db.delete(users).where(eq(users.id, id));
+      return result.rowCount > 0;
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      return false;
+    }
   }
 
   async getPortfolio(userId: number): Promise<Portfolio | undefined> {
