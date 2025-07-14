@@ -27,6 +27,8 @@ async function initializeDatabase() {
         priceChange24h: asset.priceChange24h,
         marketCap: asset.marketCap,
         volume24h: asset.volume24h,
+        price: asset.currentPrice,
+        change24h: asset.priceChange24h,
         updatedAt: new Date()
       }).onConflictDoNothing();
     }
@@ -79,7 +81,12 @@ async function initializeDatabase() {
     // Insert users and create their portfolios with $0 balance
     for (const userData of testUsers) {
       const [user] = await db.insert(users).values({
-        ...userData,
+        username: userData.username,
+        email: userData.email,
+        password: userData.password,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        address: userData.address,
         isVerified: true,
         isAdmin: false,
         createdAt: new Date()
