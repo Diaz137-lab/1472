@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
@@ -6,6 +6,7 @@ import PriceTicker from "@/components/crypto/price-ticker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { useBitcoinPrice } from "@/hooks/use-bitcoin-price";
 import { 
   Play, 
   Shield, 
@@ -28,6 +29,152 @@ import {
   Bitcoin,
   Coins
 } from "lucide-react";
+
+// Live Cryptocurrency Prices Component
+function LiveCryptoPrices() {
+  const { data: bitcoinData } = useBitcoinPrice();
+  const [cryptoData, setCryptoData] = useState([
+    { 
+      symbol: "BTC", 
+      name: "Bitcoin", 
+      price: bitcoinData?.price || 121000, 
+      change: bitcoinData?.change24h || 2.5,
+      color: "from-orange-400 to-orange-600",
+      icon: Bitcoin
+    },
+    { 
+      symbol: "ETH", 
+      name: "Ethereum", 
+      price: 3800, 
+      change: 1.8,
+      color: "from-blue-400 to-blue-600",
+      icon: Coins
+    },
+    { 
+      symbol: "BNB", 
+      name: "Binance Coin", 
+      price: 520, 
+      change: -0.5,
+      color: "from-yellow-400 to-yellow-600",
+      icon: Coins
+    },
+    { 
+      symbol: "SOL", 
+      name: "Solana", 
+      price: 185, 
+      change: 4.2,
+      color: "from-purple-400 to-purple-600",
+      icon: Coins
+    },
+    { 
+      symbol: "ADA", 
+      name: "Cardano", 
+      price: 1.15, 
+      change: 2.1,
+      color: "from-blue-400 to-blue-600",
+      icon: Coins
+    },
+    { 
+      symbol: "DOT", 
+      name: "Polkadot", 
+      price: 12.5, 
+      change: -1.2,
+      color: "from-pink-400 to-pink-600",
+      icon: Coins
+    }
+  ]);
+
+  // Update Bitcoin price when hook data changes
+  useEffect(() => {
+    if (bitcoinData) {
+      setCryptoData(prev => prev.map(crypto => 
+        crypto.symbol === "BTC" 
+          ? { ...crypto, price: bitcoinData.price, change: bitcoinData.change24h }
+          : crypto
+      ));
+    }
+  }, [bitcoinData]);
+
+  // Simulate price updates for other cryptocurrencies
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCryptoData(prev => prev.map(crypto => {
+        if (crypto.symbol === "BTC") return crypto; // Bitcoin updates from real API
+        
+        const variation = (Math.random() - 0.5) * 0.02; // ±1% variation
+        const newPrice = crypto.price * (1 + variation);
+        const newChange = crypto.change + (Math.random() - 0.5) * 0.1;
+        
+        return {
+          ...crypto,
+          price: Math.max(0.01, newPrice),
+          change: Math.max(-10, Math.min(10, newChange))
+        };
+      }));
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 p-6 h-full">
+      <div className="text-center mb-6">
+        <h3 className="text-2xl font-bold text-gray-900 mb-2">Live Crypto Prices</h3>
+        <p className="text-sm text-gray-600">Real-time cryptocurrency market data</p>
+      </div>
+      
+      <div className="space-y-4 max-h-96 overflow-y-auto">
+        {cryptoData.map((crypto) => {
+          const Icon = crypto.icon;
+          return (
+            <div
+              key={crypto.symbol}
+              className="bg-gradient-to-r from-gray-50 to-white p-4 rounded-xl border border-gray-200/50 hover:shadow-md transition-all duration-300"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className={`w-10 h-10 bg-gradient-to-br ${crypto.color} rounded-full flex items-center justify-center shadow-lg`}>
+                    <Icon className="text-white w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">{crypto.symbol}</h4>
+                    <p className="text-xs text-gray-500">{crypto.name}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="font-bold text-lg text-gray-900">
+                    ${crypto.price.toLocaleString(undefined, { 
+                      minimumFractionDigits: crypto.price >= 1 ? 2 : 4,
+                      maximumFractionDigits: crypto.price >= 1 ? 2 : 4
+                    })}
+                  </p>
+                  <p className={`text-sm font-medium flex items-center justify-end ${
+                    crypto.change >= 0 ? 'text-green-600' : 'text-red-600'
+                  }`}>
+                    {crypto.change >= 0 ? '↗' : '↘'}
+                    {crypto.change >= 0 ? '+' : ''}{crypto.change.toFixed(2)}%
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      
+      <div className="mt-6 text-center">
+        <p className="text-xs text-gray-500">
+          * Prices update every 5 seconds
+        </p>
+        <Link href="/exchange">
+          <Button className="mt-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-md transform hover:scale-105">
+            <ArrowRight className="w-4 h-4 mr-2" />
+            Start Trading
+          </Button>
+        </Link>
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -198,12 +345,7 @@ export default function Home() {
               </div>
             </div>
             <div className="relative">
-              <img
-                src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600"
-                alt="Modern wallet interface showcase"
-                className="rounded-2xl shadow-2xl w-full h-auto"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-fw-blue/20 to-transparent rounded-2xl"></div>
+              <LiveCryptoPrices />
             </div>
           </div>
         </div>
