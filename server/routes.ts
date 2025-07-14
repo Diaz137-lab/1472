@@ -149,6 +149,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const holdings = await storage.getHoldings(portfolio.id);
       res.json({ ...portfolio, holdings });
     } catch (error) {
+      console.error("Portfolio fetch error:", error);
       res.status(500).json({ message: "Failed to fetch portfolio" });
     }
   });

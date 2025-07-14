@@ -20,6 +20,8 @@ export const portfolios = pgTable("portfolios", {
   userId: integer("user_id").notNull().references(() => users.id),
   totalBalance: decimal("total_balance", { precision: 18, scale: 8 }).default("0"),
   totalValue: decimal("total_value", { precision: 18, scale: 2 }).default("0"),
+  totalChange24h: decimal("total_change_24h", { precision: 18, scale: 2 }).default("0"),
+  createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
@@ -27,10 +29,9 @@ export const holdings = pgTable("holdings", {
   id: serial("id").primaryKey(),
   portfolioId: integer("portfolio_id").notNull().references(() => portfolios.id),
   symbol: text("symbol").notNull(),
-  name: text("name").notNull(),
-  amount: decimal("amount", { precision: 18, scale: 8 }).notNull(),
+  quantity: decimal("quantity", { precision: 18, scale: 8 }).notNull(),
   averagePrice: decimal("average_price", { precision: 18, scale: 2 }).notNull(),
-  currentPrice: decimal("current_price", { precision: 18, scale: 2 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
