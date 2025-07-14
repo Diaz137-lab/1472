@@ -140,7 +140,7 @@ export default function Home() {
       </section>
 
         {/* Wallet Section */}
-        <section id="wallet" className="py-20 bg-black/20 backdrop-blur-md">
+        <section id="wallet" className="py-20 bg-gradient-to-br from-slate-50 to-blue-50 border-t border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Wallet</h2>
@@ -148,40 +148,40 @@ export default function Home() {
           </div>
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-fw-light-blue rounded-xl flex items-center justify-center">
-                  <CreditCard className="text-fw-blue text-xl" />
+              <div className="flex items-start space-x-4 bg-white/70 backdrop-blur-sm rounded-xl p-6 shadow-sm border border-gray-200/50 hover:shadow-md transition-all duration-300">
+                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <CreditCard className="text-white text-xl" />
                 </div>
                 <div>
                   <h4 className="text-xl font-semibold text-gray-900 mb-2">Buy, sell, and swap with ease</h4>
-                  <p className="text-gray-600">Use a card or bank account to buy BTC, ETH, stablecoins, and other assets.</p>
+                  <p className="text-gray-700">Use a card or bank account to buy BTC, ETH, stablecoins, and other assets.</p>
                 </div>
               </div>
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-fw-light-blue rounded-xl flex items-center justify-center">
-                  <TrendingUp className="text-fw-blue text-xl" />
+              <div className="flex items-start space-x-4 bg-white/70 backdrop-blur-sm rounded-xl p-6 shadow-sm border border-gray-200/50 hover:shadow-md transition-all duration-300">
+                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <TrendingUp className="text-white text-xl" />
                 </div>
                 <div>
                   <h4 className="text-xl font-semibold text-gray-900 mb-2">Earn rewards on your crypto</h4>
-                  <p className="text-gray-600">Get up to 10% in annual rewards by putting your crypto to work.</p>
+                  <p className="text-gray-700">Get up to 10% in annual rewards by putting your crypto to work.</p>
                 </div>
               </div>
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-fw-light-blue rounded-xl flex items-center justify-center">
-                  <Shield className="text-fw-blue text-xl" />
+              <div className="flex items-start space-x-4 bg-white/70 backdrop-blur-sm rounded-xl p-6 shadow-sm border border-gray-200/50 hover:shadow-md transition-all duration-300">
+                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <Shield className="text-white text-xl" />
                 </div>
                 <div>
                   <h4 className="text-xl font-semibold text-gray-900 mb-2">Self-custody your crypto</h4>
-                  <p className="text-gray-600">Sleep better at night knowing only you can access your funds.</p>
+                  <p className="text-gray-700">Sleep better at night knowing only you can access your funds.</p>
                 </div>
               </div>
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-fw-light-blue rounded-xl flex items-center justify-center">
-                  <LinkIcon className="text-fw-blue text-xl" />
+              <div className="flex items-start space-x-4 bg-white/70 backdrop-blur-sm rounded-xl p-6 shadow-sm border border-gray-200/50 hover:shadow-md transition-all duration-300">
+                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <LinkIcon className="text-white text-xl" />
                 </div>
                 <div>
                   <h4 className="text-xl font-semibold text-gray-900 mb-2">Connect to DeFi</h4>
-                  <p className="text-gray-600">Use dapps, collect NFTs, and unlock the power of web3.</p>
+                  <p className="text-gray-700">Use dapps, collect NFTs, and unlock the power of web3.</p>
                 </div>
               </div>
               <div className="flex space-x-4">
