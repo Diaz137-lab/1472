@@ -76,6 +76,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
   password: true,
   firstName: true,
   lastName: true,
+  address: true,
 });
 
 export const insertAdminBalanceActionSchema = createInsertSchema(adminBalanceActions).pick({

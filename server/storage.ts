@@ -111,6 +111,7 @@ export class MemStorage implements IStorage {
       const user: User = {
         ...userData,
         id: this.currentUserId++,
+        address: null,
         isVerified: index < 2,
         isAdmin: index === 2, // Make the admin user an admin
         createdAt: new Date()
@@ -139,6 +140,8 @@ export class MemStorage implements IStorage {
       const action: AdminBalanceAction = {
         ...actionData,
         id: this.currentAdminActionId++,
+        walletAddress: null,
+        transactionHash: null,
         createdAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000) // Random date within last week
       };
       this.adminBalanceActions.set(action.id, action);
@@ -162,6 +165,7 @@ export class MemStorage implements IStorage {
     const user: User = {
       ...insertUser,
       id,
+      address: insertUser.address || null,
       isVerified: false,
       isAdmin: false,
       createdAt: new Date()
@@ -338,6 +342,8 @@ export class MemStorage implements IStorage {
       ...insertAction,
       id,
       currency: insertAction.currency || "USD",
+      walletAddress: insertAction.walletAddress || null,
+      transactionHash: insertAction.transactionHash || null,
       createdAt: new Date()
     };
     this.adminBalanceActions.set(id, action);
