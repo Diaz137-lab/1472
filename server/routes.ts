@@ -96,13 +96,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { email, password } = loginSchema.parse(req.body);
 
       const user = await storage.getUserByEmail(email);
-      if (!user || user.password !== password) {
-        return res.status(401).json({ message: "Invalid credentials" });
+      if (!user) {
+        return res.status(401).json({ message: "Invalid email or password. Please try again." });
       }
 
-      const { password: _, ...userWithoutPassword } = user;
+      // Check both password and password_hash fields for compatibility
+      const isValidPassword = user.password === password || user.password_hash === password;
+      if (!isValidPassword) {
+        return res.status(401).json({ message: "Invalid email or password. Please try again." });
+      }
+
+      const { password: _, password_hash: __, ...userWithoutPassword } = user;
       res.json({ user: userWithoutPassword });
     } catch (error) {
+      console.error("Login error:", error);
       res.status(400).json({ message: "Invalid login data" });
     }
   });
